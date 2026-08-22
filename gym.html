@@ -119,7 +119,7 @@
             </div>
             <!-- 右側：直向影片完整靠右排列 -->
             <div class="gym-video-box">
-                <video id="gym-video" src="video.mp4" controls loop autoplay muted playsinline preload="auto">
+                <video id="gym-video" controls loop autoplay muted="muted" playsinline webkit-playsinline preload="auto">
                     <source src="video.mp4" type="video/mp4">
                     您的瀏覽器不支援影片播放。
                 </video>
@@ -291,6 +291,49 @@
                 transitionOverlay.classList.remove('active'); 
             }
         };
+
+        // 水中跑步機影片自動播放保證機制 (相容 iOS Safari, Chrome, Edge, Firefox)
+        (function initGymVideoAutoplay() {
+            const video = document.getElementById('gym-video');
+            if (!video) return;
+
+            video.muted = true;
+            video.defaultMuted = true;
+            video.setAttribute('muted', '');
+            video.setAttribute('playsinline', '');
+            video.setAttribute('webkit-playsinline', '');
+
+            function tryPlay() {
+                video.muted = true;
+                const promise = video.play();
+                if (promise !== undefined) {
+                    promise.catch(() => {});
+                }
+            }
+
+            tryPlay();
+
+            // 視口交叉感應 (當使用者滑動到影片區域時自動播放)
+            if ('IntersectionObserver' in window) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            tryPlay();
+                        }
+                    });
+                }, { threshold: 0.15 });
+                observer.observe(video);
+            }
+
+            // 使用者在頁面上任何點擊或滑動時喚醒
+            ['click', 'touchstart', 'scroll'].forEach(evt => {
+                document.addEventListener(evt, () => {
+                    if (video.paused) {
+                        tryPlay();
+                    }
+                }, { once: true, passive: true });
+            });
+        })();
     </script>
 <script src="/static/js/member.js"></script>
 <script src="/static/js/cart.js"></script>
