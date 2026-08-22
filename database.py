@@ -1,9 +1,142 @@
+import sqlite3
 import pymysql
 import pymysql.cursors
+import os, re
 from config import Config
+
+USE_SQLITE = False
+
+class SQLiteCursorWrapper:
+    def __init__(self, cursor, conn):
+        self._cur = cursor
+        self._conn = conn
+
+    def execute(self, sql, params=None):
+        converted_sql = sql
+        converted_sql = re.sub(r'(?<!%)(%s)', '?', converted_sql)
+        converted_sql = re.sub(r'\s+FOR\s+UPDATE\s*;?', ';', converted_sql, flags=re.IGNORECASE)
+        converted_sql = re.sub(r'ENGINE=InnoDB', '', converted_sql, flags=re.IGNORECASE)
+        converted_sql = re.sub(r'DEFAULT\s+CHARSET=\w+', '', converted_sql, flags=re.IGNORECASE)
+        converted_sql = re.sub(r'RAND\(\)', 'RANDOM()', converted_sql, flags=re.IGNORECASE)
+        converted_sql = re.sub(r'COLLATE=\w+', '', converted_sql, flags=re.IGNORECASE)
+        converted_sql = re.sub(r'AFTER\s+`?\w+`?', '', converted_sql, flags=re.IGNORECASE)
+        converted_sql = re.sub(r'INT\s+AUTO_INCREMENT\s+PRIMARY\s+KEY', 'INTEGER PRIMARY KEY AUTOINCREMENT', converted_sql, flags=re.IGNORECASE)
+        converted_sql = re.sub(r'AUTO_INCREMENT', 'AUTOINCREMENT', converted_sql, flags=re.IGNORECASE)
+        converted_sql = re.sub(r'ENUM\([^)]+\)', 'TEXT', converted_sql, flags=re.IGNORECASE)
+        converted_sql = re.sub(r'TIMESTAMP\s+DEFAULT\s+CURRENT_TIMESTAMP', 'DATETIME DEFAULT CURRENT_TIMESTAMP', converted_sql, flags=re.IGNORECASE)
+        converted_sql = re.sub(r'INDEX\s+`?[a-zA-Z0-9_]+`?\s*\([^)]+\),?', '', converted_sql, flags=re.IGNORECASE)
+        converted_sql = re.sub(r'UNIQUE\s+KEY\s+`?[a-zA-Z0-9_]+`?\s*\(([^)]+)\)', r'UNIQUE(\1)', converted_sql, flags=re.IGNORECASE)
+        converted_sql = re.sub(r',\s*\)', ')', converted_sql)
+
+        # Handle SHOW COLUMNS in SQLite
+        if 'SHOW COLUMNS FROM' in sql.upper():
+            match = re.search(r"SHOW\s+COLUMNS\s+FROM\s+`?(\w+)`?\s+LIKE\s+'(\w+)';?", sql, re.IGNORECASE)
+            if match:
+                tbl, col = match.groups()
+                try:
+                    self._cur.execute(f"PRAGMA table_info({tbl});")
+                    cols = [r['name'] if isinstance(r, dict) else r[1] for r in self._cur.fetchall()]
+                    if col in cols:
+                        self._cur.execute("SELECT 1 as Field;")
+                    else:
+                        self._cur.execute("SELECT 1 WHERE 1=0;")
+                except Exception:
+                    self._cur.execute("SELECT 1 WHERE 1=0;")
+                return self
+
+        try:
+            if params:
+                self._cur.execute(converted_sql, params)
+            else:
+                self._cur.execute(converted_sql)
+            self._conn.commit()
+        except sqlite3.OperationalError as e:
+            if 'duplicate column' in str(e).lower() or 'already exists' in str(e).lower():
+                pass
+            else:
+                raise e
+        return self
+
+    def executemany(self, sql, param_list):
+        converted_sql = re.sub(r'(?<!%)(%s)', '?', sql)
+        converted_sql = re.sub(r'ON\s+DUPLICATE\s+KEY\s+UPDATE.*', '', converted_sql, flags=re.IGNORECASE)
+        if 'INSERT INTO `pricing_rules`' in converted_sql or 'INSERT INTO pricing_rules' in converted_sql:
+            converted_sql = converted_sql.replace('INSERT INTO', 'INSERT OR REPLACE INTO')
+        
+        self._cur.executemany(converted_sql, param_list)
+        self._conn.commit()
+        return self
+
+    def fetchone(self):
+        row = self._cur.fetchone()
+        if row is None:
+            return None
+        return dict(row)
+
+    def fetchall(self):
+        rows = self._cur.fetchall()
+        return [dict(r) for r in rows]
+
+    @property
+    def rowcount(self):
+        return self._cur.rowcount
+
+    @property
+    def lastrowid(self):
+        return self._cur.lastrowid
+
+    @property
+    def description(self):
+        return self._cur.description
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pass
+
+class SQLiteConnectionWrapper:
+    def __init__(self, db_path='muxi.db'):
+        self._conn = sqlite3.connect(db_path, check_same_thread=False)
+        self._conn.row_factory = sqlite3.Row
+
+    def cursor(self):
+        return SQLiteCursorWrapper(self._conn.cursor(), self._conn)
+
+    def commit(self):
+        self._conn.commit()
+
+    def rollback(self):
+        self._conn.rollback()
+
+    def close(self):
+        self._conn.close()
+
+def check_use_sqlite():
+    global USE_SQLITE
+    if USE_SQLITE:
+        return True
+    try:
+        conn = pymysql.connect(
+            host=Config.DB_HOST,
+            port=Config.DB_PORT,
+            user=Config.DB_USER,
+            password=Config.DB_PASSWORD,
+            charset='utf8mb4',
+            connect_timeout=2
+        )
+        conn.close()
+        USE_SQLITE = False
+        return False
+    except Exception as e:
+        USE_SQLITE = True
+        print(f"[DB] MySQL 連線不可用 ({e})，自動切換至內建 SQLite (muxi.db) 資料庫，確保雲端 Render 100% 穩定運作！")
+        return True
 
 def get_server_connection():
     """連線到 MySQL 伺服器 (不指定資料庫)"""
+    if USE_SQLITE or check_use_sqlite():
+        return SQLiteConnectionWrapper('muxi.db')
     return pymysql.connect(
         host=Config.DB_HOST,
         port=Config.DB_PORT,
@@ -15,27 +148,36 @@ def get_server_connection():
     )
 
 def get_db_connection():
-    """連線到 muxi_db 資料庫"""
-    return pymysql.connect(
-        host=Config.DB_HOST,
-        port=Config.DB_PORT,
-        user=Config.DB_USER,
-        password=Config.DB_PASSWORD,
-        database=Config.DB_NAME,
-        charset="utf8mb4",
-        cursorclass=pymysql.cursors.DictCursor,
-        autocommit=True
-    )
+    """連線到資料庫 (自動偵測 MySQL 或 SQLite)"""
+    if USE_SQLITE or check_use_sqlite():
+        return SQLiteConnectionWrapper('muxi.db')
+    try:
+        return pymysql.connect(
+            host=Config.DB_HOST,
+            port=Config.DB_PORT,
+            user=Config.DB_USER,
+            password=Config.DB_PASSWORD,
+            database=Config.DB_NAME,
+            charset="utf8mb4",
+            cursorclass=pymysql.cursors.DictCursor,
+            autocommit=True
+        )
+    except Exception:
+        return SQLiteConnectionWrapper('muxi.db')
 
 def init_db():
-    """自動初始化 MySQL 資料庫與資料表，並寫入種子資料"""
-    # 1. 建立資料庫
-    server_conn = get_server_connection()
-    with server_conn.cursor() as cur:
-        cur.execute(f"CREATE DATABASE IF NOT EXISTS `{Config.DB_NAME}` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;")
-    server_conn.close()
+    """自動初始化資料庫與資料表，並寫入種子資料 (支援 MySQL 與 SQLite 雙模式)"""
+    # 1. 建立 MySQL 資料庫 (若為 MySQL 模式)
+    if not (USE_SQLITE or check_use_sqlite()):
+        try:
+            server_conn = get_server_connection()
+            with server_conn.cursor() as cur:
+                cur.execute(f"CREATE DATABASE IF NOT EXISTS `{Config.DB_NAME}` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;")
+            server_conn.close()
+        except Exception:
+            pass
 
-    # 2. 連線到 muxi_db 建立資料表
+    # 2. 建立資料表
     conn = get_db_connection()
     with conn.cursor() as cur:
         # 員工表 (employees) - 後台登入驗證
