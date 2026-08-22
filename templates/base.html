@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}沐曦 MuXi - 寵物美容與住宿{% endblock %}</title>
+    
+    <!-- 引入 Google Fonts 與 Lottie 動畫播放器 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Electrolize&family=Hachi+Maru+Pop&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+    <!-- 轉場動畫遮罩區塊 -->
+    <div id="page-transition" class="transition-overlay">
+        <div class="circle-mask"></div>
+        <div class="loading-text">Loading . . . . . .</div>
+    </div>
+
+    <!-- 頂部導覽列 -->
+    <nav class="navbar">
+        <div class="logo-area">
+            <h1>沐曦 MuXi</h1>
+            <p>GROOMING & STAY</p>
+            <lottie-player src="https://lottie.host/80e92f25-83e9-4ec4-bc49-98337854d922/cT1d3Yq2aJ.json" background="transparent" speed="1" style="width: 140px; height: 140px;" loop autoplay></lottie-player>
+        </div>
+
+        <div class="nav-background">
+            <ul class="nav-links">
+                <li><a href="{{ url_for('index') }}" class="page-link {% if request.endpoint == 'index' %}active-nav{% endif %}">首頁</a></li>
+                <li><a href="{{ url_for('index') }}#qa" class="page-link">常見Q&A</a></li>
+                
+                <!-- 美容清潔 (下拉選單) -->
+                <li class="nav-item-dropdown">
+                    <a href="#" class="dropdown-toggle {% if request.endpoint in ['clean', 'clean2'] %}active-nav{% endif %}">美容清潔 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="{{ url_for('clean') }}" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬美容</a>
+                        <a href="{{ url_for('clean2') }}" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓美容</a>
+                    </div>
+                </li>
+
+                <li><a href="{{ url_for('booking') }}" class="page-link {% if request.endpoint == 'booking' %}active-nav{% endif %}">線上預約</a></li>
+                <li><a href="{{ url_for('match') }}" class="page-link {% if request.endpoint == 'match' %}active-nav{% endif %}">毛孩速配</a></li>
+                <li><a href="{{ url_for('index') }}#stay" class="page-link">寵物住宿</a></li>
+                <li><a href="{{ url_for('admin') }}" class="page-link {% if request.endpoint == 'admin' %}active-nav{% endif %}" style="opacity: 0.9;">員工後台</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 主要內容區 -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- 頁尾 -->
+    <footer class="site-footer">
+        <lottie-player src="https://lottie.host/80e92f25-83e9-4ec4-bc49-98337854d922/cT1d3Yq2aJ.json" background="transparent" speed="1" style="width: 220px; height: 220px;" loop autoplay></lottie-player>
+        <div class="footer-info">
+            <p>📍 地址：807 高雄市三民區寶珠里建工路415號</p>
+            <p>📞 預約專線：07-3814526 / 0939185295</p>
+            <p>💬 LINE 預約：@muxi</p>
+            <p>⏰ 營業時間：10:00 - 17:00 (週一至週日)</p>
+        </div>
+        <div class="social-links">
+            <a href="https://facebook.com" target="_blank" class="social-icon" title="Facebook">FB</a>
+            <a href="https://instagram.com" target="_blank" class="social-icon" title="Instagram">IG</a>
+            <a href="mailto:service@muxi.pet" class="social-icon" title="Email">✉️</a>
+        </div>
+    </footer>
+
+    <!-- 通用 JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

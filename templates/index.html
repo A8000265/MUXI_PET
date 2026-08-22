@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沐曦 MuXi - 寵物美容與住宿 (首頁)</title>
+    
+    <!-- 引入字體與 Lottie 動畫播放器 -->
+    <link href="https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&family=Electrolize&display=swap" rel="stylesheet">
+    <!-- 換成這行新的 -->
+    <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 轉場動畫遮罩區塊 -->
+    <div id="page-transition" class="transition-overlay">
+        <div class="circle-mask"></div>
+        <div class="loading-text">Loading . . . . . .</div>
+    </div>
+
+    <!-- 頂部導覽列 -->
+    <nav class="navbar">
+        <div class="logo-area">
+            <!-- 左側的 Lottie 動畫 -->
+            <dotlottie-player class="logo-lottie" src="https://lottie.host/e0ac3dd9-de3d-4343-af06-52aab927d3c4/3HUlLNShZ1.lottie" background="transparent" speed="1" loop autoplay></dotlottie-player>
+            
+            <!-- 右側的文字區塊 (把它們包在同一個 div 裡，維持上下疊加) -->
+            <div class="logo-text-group">
+                <h1>沐曦 MuXi</h1>
+                <p>GROOMING & STAY</p>
+            </div>
+        </div>
+        <div class="nav-background">
+            <ul class="nav-links">
+                <!-- 1. 首頁按鈕 -->
+                <li><a href="index.html" class="page-link active-nav">首頁</a></li>
+                
+                <!-- 2. 常見Q&A -->
+                <li><a href="qa.html" class="page-link">常見Q&A</a></li>
+    
+                <!-- 3. 美容清潔 (下拉選單) -->
+                <li class="nav-item-dropdown">
+                    <a href="#" class="dropdown-toggle">美容清潔 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="clean.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬美容</a>
+                        <a href="clean2.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓美容</a>
+                    </div>
+                </li>
+                <!-- 👆 替換結束 👆 -->
+                <!-- 購物商城 下拉選單 -->
+                <li class="nav-item-dropdown">
+                    <a href="#" class="dropdown-toggle">購物商城 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="shop-dog.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬糧食</a>
+                        <a href="shop-cat.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓糧食</a>
+                        <a href="shop-snacks.html" class="dropdown-item page-link"><span class="icon">🦴</span>寵物零食</a>
+                        <a href="shop-cans.html" class="dropdown-item page-link"><span class="icon">🥫</span>寵物罐罐</a>
+                    </div>
+                </li>
+                <!-- 替換上去的「寵物住宿」下拉選單 -->
+                <li class="nav-item-dropdown">
+                    <a href="#" class="dropdown-toggle">寵物住宿 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="stay-dog.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬住宿</a>
+                        <a href="stay-cat.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓住宿</a>
+                    </div>
+                </li>
+                <li><a href="gym.html" class="page-link">寵物健身</a></li>
+                <li><a href="game.html" class="page-link">趣味體驗</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 首頁形象大圖 -->
+    <header class="hero-section"></header>
+
+    <!-- 關於沐曦 -->
+    <section class="about-section" id="about">
+        <!-- 左側裝飾線條 SVG -->
+        <div class="about-graphic left">
+            <svg width="380" viewBox="0 0 379 470" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 254L20.8091 246.568C61.8133 231.924 106.476 231.061 148.016 244.11L179.5 254L207.863 263.227C243.566 274.841 281.816 276.171 318.239 267.065L322.5 266" stroke="#001EFE"/>
+                <path d="M0 283L20.8091 275.568C61.8133 260.924 106.476 260.061 148.016 273.11L179.5 283L207.863 292.227C243.566 303.841 281.816 305.171 318.239 296.065L322.5 295" stroke="#001EFE"/>
+                <path d="M0 224L20.8091 216.568C61.8133 201.924 106.476 201.061 148.016 214.11L179.5 224L207.863 233.227C243.566 244.841 281.816 246.171 318.239 237.065L322.5 236" stroke="#001EFE"/>
+                <path d="M0 239L20.8091 231.568C61.8133 216.924 106.476 216.061 148.016 229.11L179.5 239L205.846 247.806C246.996 261.561 291.504 261.561 332.654 247.806L359 239" stroke="#001EFE"/>
+                <path d="M0 269L20.8091 261.568C61.8133 246.924 106.476 246.061 148.016 259.11L179.5 269L205.846 277.806C246.996 291.561 291.504 291.561 332.654 277.806L359 269" stroke="#001EFE"/>
+                <path d="M0 299L20.8091 291.568C61.8133 276.924 106.476 276.061 148.016 289.11L179.5 299L205.846 307.806C246.996 321.561 291.504 321.561 332.654 307.806L359 299" stroke="#001EFE"/>
+                <circle cx="99" cy="80" r="39.5" stroke="#001EFE"/>
+                <circle cx="254" cy="310" r="39.5" stroke="#001EFE"/>
+                <circle cx="159.5" cy="119.5" r="20" stroke="#001EFE"/>
+                <circle cx="358.5" cy="449.5" r="20" stroke="#001EFE"/>
+                <circle cx="343.5" cy="193.5" r="20" stroke="#001EFE"/>
+                <circle cx="142.5" cy="213.5" r="20" stroke="#001EFE"/>
+                <circle cx="225.5" cy="349.5" r="20" stroke="#001EFE"/>
+                <circle cx="48.5" cy="386.5" r="27" stroke="#001EFE"/>
+                <circle cx="86" cy="358" r="9.5" stroke="#001EFE"/>
+                <circle cx="294" cy="10" r="9.5" stroke="#001EFE"/>
+                <circle cx="39" cy="256" r="9.5" stroke="#001EFE"/>
+                <circle cx="344" cy="439" r="9.5" stroke="#001EFE"/>
+            </svg>
+        </div>
+
+        <!-- 中間文案區塊 -->
+        <div class="about-content">
+            <dotlottie-player src="https://lottie.host/595b812b-7b15-467f-a846-18e1242ca137/zHQFrGhHFK.lottie" background="transparent" speed="1" style="width: 150px; height: 150px; margin: 0 auto;" loop autoplay></dotlottie-player>
+            <h2 class="title-orange">關於沐曦</h2>
+            <p class="about-text">
+                你只需要愛他 其他交給沐曦<br>
+                你是孩子的全世界 而我們把每個孩子當成自己的寶貝<br>
+                在沐曦他們可以做自己 我們也讓他們好自在
+            </p>
+        </div>
+
+        <!-- 右側狗狗照片與掌印裝飾 -->
+        <div class="about-graphic right">
+             <img src="dogpaw.svg" alt="沐曦狗狗剪影" class="paw-graphic">
+        </div>
+    </section>
+
+    <!-- 主要內容區 (左邊 QA，右邊服務) -->
+    <section class="main-content">
+        <!-- 常見 Q&A -->
+        <div class="faq-container" id="qa">
+            <h2 class="title-pink">常見Q&A</h2>
+            <div class="faq-item">
+                <h3 class="question">來美容需要提前預約嗎？</h3>
+                <p class="answer">是的，每次美容皆採網站預約制。為了簡化流程並避免重複排班，我們...</p>
+            </div>
+            <div class="faq-item">
+                <h3 class="question">不確定能不能美容怎麼辦？</h3>
+                <p class="answer">若毛孩有特殊情況或疑慮 歡迎先透過電話，或至我們的FB / IG...</p>
+            </div>
+            <div class="faq-item">
+                <h3 class="question">可以當天預約美容嗎？</h3>
+                <p class="answer">若當天預約未滿，會以現場預約客完成後，排程下個順位進行美容。若當天預約已滿...</p>
+            </div>
+            <div class="faq-item">
+                <h3 class="question">接送服務需要多久前預約？</h3>
+                <p class="answer">若有需要接送，請務必提前 2-3 天於網站預約，以便我們為您安排最佳的接送路徑。</p>
+            </div>
+            <a href="qa.html" class="view-more page-link">View more</a>
+        </div>
+
+        <!-- 服務項目 -->
+        <div class="services-container">
+            <div class="services-header">
+                <dotlottie-player src="https://lottie.host/e441cd0b-2e3a-4ba4-af6d-4e67ab47ba32/Nn2FJwXW1W.lottie" background="transparent" speed="1" style="width: 100px; height: 100px;" loop autoplay></dotlottie-player>
+                <h2 class="title-cyan">服務項目</h2>
+                <dotlottie-player src="https://lottie.host/e441cd0b-2e3a-4ba4-af6d-4e67ab47ba32/Nn2FJwXW1W.lottie" background="transparent" speed="1" style="width: 100px; height: 100px; transform: scaleX(-1);" loop autoplay></dotlottie-player>
+            </div>
+            <div class="services-grid">
+                <!-- 點擊美容服務區塊也可以跳轉 -->
+                <a href="clean.html" class="service-card page-link" style="text-decoration: none;">
+                    <div class="icon-box rotate-left cyan-border">✂️</div>
+                    <h4>美容</h4>
+                </a>
+                <div class="service-card">
+                    <div class="icon-box rotate-right cyan-border">🏠</div>
+                    <h4>住宿</h4>
+                </div>
+                <div class="service-card">
+                    <div class="icon-box rotate-right cyan-border">💪</div>
+                    <h4>健身</h4>
+                </div>
+                <div class="service-card">
+                    <div class="icon-box rotate-left cyan-border">🛒</div>
+                    <h4>百貨</h4>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 頁尾 -->
+    <footer class="site-footer">
+        <dotlottie-player src="https://lottie.host/e0ac3dd9-de3d-4343-af06-52aab927d3c4/3HUlLNShZ1.lottie" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></dotlottie-player>
+        <div class="footer-info">
+            <p>地址：807高雄市三民區寶珠里建工路415號</p>
+            <p>預約專線：07-3814526 / 0939185295</p>
+            <p>LINE預約：@muxi</p>
+            <p>營業時間：9:00-17:00</p>
+        </div>
+        <div class="social-links">
+            <a href="#" class="social-icon">FB</a>
+            <a href="#" class="social-icon">IN</a>
+            <a href="#" class="social-icon">✉️</a>
+        </div>
+    </footer>
+
+    <!-- 負責處理跳轉轉場動畫的 JS -->
+<!-- 負責處理跳轉轉場動畫的 JS -->
+<script>
+        // ====== 1. 處理所有下拉選單點擊 ======
+        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', function(event) {
+                event.preventDefault(); // 防止畫面跳動
+                const parentDropdown = this.parentElement;
+                
+                // 貼心設計：如果點開其中一個選單，自動把另一個關閉
+                document.querySelectorAll('.nav-item-dropdown').forEach(item => {
+                    if (item !== parentDropdown) {
+                        item.classList.remove('active');
+                    }
+                });
+                
+                // 切換目前點擊的選單顯示/隱藏
+                parentDropdown.classList.toggle('active');
+            });
+        });
+
+        // 點擊畫面其他地方時，自動關閉所有下拉選單
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.nav-item-dropdown')) {
+                document.querySelectorAll('.nav-item-dropdown').forEach(item => {
+                    item.classList.remove('active');
+                });
+            }
+        });
+
+        // ====== 2. 處理頁面跳轉轉場 ======
+        const pageLinks = document.querySelectorAll('.page-link');
+        const transitionOverlay = document.getElementById('page-transition');
+
+        if (pageLinks.length > 0 && transitionOverlay) {
+            pageLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault(); 
+                    const targetUrl = this.getAttribute('href'); 
+                    
+                    // 點擊後，把所有的下拉選單都收起來
+                    document.querySelectorAll('.nav-item-dropdown').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    
+                    // 啟動轉場動畫
+                    transitionOverlay.classList.add('active'); 
+                    
+                    // 等待 1 秒後真正跳轉
+                    setTimeout(() => {
+                        window.location.href = targetUrl;
+                    }, 1000); 
+                });
+            });
+        }
+
+        // ====== 3. 抵達新頁面時解開轉場遮罩 ======
+        window.addEventListener('pageshow', () => {
+            const transitionOverlay = document.getElementById('page-transition');
+            if (transitionOverlay) transitionOverlay.classList.remove('active');
+        });
+        window.onload = () => {
+            const transitionOverlay = document.getElementById('page-transition');
+            if (transitionOverlay) {
+                // 確保抵達新頁面時，遮罩直接解除就好，不需要再讓它打開又關閉
+                transitionOverlay.classList.remove('active'); 
+            }
+        };
+    </script>
+<script src="/static/js/member.js"></script>
+<script src="/static/js/cart.js"></script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>貓貓住宿 - 沐曦 MuXi</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&family=Electrolize&display=swap" rel="stylesheet">
+    <!-- 使用最新支援 .lottie 格式的播放器 -->
+    <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 轉場動畫遮罩區塊 -->
+    <div id="page-transition" class="transition-overlay">
+        <div class="circle-mask"></div>
+        <div class="loading-text">Loading . . . . . .</div>
+    </div>
+
+    <!-- 頂部導覽列 -->
+    <nav class="navbar">
+        <div class="logo-area">
+            <!-- 左側的 Lottie 動畫 -->
+            <dotlottie-player class="logo-lottie" src="https://lottie.host/e0ac3dd9-de3d-4343-af06-52aab927d3c4/3HUlLNShZ1.lottie" background="transparent" speed="1" loop autoplay></dotlottie-player>
+            
+            <!-- 右側的文字區塊 (把它們包在同一個 div 裡，維持上下疊加) -->
+            <div class="logo-text-group">
+                <h1>沐曦 MuXi</h1>
+                <p>GROOMING & STAY</p>
+            </div>
+        </div>
+        <div class="nav-background">
+            <ul class="nav-links">
+                <li><a href="index.html" class="page-link">首頁</a></li>
+                <li><a href="qa.html" class="page-link">常見Q&A</a></li>
+                
+                <!-- 美容清潔 下拉選單 -->
+                <li class="nav-item-dropdown">
+                    <a href="#" class="dropdown-toggle">美容清潔 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="clean.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬美容</a>
+                        <a href="clean2.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓美容</a>
+                    </div>
+                </li>
+
+                <!-- 購物商城 下拉選單 -->
+                <li class="nav-item-dropdown">
+                    <a href="#" class="dropdown-toggle">購物商城 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="shop-dog.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬糧食</a>
+                        <a href="shop-cat.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓糧食</a>
+                        <a href="shop-snacks.html" class="dropdown-item page-link"><span class="icon">🦴</span>寵物零食</a>
+                        <a href="shop-cans.html" class="dropdown-item page-link"><span class="icon">🥫</span>寵物罐罐</a>
+                    </div>
+                </li>
+                <!-- 寵物住宿 標記為 Active 狀態 -->
+                <!-- 替換上去的「寵物住宿」下拉選單 -->
+                <li class="nav-item-dropdown">
+                    <a href="#" class="dropdown-toggle">寵物住宿 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="stay-dog.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬住宿</a>
+                        <a href="stay-cat.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓住宿</a>
+                    </div>
+                </li>
+                <li><a href="gym.html" class="page-link">寵物健身</a></li>
+                <li><a href="game.html" class="page-link">趣味體驗</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 住宿分類 Tabs -->
+    <div class="salon-tabs">
+        <a href="stay-dog.html" class="tab page-link">狗狗住宿</a>
+        <span class="divider">/</span>
+        <a href="stay-cat.html" class="tab active-tab page-link">貓貓住宿</a>
+    </div>
+
+    <!-- 頂部形象大圖 (貓貓住宿) -->
+    <section class="hotel-hero cat-hero">
+        <div class="hero-text-overlay">
+            <h2>貓貓<br>住宿</h2>
+        </div>
+    </section>
+
+    <!-- 房型介紹 -->
+    <section class="room-types-section">
+        <div class="room-card">
+            <img src="img-6401_orig.jpg" alt="一般房" class="room-image">
+            <h3 class="room-title">一般房</h3>
+            <p class="room-desc">房間尺寸約81x110x117cm</p>
+        </div>
+        <div class="room-card">
+            <img src="0p1a4404.jpg" alt="一大房" class="room-image">
+            <h3 class="room-title">一大房(上下2層)</h3>
+            <p class="room-desc">房間尺寸約81x110x234cm</p>
+        </div>
+    </section>
+
+    <!-- 住宿環境介紹 -->
+    <section class="hotel-intro">
+        <p>
+            我們的貓咪住宿區為遠離犬區與噪音的獨立空間<br>
+            設計完全符合貓咪喜歡鑽爬躲藏的天性<br>
+            以沉穩色調與柔和音樂營造安心無壓的環境<br>
+            空間配備空調、吊扇與遮光簾以確保舒適通風<br>
+            裝潢嚴選 MIT 國家標準低甲醛防焰建材與防滑石質地磚<br>
+            全館由 24 小時 21 支監視器嚴密守護<br>
+            房內皆預留專屬監控插座<br>
+            並貼心供應過濾礦泉水、護頸餐具<br>
+            以及裝設隱形鐵窗的專屬安全陽台<br>
+            讓貓咪能安心自在地玩耍休息
+        </p>
+    </section>
+
+    <!-- 住宿價目表 -->
+    <section class="pricing-section">
+        <div class="section-header">
+            <span class="icon-green">🌿</span>
+            <h2 class="title-green-dark">住宿（以每晚／24小時計算）</h2>
+        </div>
+        
+        <table class="pricing-table">
+            <thead>
+                <tr>
+                    <th>房型</th>
+                    <th>空間特色</th>
+                    <th>房間尺寸</th>
+                    <th>價格(每晚)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>一般房</td>
+                    <td>單層空間<br>
+                        適合單貓入住或<br>
+                        不愛跳躍的高齡貓</td>
+                    <td>81 x 110 x 117 cm</td>
+                    <td>$ 700 起</td>
+                </tr>
+                <tr>
+                    <td>一大房</td>
+                    <td>上下兩層垂直空間<br>
+                        適合活動力高的<br>
+                        貓咪或多貓家庭</td>
+                    <td>81 x 110 x 234 cm</td>
+                    <td>$ 1200 起</td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="discount-purple">
+            同房加倍優惠：同家庭的第二隻貓咪入住同一間房<br>
+            加收 200 - 300 元的共住費用 而不收取第二間房費
+        </p>
+    </section>
+
+    <!-- 安親價目表 -->
+    <section class="pricing-section" style="margin-top: 40px;">
+        <div class="section-header">
+            <span class="icon-green">🌿</span>
+            <h2 class="title-green-dark">安親（依營業時間內計費）</h2>
+        </div>
+        
+        <table class="pricing-table">
+            <thead>
+                <tr>
+                    <th>貓貓體型</th>
+                    <th>單次計時 (每小時)</th>
+                    <th>半日托 (4-6小時)</th>
+                    <th>全天托 (6-8小時)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>短毛貓</td>
+                    <td>$ 60</td>
+                    <td>$ 300</td>
+                    <td>$ 450</td>
+                </tr>
+                <tr>
+                    <td>長毛貓</td>
+                    <td>$ 80</td>
+                    <td>$ 350</td>
+                    <td>$ 500</td>
+                </tr>
+                <tr>
+                    <td>大型長毛貓</td>
+                    <td>$ 100</td>
+                    <td>$ 400</td>
+                    <td>$ 550</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 注意事項與照片 -->
+    <section class="hotel-rules-section">
+        <div class="rules-content">
+            <div class="section-header">
+                <svg width="63" height="63" viewBox="0 0 63 63" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g clip-path="url(#clip0_143_701)">
+                        <path d="M29.274 25.326L46.2 42.252V53.718C46.2 54.306 46.41 54.81 46.83 55.23L49.77 58.17C50.19 58.59 50.4 59.094 50.4 59.682V60.9C50.4 62.076 49.476 63 48.3 63H42.882C42.294 63 41.79 62.79 41.37 62.37L38.43 59.43C38.01 59.01 37.8 58.506 37.8 57.918V48.3C37.8 47.124 36.876 46.2 35.7 46.2H34.902C34.104 46.2 33.39 46.662 33.012 47.376L29.862 53.718C29.568 54.306 29.4 54.936 29.4 55.608V55.65C29.4 56.28 29.778 56.868 30.324 57.162L32.424 58.212C33.138 58.59 33.6 59.304 33.6 60.102V60.9C33.6 62.076 32.676 63 31.5 63H12.768C9.954 63 7.308 61.908 5.334 59.934L3.696 58.296C1.344 55.944 0 52.71 0 49.392V48.3C0 44.352 1.974 40.698 5.25 38.514L6.3 37.8V45.696C6.3 48.594 7.938 51.198 10.5 52.5C10.626 46.998 12.012 42.126 14.7 37.8C17.094 34.02 21.924 29.862 29.274 25.326ZM44.1 4.2C45.276 4.2 46.2 5.124 46.2 6.3V11.298C46.2 12.096 46.662 12.81 47.376 13.188L61.11 20.076C62.286 20.622 63 21.798 63 23.1V23.478C63 24.57 62.538 25.662 61.782 26.418L58.8 29.4H50.4L47.67 34.818L33.684 20.832L41.412 5.376C41.79 4.662 42.504 4.2 43.302 4.2H44.1ZM14.7 18.9C17.01 18.9 18.9 20.79 18.9 23.1C18.9 25.41 17.01 27.3 14.7 27.3C12.39 27.3 10.5 25.41 10.5 23.1C10.5 20.79 12.39 18.9 14.7 18.9ZM19.95 0L16.8 15.75H12.6L9.45 0H19.95Z" fill="#FF0000"/>
+                    </g>
+                    <defs>
+                        <clipPath id="clip0_143_701">
+                            <rect width="63" height="63" fill="white"/>
+                        </clipPath>
+                    </defs>
+                </svg>
+                <h2 class="title-red">特殊收費&注意事項</h2>
+            </div>
+            <p class="rules-text">
+                <b>健康與防護要求：</b>為保障所有毛孩的健康，入住前須出示一年內「核心疫苗施打手冊」，並確認已確實完成體內外驅蟲與除蚤。<br><br>
+                <b>自備熟悉物品：</b>建議飼主攜帶毛孩平時習慣的日常用品（如：狗狗的玩具／貓咪的慣用貓砂），以及帶有主人味道的衣物或小毛毯，能有效降低換環境的緊迫感。<br><br>
+                <b>連續住宿優惠：</b>住滿 7 天享 95 折，住滿 14 天享 9 折，並貼心加贈一次「基礎清潔」服務，讓毛孩香噴噴地回家。<br><br>
+                <b>超時接送費用：</b>若超過預定的退房時間，將自動依毛孩體型分類轉以「單次計時安親費」計價；若超過當日營業時間，將強制轉為住宿一晚，並收取一晚房費。<br><br>
+                <b>國定假日加價：</b>遇連續假期或農曆春節等特殊旺季，為控管房況品質與平衡人力成本，將設定額外加價（詳細收費依店內或粉專公告為準）。
+            </p>
+        </div>
+        <div class="rules-images">
+            <img src="line-album-220808-2.jpg" alt="住宿環境1" class="rules-img-top">
+            <img src="333536_orig.jpg" alt="住宿環境2" class="rules-img-bottom">
+        </div>
+    </section>
+
+    <!-- 立即預約 CTA -->
+    <section class="cta-section">
+        <a href="booking.html" class="btn-appointment page-link">立即預約</a>
+    </section>
+
+    <!-- 頁尾 -->
+    <footer class="site-footer">
+        <dotlottie-player src="https://lottie.host/e0ac3dd9-de3d-4343-af06-52aab927d3c4/3HUlLNShZ1.lottie" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></dotlottie-player>
+        <div class="footer-info">
+            <p>地址：807高雄市三民區寶珠里建工路415號</p>
+            <p>預約專線：07-3814526 / 0939185295</p>
+            <p>LINE預約：@muxi</p>
+            <p>營業時間：9:00-17:00</p>
+        </div>
+        <div class="social-links">
+            <a href="#" class="social-icon">FB</a>
+            <a href="#" class="social-icon">IN</a>
+            <a href="#" class="social-icon">✉️</a>
+        </div>
+    </footer>
+
+    <!-- 轉場與下拉選單腳本 -->
+    <script>
+        // ====== 1. 處理所有下拉選單點擊 ======
+        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', function(event) {
+                event.preventDefault(); 
+                const parentDropdown = this.parentElement;
+                document.querySelectorAll('.nav-item-dropdown').forEach(item => {
+                    if (item !== parentDropdown) { item.classList.remove('active'); }
+                });
+                parentDropdown.classList.toggle('active');
+            });
+        });
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.nav-item-dropdown')) {
+                document.querySelectorAll('.nav-item-dropdown').forEach(item => {
+                    item.classList.remove('active');
+                });
+            }
+        });
+
+        // ====== 2. 處理頁面跳轉轉場 ======
+        const pageLinks = document.querySelectorAll('.page-link');
+        if (pageLinks.length > 0) {
+            pageLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault(); 
+                    const targetUrl = this.getAttribute('href'); 
+                    document.querySelectorAll('.nav-item-dropdown').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    const transitionOverlay = document.getElementById('page-transition');
+                    if (transitionOverlay) {
+                        transitionOverlay.classList.add('active'); 
+                        setTimeout(() => { window.location.href = targetUrl; }, 1000); 
+                    } else {
+                        window.location.href = targetUrl;
+                    }
+                });
+            });
+        }
+
+        // ====== 3. 抵達新頁面時解開轉場遮罩 (最關鍵的地方❗) ======
+        window.addEventListener('pageshow', () => {
+            const transitionOverlay = document.getElementById('page-transition');
+            if (transitionOverlay) transitionOverlay.classList.remove('active');
+        });
+        window.onload = () => {
+            const transitionOverlay = document.getElementById('page-transition');
+            if (transitionOverlay) {
+                transitionOverlay.classList.remove('active'); 
+            }
+        };
+    </script>
+<script src="/static/js/member.js"></script>
+<script src="/static/js/cart.js"></script>
+</body>
+</html>

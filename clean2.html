@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>貓貓沙龍 - 美容清潔 - 沐曦 MuXi</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&family=Electrolize&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 轉場動畫遮罩區塊 -->
+    <div id="page-transition" class="transition-overlay">
+        <div class="circle-mask"></div>
+        <div class="loading-text">Loading . . . . . .</div>
+    </div>
+
+    <!-- 頂部導覽列 -->
+    <nav class="navbar">
+        <div class="logo-area">
+            <!-- 左側的 Lottie 動畫 -->
+            <dotlottie-player class="logo-lottie" src="https://lottie.host/e0ac3dd9-de3d-4343-af06-52aab927d3c4/3HUlLNShZ1.lottie" background="transparent" speed="1" loop autoplay></dotlottie-player>
+            
+            <!-- 右側的文字區塊 (把它們包在同一個 div 裡，維持上下疊加) -->
+            <div class="logo-text-group">
+                <h1>沐曦 MuXi</h1>
+                <p>GROOMING & STAY</p>
+            </div>
+        </div>
+        <div class="nav-background">
+            <ul class="nav-links">
+                <li><a href="index.html" class="page-link">首頁</a></li>
+                <li><a href="qa.html" class="page-link">常見Q&A</a></li>
+                
+                <!-- 美容清潔 下拉選單 (標記為 Active 狀態) -->
+                <li class="nav-item-dropdown active-dropdown-parent">
+                    <a href="#" class="dropdown-toggle active-nav">美容清潔 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="clean.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬美容</a>
+                        <a href="clean2.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓美容</a>
+                    </div>
+                </li>
+
+                <!-- 購物商城 下拉選單 -->
+                <li class="nav-item-dropdown">
+                    <a href="#" class="dropdown-toggle">購物商城 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="shop-dog.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬糧食</a>
+                        <a href="shop-cat.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓糧食</a>
+                        <a href="shop-snacks.html" class="dropdown-item page-link"><span class="icon">🦴</span>寵物零食</a>
+                        <a href="shop-cans.html" class="dropdown-item page-link"><span class="icon">🥫</span>寵物罐罐</a>
+                    </div>
+                </li>
+                <!-- 寵物住宿 標記為 Active 狀態 -->
+                <!-- 替換上去的「寵物住宿」下拉選單 -->
+                <li class="nav-item-dropdown">
+                    <a href="#" class="dropdown-toggle">寵物住宿 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="stay-dog.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬住宿</a>
+                        <a href="stay-cat.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓住宿</a>
+                    </div>
+                </li>
+                <li><a href="gym.html" class="page-link">寵物健身</a></li>
+                <li><a href="game.html" class="page-link">趣味體驗</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 沙龍分類 Tabs (貓貓沙龍為 Active 狀態) -->
+    <div class="salon-tabs">
+        <a href="clean.html" class="tab page-link">狗狗沙龍</a>
+        <span class="divider">/</span>
+        <a href="clean2.html" class="tab active-tab page-link">貓貓沙龍</a>
+    </div>
+
+    <!-- 頂部承諾與主視覺 -->
+    <section class="commitment-section">
+        <div class="commitment-image">
+            <!-- 替換為貓貓沙龍的圖片 -->
+            <img src="CC1.jpg" alt="貓貓沙龍" class="rounded-image">
+        </div>
+        <div class="commitment-text">
+            <h2>貓貓沙龍</h2>
+            <p>
+                【我們的承諾：安心、專業、無暴力】<br><br>
+                我們擁有豐富的專業寵物美容經驗<br>
+                提供半開放式的美容空間<br>
+                讓毛孩在過程中能與美容師互動、減少緊張感<br>
+                我們堅決拒絕施打麻醉劑與美容暴力<br>
+                針對較敏感的貓咪<br>
+                更採低噪音吹整與全程輕聲安撫<br>
+                給予最高道德、最專業的呵護是我們的堅持
+            </p>
+        </div>
+    </section>
+
+    <!-- 服務項目方案 -->
+    <section class="service-plans-section">
+        <div class="section-header">
+            <span class="icon-blue">🛁</span>
+            <h2 class="title-blue">服務項目</h2>
+        </div>
+        <p class="plan-subtitle">
+            我們為毛孩提供三種不同程度的美容方案<br>
+            所有洗護過程皆包含「洗護四步驟」<br>
+            到店諮詢評估 ➔ 深層/溫和潔淨 ➔ 客製養護 ➔ 吹整潤澤/安撫
+        </p>
+
+        <div class="plans-grid">
+            <div class="plan-card">
+                <h3 class="title-cyan">純清潔</h3>
+                <p>適合日常基礎保養<br>包含：<br>剪指甲<br>清潔耳道<br>擠肛門腺<br>梳毛與清除廢毛<br>溫和洗淨<br>完整吹整<br>刷牙</p>
+            </div>
+            <div class="plan-card">
+                <h3 class="title-green">小美容</h3>
+                <p>適合維持清爽外觀<br>包含【基礎清潔】全項目<br>再加上：<br>腳底毛/腳緣修剪<br>屁屁毛修剪<br>肚肚毛修剪<br>眼周與頭部雜毛小修</p>
+            </div>
+            <div class="plan-card">
+                <h3 class="title-pink">大美容</h3>
+                <p>適合需要改頭換面<br>或定期修剪的毛孩<br>包含【小美容】全項目<br>再加上：<br>全身毛髮修剪與造型設計<br>可依需求選擇<br>「電剪（俐落剃除）」<br>或「精緻手剪（維持自然蓬度）」</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 價目表 (Table) 換成貓咪規格 -->
+    <section class="pricing-section">
+        <table class="pricing-table">
+            <thead>
+                <tr>
+                    <th>貓型 / 項目</th>
+                    <th>純清潔</th>
+                    <th>小美容</th>
+                    <th>大美容</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>短毛貓</td>
+                    <td>$400 起</td>
+                    <td>$600 起</td>
+                    <td>$1000 起</td>
+                </tr>
+                <tr>
+                    <td>長毛貓</td>
+                    <td>$600 起</td>
+                    <td>$800 起</td>
+                    <td>$1400 起</td>
+                </tr>
+                <tr>
+                    <td>大型長毛貓 (緬因等)</td>
+                    <td>$800 起</td>
+                    <td>$1000 起</td>
+                    <td>$1600 起</td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="pricing-warning">
+            ※ 關於預估價格：網站預約系統計算之金額為「基本預估總價」<br>
+            實際價格將依毛孩現場的真實體型、毛量、毛況與美容難易度進行專業評估<br>
+            若有需調整或產生額外費用，美容師必定會於「施作前」與您確認
+        </p>
+    </section>
+
+    <!-- 加購服務 -->
+    <section class="addons-section">
+        <div class="section-header">
+            <span class="icon-green">🌿</span>
+            <h2 class="title-green-dark">升級加購服務 (SPA與護理)</h2>
+        </div>
+        <p class="addons-text">
+            無（一般精選洗劑）：使用本店嚴選溫和洗劑，適合膚況健康的毛孩（不加價）<br><br>
+            除蚤藥浴：有效驅除跳蚤、壁蝨，舒緩皮膚搔癢<br><br>
+            深層護髮SPA：使用日本製造原裝進口 Afloat Dog 系列產品。由寵物美容協會與獸醫協會共同研發打造，用科學證實的洗浴方式，達到「去皮脂膜 ➔ 保濕鎖水 (蓬鬆/柔順任選) ➔ 皮脂膜重建」，調理改善寵物皮膚狀況<br><br>
+            草本浴：Ayurveda 源於印度，是世界上最古老的醫學體系。引進具世界級有機認證機構 Ecocert 認證的 100% 天然有機草本配方，讓毛孩們享受到最安心的草本泥浴、最高品質的膚質調理
+        </p>
+    </section>
+
+    <!-- 貼心提醒 -->
+    <section class="reminders-section">
+        <div class="reminders-content">
+            <div class="section-header">
+                <svg width="63" height="63" viewBox="0 0 63 63" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g clip-path="url(#clip0_106_264)">
+                        <path d="M29.274 25.326L46.2 42.252V53.718C46.2 54.306 46.41 54.81 46.83 55.23L49.77 58.17C50.19 58.59 50.4 59.094 50.4 59.682V60.9C50.4 62.076 49.476 63 48.3 63H42.882C42.294 63 41.79 62.79 41.37 62.37L38.43 59.43C38.01 59.01 37.8 58.506 37.8 57.918V48.3C37.8 47.124 36.876 46.2 35.7 46.2H34.902C34.104 46.2 33.39 46.662 33.012 47.376L29.862 53.718C29.568 54.306 29.4 54.936 29.4 55.608V55.65C29.4 56.28 29.778 56.868 30.324 57.162L32.424 58.212C33.138 58.59 33.6 59.304 33.6 60.102V60.9C33.6 62.076 32.676 63 31.5 63H12.768C9.954 63 7.308 61.908 5.334 59.934L3.696 58.296C1.344 55.944 0 52.71 0 49.392V48.3C0 44.352 1.974 40.698 5.25 38.514L6.3 37.8V45.696C6.3 48.594 7.938 51.198 10.5 52.5C10.626 46.998 12.012 42.126 14.7 37.8C17.094 34.02 21.924 29.862 29.274 25.326ZM44.1 4.2C45.276 4.2 46.2 5.124 46.2 6.3V11.298C46.2 12.096 46.662 12.81 47.376 13.188L61.11 20.076C62.286 20.622 63 21.798 63 23.1V23.478C63 24.57 62.538 25.662 61.782 26.418L58.8 29.4H50.4L47.67 34.818L33.684 20.832L41.412 5.376C41.79 4.662 42.504 4.2 43.302 4.2H44.1ZM14.7 18.9C17.01 18.9 18.9 20.79 18.9 23.1C18.9 25.41 17.01 27.3 14.7 27.3C12.39 27.3 10.5 25.41 10.5 23.1C10.5 20.79 12.39 18.9 14.7 18.9ZM19.95 0L16.8 15.75H12.6L9.45 0H19.95Z" fill="#924300"/>
+                    </g>
+                    <defs>
+                        <clipPath id="clip0_106_264">
+                            <rect width="63" height="63" fill="white"/>
+                        </clipPath>
+                    </defs>
+                </svg>
+                <h2 class="title-brown">貼心提醒</h2>
+            </div>
+            <p class="reminders-text">
+                若毛孩有明顯吠叫、哈氣或攻擊性，以及有先天性疾病或高齡，請務必於預約時先告知，方便安排合適的美容方式<br><br>
+                洗澡／大美容價格不含「拆結」處理，嚴重打結需視情況另計清潔整理費用<br><br>
+                特殊造型（如腳柱、腳球、腳靴等）由美容師依現場毛況評估後另行報價<br><br>
+                局部修剪（貴賓腳、貴賓嘴、小修頭型等）依實際情況另行報價。<br><br>
+                若發現體外寄生蟲，將加收環境清潔費，並需完成除蚤洗浴療程。<br><br>
+                接送內容請私訊粉專小編或來電洽詢，依路程酌收 100-300 不等接送費用
+            </p>
+        </div>
+        <div class="reminders-image">
+            <!-- 替換為貓貓沙龍的貼心提醒圖 -->
+            <img src="CC2.jpg" alt="貼心提醒圖" class="rounded-left-image">
+        </div>
+    </section>
+
+    <!-- 立即預約 CTA -->
+    <section class="cta-section">
+        <a href="booking.html" class="btn-appointment page-link">立即預約</a>
+    </section>
+
+    <!-- 頁尾 -->
+    <footer class="site-footer">
+        <dotlottie-player src="https://lottie.host/e0ac3dd9-de3d-4343-af06-52aab927d3c4/3HUlLNShZ1.lottie" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></dotlottie-player>
+        <div class="footer-info">
+            <p>地址：807高雄市三民區寶珠里建工路415號</p>
+            <p>預約專線：07-3814526 / 0939185295</p>
+            <p>LINE預約：@muxi</p>
+            <p>營業時間：9:00-17:00</p>
+        </div>
+        <div class="social-links">
+            <a href="#" class="social-icon">FB</a>
+            <a href="#" class="social-icon">IN</a>
+            <a href="#" class="social-icon">✉️</a>
+        </div>
+    </footer>
+
+<!-- 負責處理跳轉轉場動畫的 JS -->
+<script>
+        // ====== 1. 處理所有下拉選單點擊 ======
+        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', function(event) {
+                event.preventDefault(); // 防止畫面跳動
+                const parentDropdown = this.parentElement;
+                
+                // 貼心設計：如果點開其中一個選單，自動把另一個關閉
+                document.querySelectorAll('.nav-item-dropdown').forEach(item => {
+                    if (item !== parentDropdown) {
+                        item.classList.remove('active');
+                    }
+                });
+                
+                // 切換目前點擊的選單顯示/隱藏
+                parentDropdown.classList.toggle('active');
+            });
+        });
+
+        // 點擊畫面其他地方時，自動關閉所有下拉選單
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.nav-item-dropdown')) {
+                document.querySelectorAll('.nav-item-dropdown').forEach(item => {
+                    item.classList.remove('active');
+                });
+            }
+        });
+
+        // ====== 2. 處理頁面跳轉轉場 ======
+        const pageLinks = document.querySelectorAll('.page-link');
+        const transitionOverlay = document.getElementById('page-transition');
+
+        if (pageLinks.length > 0 && transitionOverlay) {
+            pageLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault(); 
+                    const targetUrl = this.getAttribute('href'); 
+                    
+                    // 點擊後，把所有的下拉選單都收起來
+                    document.querySelectorAll('.nav-item-dropdown').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    
+                    // 啟動轉場動畫
+                    transitionOverlay.classList.add('active'); 
+                    
+                    // 等待 1 秒後真正跳轉
+                    setTimeout(() => {
+                        window.location.href = targetUrl;
+                    }, 1000); 
+                });
+            });
+        }
+
+        // ====== 3. 抵達新頁面時解開轉場遮罩 ======
+        window.addEventListener('pageshow', () => {
+            const transitionOverlay = document.getElementById('page-transition');
+            if (transitionOverlay) transitionOverlay.classList.remove('active');
+        });
+        window.onload = () => {
+            const transitionOverlay = document.getElementById('page-transition');
+            if (transitionOverlay) {
+                // 確保抵達新頁面時，遮罩直接解除就好，不需要再讓它打開又關閉
+                transitionOverlay.classList.remove('active'); 
+            }
+        };
+    </script>
+<script src="/static/js/member.js"></script>
+<script src="/static/js/cart.js"></script>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>購物商城 - 法米納犬糧 - 沐曦 MuXi</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&family=Electrolize&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 轉場動畫遮罩區塊 -->
+    <div id="page-transition" class="transition-overlay">
+        <div class="circle-mask"></div>
+        <div class="loading-text">Loading . . . . . .</div>
+    </div>
+
+    <!-- 頂部導覽列 -->
+    <nav class="navbar">
+        <div class="logo-area">
+            <dotlottie-player class="logo-lottie" src="https://lottie.host/e0ac3dd9-de3d-4343-af06-52aab927d3c4/3HUlLNShZ1.lottie" background="transparent" speed="1" loop autoplay></dotlottie-player>
+            <div class="logo-text-group">
+                <h1>沐曦 MuXi</h1>
+                <p>GROOMING & STAY</p>
+            </div>
+        </div>
+        <div class="nav-background">
+            <ul class="nav-links">
+                <li><a href="index.html" class="page-link">首頁</a></li>
+                <li><a href="qa.html" class="page-link">常見Q&A</a></li>
+                
+                <li class="nav-item-dropdown">
+                    <a href="#" class="dropdown-toggle">美容清潔 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="clean.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬美容</a>
+                        <a href="clean2.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓美容</a>
+                    </div>
+                </li>
+
+                <!-- 購物商城 下拉選單 (標記為 Active 狀態) -->
+                <li class="nav-item-dropdown active-dropdown-parent">
+                    <a href="#" class="dropdown-toggle active-nav">購物商城 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="shop-dog.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬糧食</a>
+                        <a href="shop-cat.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓糧食</a>
+                        <a href="shop-snacks.html" class="dropdown-item page-link"><span class="icon">🦴</span>寵物零食</a>
+                        <a href="shop-cans.html" class="dropdown-item page-link"><span class="icon">🥫</span>寵物罐罐</a>
+                    </div>
+                </li>
+                
+                <li class="nav-item-dropdown">
+                    <a href="#" class="dropdown-toggle">寵物住宿 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="stay-dog.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬住宿</a>
+                        <a href="stay-cat.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓住宿</a>
+                    </div>
+                </li>
+
+                <li><a href="gym.html" class="page-link">寵物健身</a></li>
+                <li><a href="game.html" class="page-link">趣味體驗</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 商城工具列 (購物車與品牌切換) -->
+    <div class="shop-toolbar">
+        <a href="#" class="cart-btn">
+            <span class="iconify" data-icon="mdi:cart-outline"></span> 我的購物車
+        </a>
+        <div class="brand-filter">
+            <!-- 點擊跳回馬丁犬糧 -->
+            <a href="shop-dog.html" class="page-link">馬丁</a>
+            <span class="divider">/</span>
+            <!-- 目前在法米納犬糧，所以加上 active-brand 讓它變藍色 -->
+            <a href="#" class="active-brand">法米納</a>
+        </div>
+    </div>
+
+    <!-- 商城大標題 -->
+    <div class="shop-header">
+        <h2 class="title-black">法米納犬糧</h2>
+    </div>
+
+    <!-- 商品列表 (法米納 3 款商品) -->
+    <section class="products-grid">
+        <!-- 👇 1. 雞肉芒果：加上 href="product-detail.html" 把它連到剛剛做好的詳細頁面 👇 -->
+        <a href="product-detail.html" class="product-card page-link" style="text-decoration: none;">
+            <img src="DF7.jpg" alt="全齡犬-雞肉芒果" class="product-img">
+            <h4 class="product-name">全齡犬-雞肉芒果</h4>
+        </a>
+
+        <!-- 2. 鮭魚鳳梨 (假設未來會有鮭魚的詳細頁，可以先留 # 或換成對應檔名) -->
+        <a href="product-detail-salmon.html" class="product-card page-link" style="text-decoration: none;">
+            <img src="DF8.jpg" alt="全齡犬-鮭魚鳳梨" class="product-img">
+            <h4 class="product-name">全齡犬-鮭魚鳳梨</h4>
+        </a>
+
+        <!-- 3. 豬肉奇異果 (假設未來會有豬肉的詳細頁) -->
+        <a href="product-detail-pork.html" class="product-card page-link" style="text-decoration: none;">
+            <img src="DF9.jpg" alt="全齡犬-豬肉奇異果" class="product-img">
+            <h4 class="product-name">全齡犬-豬肉奇異果</h4>
+        </a>
+    </section>
+
+    <!-- 頁尾 -->
+    <footer class="site-footer">
+        <dotlottie-player src="https://lottie.host/e0ac3dd9-de3d-4343-af06-52aab927d3c4/3HUlLNShZ1.lottie" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></dotlottie-player>
+        <div class="footer-info">
+            <p>地址：807高雄市三民區寶珠里建工路415號</p>
+            <p>預約專線：07-3814526 / 0939185295</p>
+            <p>LINE預約：@muxi</p>
+            <p>營業時間：9:00-17:00</p>
+        </div>
+        <div class="social-links">
+            <a href="#" class="social-icon">FB</a>
+            <a href="#" class="social-icon">IN</a>
+            <a href="#" class="social-icon">✉️</a>
+        </div>
+    </footer>
+
+    <!-- 轉場與下拉選單腳本 -->
+    <script>
+        // 下拉選單邏輯
+        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', function(event) {
+                event.preventDefault(); 
+                const parentDropdown = this.parentElement;
+                document.querySelectorAll('.nav-item-dropdown').forEach(item => {
+                    if (item !== parentDropdown) { item.classList.remove('active'); }
+                });
+                parentDropdown.classList.toggle('active');
+            });
+        });
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.nav-item-dropdown')) {
+                document.querySelectorAll('.nav-item-dropdown').forEach(item => {
+                    item.classList.remove('active');
+                });
+            }
+        });
+
+        // 轉場邏輯
+        const pageLinks = document.querySelectorAll('.page-link');
+        if (pageLinks.length > 0) {
+            pageLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault(); 
+                    const targetUrl = this.getAttribute('href'); 
+                    const transitionOverlay = document.getElementById('page-transition');
+                    if (transitionOverlay) {
+                        transitionOverlay.classList.add('active'); 
+                        setTimeout(() => { window.location.href = targetUrl; }, 1000); 
+                    } else {
+                        window.location.href = targetUrl;
+                    }
+                });
+            });
+        }
+        window.addEventListener('pageshow', () => {
+            const transitionOverlay = document.getElementById('page-transition');
+            if (transitionOverlay) transitionOverlay.classList.remove('active');
+        });
+        window.onload = () => {
+            const transitionOverlay = document.getElementById('page-transition');
+            if (transitionOverlay) {
+                transitionOverlay.classList.remove('active'); 
+            }
+        };
+    </script>
+<script src="/static/js/member.js"></script>
+<script src="/static/js/cart.js"></script>
+</body>
+</html>

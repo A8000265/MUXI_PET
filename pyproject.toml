@@ -1,0 +1,12 @@
+[project]
+name = "muxi"
+version = "0.1.0"
+description = "沐曦 MuXi 寵物美容與住宿預約系統"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "flask>=3.0.0",
+    "pymysql>=1.1.0",
+    "cryptography>=42.0.0",
+    "python-dotenv>=1.0.0",
+]

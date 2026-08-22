@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>寵物美容預約系統</title>
+    <style>
+        /* 基礎設定與純白背景配置 */
+        :root {
+            --primary-color: #4A4A4A;
+            --accent-color: #8B7355; 
+            --bg-color: #FFFFFF;
+            --border-color: #E5E5E5;
+            --full-color: #FF6B6B; 
+            --available-color: #F8F9FA;
+            --booked-color: #D3D3D3;
+        }
+
+        body {
+            font-family: 'PingFang TC', 'Heiti TC', '微軟正黑體', sans-serif;
+            background: radial-gradient(ellipse at bottom, #1E1B4B 0%, #0F172A 50%, #090D16 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            overflow-x: hidden;
+        }
+
+        #meteorShowerCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .booking-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 840px; 
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(16px);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 30px rgba(147, 51, 234, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            padding: 40px;
+            box-sizing: border-box;
+            margin-bottom: 50px;
+        }
+
+        h2, h3 { color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-top: 0; }
+        
+        .back-btn {
+            background: none;
+            border: none;
+            color: #7C3AED;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0 0 15px 0;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .back-btn:hover {
+            color: #4C1D95;
+            transform: translateX(-4px);
+        }
+        
+        /* 表單與排版 */
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary-color); }
+        select, input[type="text"], input[type="tel"], input[type="email"], textarea {
+            width: 100%; padding: 12px; border: 1px solid var(--border-color);
+            border-radius: 6px; font-size: 16px; outline: none; transition: 0.3s; box-sizing: border-box;
+        }
+        select:focus, input:focus, textarea:focus { border-color: var(--accent-color); }
+        textarea { resize: vertical; }
+        
+        .radio-group { display: flex; gap: 15px; margin-top: 5px; flex-wrap: wrap;}
+        .radio-group label { display: inline-flex; align-items: center; font-weight: normal; cursor: pointer; }
+        .radio-group input { margin-right: 5px; }
+
+        /* 複選按鈕網格排版 (針對寵物健身) */
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 5px;
+            background: #FAFAFA;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+        .checkbox-grid label { display: flex; align-items: flex-start; font-weight: normal; cursor: pointer; font-size: 14px; margin-bottom: 0;}
+        .checkbox-grid input { margin-top: 3px; margin-right: 8px; flex-shrink: 0;}
+        
+        .hint-text { font-size: 13px; color: #888; margin-top: 5px; display: block; }
+
+        /* 即時價格預覽區域 */
+        .price-preview {
+            background-color: #FAFAFA; border-left: 4px solid var(--accent-color);
+            padding: 15px 20px; margin: 25px 0; border-radius: 4px;
+        }
+        .price-preview h3 { margin: 0 0 10px 0; font-size: 16px; color: #666; border: none; padding: 0;}
+        .price-preview .total { font-size: 28px; font-weight: bold; color: var(--accent-color); }
+
+        /* 月曆區塊設計 (支援雙軌預約) */
+        .schedule-block {
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            background: #fff;
+        }
+        .schedule-block h4 { margin-top: 0; color: var(--accent-color); border-bottom: 1px dashed var(--border-color); padding-bottom: 10px;}
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .calendar-header button { background: none; border: 1px solid var(--border-color); padding: 5px 15px; border-radius: 4px; cursor: pointer; }
+        .calendar-grid {
+            display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; margin-bottom: 20px;
+        }
+        .weekday { font-weight: bold; color: #888; padding: 10px 0; }
+        .day {
+            padding: 15px 5px; border-radius: 6px; border: 1px solid var(--border-color);
+            cursor: pointer; transition: 0.2s; background: var(--available-color);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .day.disabled { background: #f5f5f5; color: #ccc; cursor: not-allowed; border-color: transparent; }
+        .day.full { background: #FFF0F0; color: var(--full-color); cursor: not-allowed; border-color: #FFE0E0; }
+        .day.selected { background: var(--accent-color); color: white; border-color: var(--accent-color); }
+        .day-status { font-size: 12px; margin-top: 4px; }
+
+        /* 時段按鈕設計 */
+        .time-slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .time-btn {
+            padding: 12px; border: 1px solid var(--border-color); border-radius: 6px;
+            background: white; cursor: pointer; transition: 0.2s; font-size: 14px;
+        }
+        .time-btn.available:hover { border-color: var(--accent-color); color: var(--accent-color); }
+        .time-btn.selected { background: var(--accent-color); color: white; border-color: var(--accent-color); }
+        .time-btn.booked { background: var(--booked-color); color: white; cursor: not-allowed; text-decoration: line-through; border-color: transparent; }
+
+        /* 按鈕 */
+        .primary-btn {
+            width: 100%; padding: 15px; background: var(--accent-color); color: white;
+            border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        .primary-btn:hover { background: #7A6347; }
+        
+        /* 區塊顯示控制 */
+        #step2-book, #step3-receipt, #memberIdGroup { display: none; }
+
+        /* 收據與警告 */
+        .receipt { margin-top: 30px; padding: 20px; border: 2px dashed var(--border-color); border-radius: 8px; background: #FAFAFA; line-height: 1.8; }
+        .receipt h3 { text-align: center; margin-top: 0; color: var(--accent-color); border: none; }
+        .receipt hr { border: none; border-top: 1px dashed #ccc; }
+        .warning-text { color: #D8000C; background-color: #FFD2D2; padding: 10px; border-radius: 4px; font-weight: bold; margin-top: 15px; font-size: 14px;}
+        .notice-list { color: #856404; background-color: #FFF3CD; padding: 15px 20px; border-radius: 4px; margin-top: 15px; font-size: 14px; }
+        .notice-list ul { margin: 5px 0 0 0; padding-left: 20px; }
+
+        /* 後台管理連結 */
+        .admin-link { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; font-size: 14px; }
+        .admin-link a { color: #999; text-decoration: none; cursor: pointer; }
+        .admin-link a:hover { color: var(--accent-color); }
+
+        /* 手機版排版優化 */
+        @media (max-width: 600px) {
+            .checkbox-grid { grid-template-columns: 1fr; }
+        }
+
+        /* 智慧過濾：劃掉與禁止選擇樣式 */
+        .checkbox-grid label.disabled-option {
+            opacity: 0.35;
+            text-decoration: line-through;
+            cursor: not-allowed;
+            background: #F3F4F6 !important;
+            color: #9CA3AF !important;
+            border-color: #E5E7EB !important;
+            pointer-events: none;
+            user-select: none;
+        }
+        .checkbox-grid label.disabled-option input {
+            cursor: not-allowed;
+        }
+        option:disabled {
+            color: #9CA3AF !important;
+            background-color: #F3F4F6;
+        }
+    </style>
+</head>
+<body>
+<!-- 絢麗動態流星雨背景 Canvas -->
+<canvas id="meteorShowerCanvas"></canvas>
+
+<div class="booking-container">
+    <button class="back-btn" onclick="handleBookingBack()">&#8592; 返回上一頁</button>
+
+    <h2>🐾 寵物美容與健身預約</h2>
+
+    <!-- ================= 第一階段：估價 ================= -->
+    <div id="step1-estimate">
+        <div class="form-group">
+            <label>請問寵物類別：</label>
+            <select id="petType">
+                <option value="小型犬">小型犬</option>
+                <option value="中型犬">中型犬</option>
+                <option value="大型犬">大型犬</option>
+                <option value="巨型犬">巨型犬</option>
+                <option value="短毛貓">短毛貓</option>
+                <option value="長毛貓">長毛貓</option>
+                <option value="大型長毛貓（布偶、緬因等）">大型長毛貓（布偶、緬因等）</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>美容清潔服務：</label>
+            <select id="serviceType">
+                <option value="無">不需要美容清潔</option>
+                <option value="純清潔">純清潔</option>
+                <option value="小美容">小美容</option>
+                <option value="大美容">大美容</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>寵物健身項目 (可複選)：</label>
+            <div class="checkbox-grid" id="fitnessCheckboxes">
+                <label><input type="checkbox" name="fitness" value="水中跑步機 (旗艦版)">水中跑步機-旗艦版 (+$1200)</label>
+                <label><input type="checkbox" name="fitness" value="水中跑步機 (小型版)">水中跑步機-小型版 (+$1000)</label>
+                <label><input type="checkbox" name="fitness" value="牛奶浴 (小型/旗艦版)">牛奶浴-小型 旗艦版 (+$400)</label>
+                <label><input type="checkbox" name="fitness" value="牛奶浴 (小型/豪華版)">牛奶浴-小型 豪華版 (+$600)</label>
+                <label><input type="checkbox" name="fitness" value="牛奶浴 (中型/旗艦版)">牛奶浴-中型 旗艦版 (+$600)</label>
+                <label><input type="checkbox" name="fitness" value="牛奶浴 (中型/豪華版)">牛奶浴-中型 豪華版 (+$800)</label>
+                <label><input type="checkbox" name="fitness" value="牛奶浴 (大型/旗艦版)">牛奶浴-大型 旗艦版 (+$800)</label>
+                <label><input type="checkbox" name="fitness" value="牛奶浴 (大型/豪華版)">牛奶浴-大型 豪華版 (+$1200)</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>🏠 寵物住宿與安親服務 (選填)：</label>
+            <select id="stayType">
+                <option value="無">不需要住宿與安親</option>
+                <optgroup label="🐕 狗狗住宿 (每晚計費 / 24小時)">
+                    <option value="狗狗住宿-小型犬房">狗狗住宿 - 小型犬房 ($800/晚)</option>
+                    <option value="狗狗住宿-一般房">狗狗住宿 - 一般房 ($1000/晚)</option>
+                    <option value="狗狗住宿-大型房">狗狗住宿 - 大型房 ($1500/晚)</option>
+                </optgroup>
+                <optgroup label="🐕 狗狗安親 (依時段計費)">
+                    <option value="狗狗安親-小型犬半日托">狗狗安親 - 小型犬 半日托 ($300)</option>
+                    <option value="狗狗安親-小型犬全日托">狗狗安親 - 小型犬 全日托 ($500)</option>
+                    <option value="狗狗安親-中型犬半日托">狗狗安親 - 中型犬 半日托 ($400)</option>
+                    <option value="狗狗安親-中型犬全日托">狗狗安親 - 中型犬 全日托 ($650)</option>
+                    <option value="狗狗安親-大型犬半日托">狗狗安親 - 大型犬 半日托 ($550)</option>
+                    <option value="狗狗安親-大型犬全日托">狗狗安親 - 大型犬 全日托 ($850)</option>
+                </optgroup>
+                <optgroup label="🐈 貓貓住宿 (每晚計費 / 24小時)">
+                    <option value="貓貓住宿-一般房">貓貓住宿 - 一般房 ($700/晚)</option>
+                    <option value="貓貓住宿-一大房(上下2層)">貓貓住宿 - 一大房上下2層 ($1200/晚)</option>
+                </optgroup>
+                <optgroup label="🐈 貓貓安親 (依時段計費)">
+                    <option value="貓貓安親-短毛貓半日托">貓貓安親 - 短毛貓 半日托 ($300)</option>
+                    <option value="貓貓安親-短毛貓全日托">貓貓安親 - 短毛貓 全日托 ($450)</option>
+                    <option value="貓貓安親-長毛貓半日托">貓貓安親 - 長毛貓 半日托 ($350)</option>
+                    <option value="貓貓安親-長毛貓全日托">貓貓安親 - 長毛貓 全日托 ($500)</option>
+                    <option value="貓貓安親-大型長毛貓半日托">貓貓安親 - 大型長毛貓 半日托 ($400)</option>
+                    <option value="貓貓安親-大型長毛貓全日托">貓貓安親 - 大型長毛貓 全日托 ($550)</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <div class="form-group" id="stayNightsGroup" style="display: none;">
+            <label>住宿晚數 (以 24 小時為一晚計費)：</label>
+            <input type="number" id="stayNights" min="1" max="60" value="1" style="width:100%; padding:12px; border-radius:8px; border:1.5px solid #D1D5DB; font-size:15px; box-sizing:border-box;">
+            <span class="hint-text" style="color:#FE7000; font-size:13px; font-weight:bold;">✨ 連續住宿住滿 7 天享 95 折，住滿 14 天享 9 折優惠！</span>
+        </div>
+
+        <div class="form-group">
+            <label>是否加購其他項目 (限有選美容者)：</label>
+            <select id="addonType">
+                <option value="無">無</option>
+                <option value="除蚤藥浴">除蚤藥浴 (+$300)</option>
+                <option value="深層護髮SPA">深層護髮SPA (+$500)</option>
+                <option value="草本浴">草本浴 (+$400)</option>
+                <option value="碳酸泉浴">碳酸泉浴 (+$400)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>是否需要接送服務：</label>
+            <div class="radio-group">
+                <label><input type="radio" name="transportService" value="否" checked>不需要</label>
+                <label><input type="radio" name="transportService" value="是">需要</label>
+            </div>
+            <span class="hint-text">接送內容請私訊粉專小編或來電洽詢，依路程酌收 100-300 不等接送費用 (不計入下方預估總價)。</span>
+        </div>
+
+        <div class="price-preview">
+            <h3>💰 預估總金額 (若具會員身分，請於下一步勾選折扣)</h3>
+            <div class="total" id="liveTotal">NT$ 0</div>
+        </div>
+
+        <button class="primary-btn" id="btnGoToBook" onclick="goToStep2()">確認項目，前往選擇預約時間</button>
+    </div>
+
+    <!-- ================= 第二階段：填寫資料與選時段 ================= -->
+    <div id="step2-book">
+        <h3>📅 選擇預約日期與填寫資料</h3>
+        
+        <!-- 動態產生的美容月曆區塊 -->
+        <div id="schedule-grooming" class="schedule-block" style="display: none;">
+            <h4>✂️ 選擇【美容清潔】預約時間</h4>
+            <div class="calendar-header">
+                <button type="button" onclick="changeMonth('grooming', -1)">&#8592; 上個月</button>
+                <h4 id="month-grooming" style="margin:0;">2024 年 1 月</h4>
+                <button type="button" onclick="changeMonth('grooming', 1)">下個月 &#8594;</button>
+            </div>
+            <div class="calendar-grid" id="grid-grooming"></div>
+            <input type="hidden" id="date-grooming">
+            
+            <div class="time-slots" id="time-grooming">
+                <p style="grid-column: span 4; color: #888; font-size: 14px;">請先選擇日期</p>
+            </div>
+            <input type="hidden" id="time-grooming-val">
+        </div>
+
+        <!-- 動態產生的健身月曆區塊 -->
+        <div id="schedule-fitness" class="schedule-block" style="display: none;">
+            <h4>💪 選擇【寵物健身】預約時間</h4>
+            <div class="calendar-header">
+                <button type="button" onclick="changeMonth('fitness', -1)">&#8592; 上個月</button>
+                <h4 id="month-fitness" style="margin:0;">2024 年 1 月</h4>
+                <button type="button" onclick="changeMonth('fitness', 1)">下個月 &#8594;</button>
+            </div>
+            <div class="calendar-grid" id="grid-fitness"></div>
+            <input type="hidden" id="date-fitness">
+            
+            <div class="time-slots" id="time-fitness">
+                <p style="grid-column: span 4; color: #888; font-size: 14px;">請先選擇日期</p>
+            </div>
+            <input type="hidden" id="time-fitness-val">
+        </div>
+
+        <!-- 動態產生的住宿/安親月曆區塊 -->
+        <div id="schedule-stay" class="schedule-block" style="display: none;">
+            <h4>🏠 選擇【寵物住宿 / 安親】入住時間</h4>
+            <div class="calendar-header">
+                <button type="button" onclick="changeMonth('stay', -1)">&#8592; 上個月</button>
+                <h4 id="month-stay" style="margin:0;">2024 年 1 月</h4>
+                <button type="button" onclick="changeMonth('stay', 1)">下個月 &#8594;</button>
+            </div>
+            <div class="calendar-grid" id="grid-stay"></div>
+            <input type="hidden" id="date-stay">
+            
+            <div class="time-slots" id="time-stay">
+                <p style="grid-column: span 4; color: #888; font-size: 14px;">請先選擇日期</p>
+            </div>
+            <input type="hidden" id="time-stay-val">
+        </div>
+
+        <!-- 主人與毛孩資料填寫 -->
+        <div class="form-group">
+            <label>寵物名字 (選擇性)：</label>
+            <input type="text" id="petName" placeholder="請輸入寵物名字">
+        </div>
+
+        <div class="form-group">
+            <label>主人姓名 (必填)：</label>
+            <input type="text" id="ownerName" placeholder="請輸入您的姓名">
+        </div>
+
+        <div class="form-group">
+            <label>聯繫方式 (必填，手機號碼)：</label>
+            <input type="tel" id="ownerPhone" placeholder="09xx-xxx-xxx">
+        </div>
+
+        <div class="form-group">
+            <label>電子信箱 (必填，寄送確認信件用)：</label>
+            <input type="email" id="ownerEmail" placeholder="example@email.com">
+        </div>
+
+        <div class="form-group">
+            <label>給店家的留言與備註 (選填)：</label>
+            <textarea id="ownerRemarks" rows="4" placeholder="若寵物有特殊情況（例如：狗狗有骨折、皮膚上有傷口或過敏、或者寵物較為怕生等），請在此告知我們，以便提供最適合的照護！"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>會員身分 (勾選後更新金額)：</label>
+            <div class="radio-group">
+                <label><input type="radio" name="memberType" value="無" checked onchange="updateMemberLogic()">無</label>
+                <label><input type="radio" name="memberType" value="一般會員" onchange="updateMemberLogic()">一般會員 (9折)</label>
+                <label><input type="radio" name="memberType" value="黃金會員" onchange="updateMemberLogic()">黃金會員 (85折)</label>
+            </div>
+        </div>
+
+        <div class="form-group" id="memberIdGroup">
+            <label>會員編號 (必填)：</label>
+            <input type="text" id="memberId" placeholder="請輸入您的會員編號">
+        </div>
+
+        <button class="primary-btn" onclick="submitBooking()">確定預約</button>
+    </div>
+
+    <!-- ================= 第三階段：預約成功 ================= -->
+    <div id="step3-receipt" class="receipt">
+        <!-- 內容由 JS 填入 -->
+    </div>
+
+    <!-- 員工後台功能 (模擬) -->
+    <div class="admin-link">
+        <a onclick="exportToExcel()">👨‍💻 員工後台：匯出所有預約資料 (Excel CSV)</a>
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    // 資料庫設定
+    // ==========================================
+    const BASE_PRICING = {
+        "小型犬": {"純清潔": 350, "小美容": 500, "大美容": 900},
+        "中型犬": {"純清潔": 500, "小美容": 700, "大美容": 1300},
+        "大型犬": {"純清潔": 1000, "小美容": 1400, "大美容": 2200},
+        "巨型犬": {"純清潔": 1500, "小美容": 2000, "大美容": 2800},
+        "短毛貓": {"純清潔": 400, "小美容": 600, "大美容": 1000},
+        "長毛貓": {"純清潔": 600, "小美容": 800, "大美容": 1400},
+        "大型長毛貓（布偶、緬因等）": {"純清潔": 800, "小美容": 1000, "大美容": 1600}
+    };
+    const ADD_ON_PRICING = { "無": 0, "除蚤藥浴": 300, "深層護髮SPA": 500, "草本浴": 400, "碳酸泉浴": 400 };
+    
+    // 寵物健身價格設定 (對應 checkbox value)
+    const FITNESS_PRICING = {
+        "水中跑步機 (旗艦版)": 1200,
+        "水中跑步機 (小型版)": 1000,
+        "牛奶浴 (小型/旗艦版)": 400,
+        "牛奶浴 (小型/豪華版)": 600,
+        "牛奶浴 (中型/旗艦版)": 600,
+        "牛奶浴 (中型/豪華版)": 800,
+        "牛奶浴 (大型/旗艦版)": 800,
+        "牛奶浴 (大型/豪華版)": 1200
+    };
+
+    // 寵物住宿與安親價格設定
+    const STAY_PRICING = {
+        "無": 0,
+        "狗狗住宿-小型犬房": 800,
+        "狗狗住宿-一般房": 1000,
+        "狗狗住宿-大型房": 1500,
+        "狗狗安親-小型犬半日托": 300,
+        "狗狗安親-小型犬全日托": 500,
+        "狗狗安親-中型犬半日托": 400,
+        "狗狗安親-中型犬全日托": 650,
+        "狗狗安親-大型犬半日托": 550,
+        "狗狗安親-大型犬全日托": 850,
+        "貓貓住宿-一般房": 700,
+        "貓貓住宿-一大房(上下2層)": 1200,
+        "貓貓安親-短毛貓半日托": 300,
+        "貓貓安親-短毛貓全日托": 450,
+        "貓貓安親-長毛貓半日托": 350,
+        "貓貓安親-長毛貓全日托": 500,
+        "貓貓安親-大型長毛貓半日托": 400,
+        "貓貓安親-大型長毛貓全日托": 550
+    };
+
+    const ALL_TIME_SLOTS = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
+
+    // ==========================================
+    // 邏輯處理與計算
+    // ==========================================
+    function calculatePrices() {
+        const petType = document.getElementById('petType').value;
+        const serviceType = document.getElementById('serviceType').value;
+        const addonType = document.getElementById('addonType').value;
+        const stayType = document.getElementById('stayType').value;
+        const stayNightsInput = document.getElementById('stayNights');
+        let stayNights = parseInt(stayNightsInput.value) || 1;
+        if (stayNights < 1) stayNights = 1;
+        const memberType = document.querySelector('input[name="memberType"]:checked').value;
+
+        // 住宿晚數欄位顯示/隱藏切換
+        const stayNightsGroup = document.getElementById('stayNightsGroup');
+        if (stayType.includes("住宿")) {
+            stayNightsGroup.style.display = "block";
+        } else {
+            stayNightsGroup.style.display = "none";
+        }
+
+        // 1. 計算美容費用
+        let basePrice = (serviceType !== "無" && BASE_PRICING[petType] && BASE_PRICING[petType][serviceType]) ? BASE_PRICING[petType][serviceType] : 0;
+        let addonPrice = serviceType !== "無" ? (ADD_ON_PRICING[addonType] || 0) : 0;
+        
+        // 2. 計算健身費用 (複選)
+        let fitnessPrice = 0;
+        let selectedFitness = [];
+        document.querySelectorAll('input[name="fitness"]:checked').forEach(cb => {
+            fitnessPrice += FITNESS_PRICING[cb.value];
+            selectedFitness.push(cb.value);
+        });
+
+        // 3. 計算住宿/安親費用 (連續住宿優惠)
+        let stayPrice = 0;
+        if (stayType !== "無") {
+            let unitPrice = STAY_PRICING[stayType] || 0;
+            if (stayType.includes("住宿")) {
+                let stayDiscountRate = 1.0;
+                if (stayNights >= 14) stayDiscountRate = 0.90;
+                else if (stayNights >= 7) stayDiscountRate = 0.95;
+                stayPrice = Math.round(unitPrice * stayNights * stayDiscountRate);
+            } else {
+                stayPrice = unitPrice;
+            }
+        }
+        
+        // 總額加總
+        let subtotal = basePrice + fitnessPrice + addonPrice + stayPrice;
+        
+        let discountRate = 0;
+        if (memberType === "一般會員") discountRate = 0.10; 
+        if (memberType === "黃金會員") discountRate = 0.15; 
+
+        let discount = subtotal * discountRate;
+        let total = subtotal - discount;
+
+        document.getElementById('liveTotal').innerText = `NT$ ${Math.round(total)}`;
+        return { basePrice, fitnessPrice, addonPrice, stayPrice, stayType, stayNights, discount, total, serviceType, selectedFitness, memberType };
+    }
+
+    // ==========================================
+    // 依據寵物類別自動劃掉（禁止選擇）不適用項目的智慧過濾引擎
+    // ==========================================
+    function filterOptionsByPetType() {
+        const petType = document.getElementById('petType').value;
+
+        // 1. 寵物健身 Checkbox 劃掉與過濾
+        document.querySelectorAll('input[name="fitness"]').forEach(cb => {
+            const label = cb.closest('label');
+            const val = cb.value;
+            let allowed = true;
+
+            if (petType === "小型犬") {
+                // 小型犬：可選水中跑步機(小型/旗艦版)、牛奶浴小型(旗艦/豪華)，其餘中型大型劃掉
+                if (val.includes("中型") || val.includes("大型")) allowed = false;
+            } else if (petType === "中型犬") {
+                // 中型犬：無法使用小型版跑步機，僅能選旗艦版；牛奶浴僅適用中型
+                if (val === "水中跑步機 (小型版)" || val.includes("小型") || val.includes("大型")) allowed = false;
+            } else if (petType === "大型犬" || petType === "巨型犬") {
+                // 大型犬/巨型犬：無法使用小型跑步機，僅能選旗艦版；牛奶浴僅適用大型
+                if (val === "水中跑步機 (小型版)" || val.includes("小型") || val.includes("中型")) allowed = false;
+            } else if (petType === "短毛貓" || petType === "長毛貓") {
+                // 貓咪不適用水中跑步機；適用小型牛奶浴
+                if (val.includes("水中跑步機") || val.includes("中型") || val.includes("大型")) allowed = false;
+            } else if (petType === "大型長毛貓（布偶、緬因等）") {
+                // 大型長毛貓不適用水中跑步機；適用中型牛奶浴
+                if (val.includes("水中跑步機") || val.includes("小型") || val.includes("大型")) allowed = false;
+            }
+
+            if (!allowed) {
+                cb.disabled = true;
+                cb.checked = false;
+                if (label) label.classList.add('disabled-option');
+            } else {
+                cb.disabled = false;
+                if (label) label.classList.remove('disabled-option');
+            }
+        });
+
+        // 2. 寵物住宿與安親 Option 劃掉與過濾
+        const staySelect = document.getElementById('stayType');
+        const stayOptions = staySelect.querySelectorAll('option');
+        let currentStayVal = staySelect.value;
+        let isCurrentStayDisabled = false;
+
+        stayOptions.forEach(opt => {
+            const val = opt.value;
+            if (val === "無") {
+                opt.disabled = false;
+                return;
+            }
+
+            let allowed = false;
+
+            if (petType === "小型犬") {
+                if (val === "狗狗住宿-小型犬房" || val === "狗狗住宿-一般房" || val.startsWith("狗狗安親-小型犬")) {
+                    allowed = true;
+                }
+            } else if (petType === "中型犬") {
+                if (val === "狗狗住宿-一般房" || val === "狗狗住宿-大型房" || val.startsWith("狗狗安親-中型犬")) {
+                    allowed = true;
+                }
+            } else if (petType === "大型犬" || petType === "巨型犬") {
+                if (val === "狗狗住宿-大型房" || val.startsWith("狗狗安親-大型犬")) {
+                    allowed = true;
+                }
+            } else if (petType === "短毛貓") {
+                if (val === "貓貓住宿-一般房" || val === "貓貓住宿-一大房(上下2層)" || val.startsWith("貓貓安親-短毛貓")) {
+                    allowed = true;
+                }
+            } else if (petType === "長毛貓") {
+                if (val === "貓貓住宿-一般房" || val === "貓貓住宿-一大房(上下2層)" || val.startsWith("貓貓安親-長毛貓")) {
+                    allowed = true;
+                }
+            } else if (petType === "大型長毛貓（布偶、緬因等）") {
+                if (val === "貓貓住宿-一般房" || val === "貓貓住宿-一大房(上下2層)" || val.startsWith("貓貓安親-大型長毛貓")) {
+                    allowed = true;
+                }
+            }
+
+            // 清除之前的 (不適用) 標籤
+            let rawText = opt.text.replace(" 🚫 (不適用)", "");
+
+            if (!allowed) {
+                opt.disabled = true;
+                opt.text = rawText + " 🚫 (不適用)";
+                if (currentStayVal === val) {
+                    isCurrentStayDisabled = true;
+                }
+            } else {
+                opt.disabled = false;
+                opt.text = rawText;
+            }
+        });
+
+        if (isCurrentStayDisabled) {
+            staySelect.value = "無";
+        }
+    }
+
+    // 綁定估價事件
+    document.getElementById('petType').addEventListener('change', () => {
+        filterOptionsByPetType();
+        calculatePrices();
+    });
+    document.getElementById('serviceType').addEventListener('change', calculatePrices);
+    document.getElementById('addonType').addEventListener('change', calculatePrices);
+    document.getElementById('stayType').addEventListener('change', calculatePrices);
+    document.getElementById('stayNights').addEventListener('input', calculatePrices);
+    document.querySelectorAll('input[name="fitness"]').forEach(cb => cb.addEventListener('change', calculatePrices));
+
+    // 頁面初次載入時自動執行過濾與計算
+    filterOptionsByPetType();
+    calculatePrices();
+
+    function updateMemberLogic() {
+        const memberType = document.querySelector('input[name="memberType"]:checked').value;
+        const memberIdGroup = document.getElementById('memberIdGroup');
+        if (memberType === "無") {
+            memberIdGroup.style.display = "none";
+            document.getElementById('memberId').value = "";
+        } else {
+            memberIdGroup.style.display = "block";
+        }
+        calculatePrices();
+    }
+
+    function goToStep2() {
+        const serviceType = document.getElementById('serviceType').value;
+        const fitnessChecked = document.querySelectorAll('input[name="fitness"]:checked').length > 0;
+        const stayType = document.getElementById('stayType').value;
+        
+        if (serviceType === "無" && !fitnessChecked && stayType === "無") {
+            alert("請至少選擇一項「美容清潔」、「寵物健身」或「寵物住宿/安親」才能進行預約！");
+            return;
+        }
+
+        document.getElementById('btnGoToBook').style.display = "none";
+        document.getElementById('step1-estimate').style.display = "none";
+        document.getElementById('step2-book').style.display = "block";
+
+        // 依據選擇顯示對應的月曆
+        const groomingSchedule = document.getElementById('schedule-grooming');
+        const fitnessSchedule = document.getElementById('schedule-fitness');
+        const staySchedule = document.getElementById('schedule-stay');
+
+        if (serviceType !== "無") {
+            groomingSchedule.style.display = "block";
+            renderCalendar('grooming');
+        } else {
+            groomingSchedule.style.display = "none";
+        }
+        
+        if (fitnessChecked) {
+            fitnessSchedule.style.display = "block";
+            renderCalendar('fitness');
+        } else {
+            fitnessSchedule.style.display = "none";
+        }
+
+        if (stayType !== "無") {
+            staySchedule.style.display = "block";
+            renderCalendar('stay');
+        } else {
+            staySchedule.style.display = "none";
+        }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ==========================================
+    // 獨立月曆與時段渲染系統
+    // ==========================================
+    const calState = {
+        grooming: { current: new Date(), selectedDiv: null, selectedTimeBtn: null },
+        fitness: { current: new Date(), selectedDiv: null, selectedTimeBtn: null },
+        stay: { current: new Date(), selectedDiv: null, selectedTimeBtn: null }
+    };
+
+    function renderCalendar(type) {
+        const state = calState[type];
+        const grid = document.getElementById(`grid-${type}`);
+        const monthDisplay = document.getElementById(`month-${type}`);
+        grid.innerHTML = ''; 
+        
+        const year = state.current.getFullYear();
+        const month = state.current.getMonth();
+        monthDisplay.innerText = `${year} 年 ${month + 1} 月`;
+
+        const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+        weekdays.forEach(day => {
+            const div = document.createElement('div');
+            div.className = 'weekday'; div.innerText = day; grid.appendChild(div);
+        });
+
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        for (let i = 0; i < firstDay; i++) grid.appendChild(document.createElement('div'));
+
+        for (let i = 1; i <= daysInMonth; i++) {
+            const dateObj = new Date(year, month, i);
+            const div = document.createElement('div');
+            div.className = 'day';
+            let dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+            
+            let isFull = (i % 14 === 0) && dateObj >= today;
+
+            if (dateObj < today) {
+                div.classList.add('disabled'); div.innerHTML = `<span>${i}</span>`;
+            } else if (isFull) {
+                div.classList.add('full'); div.innerHTML = `<span>${i}</span><span class="day-status">額滿</span>`;
+            } else {
+                div.innerHTML = `<span>${i}</span><span class="day-status" style="color:#28a745">可選</span>`;
+                div.onclick = function() {
+                    if (state.selectedDiv) state.selectedDiv.classList.remove('selected');
+                    div.classList.add('selected');
+                    state.selectedDiv = div;
+                    document.getElementById(`date-${type}`).value = dateStr;
+                    renderTimeSlots(type, dateStr);
+                };
+            }
+            grid.appendChild(div);
+        }
+    }
+
+    function changeMonth(type, offset) {
+        calState[type].current.setMonth(calState[type].current.getMonth() + offset);
+        renderCalendar(type);
+    }
+
+    function renderTimeSlots(type, dateStr) {
+        const state = calState[type];
+        const container = document.getElementById(`time-${type}`);
+        container.innerHTML = '';
+        document.getElementById(`time-${type}-val`).value = ''; 
+
+        const seed = parseInt(dateStr.split('-')[2]); 
+        
+        ALL_TIME_SLOTS.forEach((time, index) => {
+            const btn = document.createElement('button');
+            btn.type = "button";
+            
+            let isBooked = type === 'grooming' ? ((seed + index) % 3 === 0) : ((seed + index) % 4 === 0);
+
+            if (isBooked) {
+                btn.className = "time-btn booked";
+                btn.innerText = `${time} (已滿)`;
+                btn.disabled = true;
+            } else {
+                btn.className = "time-btn available";
+                btn.innerText = time;
+                btn.onclick = function() {
+                    if (state.selectedTimeBtn) state.selectedTimeBtn.classList.remove('selected');
+                    btn.classList.add('selected');
+                    state.selectedTimeBtn = btn;
+                    document.getElementById(`time-${type}-val`).value = time;
+                };
+            }
+            container.appendChild(btn);
+        });
+    }
+
+    // ==========================================
+    // 提交預約與本地儲存
+    // ==========================================
+    function submitBooking() {
+        const serviceType = document.getElementById('serviceType').value;
+        const fitnessChecked = document.querySelectorAll('input[name="fitness"]:checked').length > 0;
+        const stayType = document.getElementById('stayType').value;
+        
+        let gDate = "", gTime = "", fDate = "", fTime = "", sDate = "", sTime = "";
+
+        // 驗證美容時間
+        if (serviceType !== "無") {
+            gDate = document.getElementById('date-grooming').value;
+            gTime = document.getElementById('time-grooming-val').value;
+            if (!gDate || !gTime) return alert("❌ 請完整選擇「美容清潔」的預約日期與時間！");
+        }
+        
+        // 驗證健身時間
+        if (fitnessChecked) {
+            fDate = document.getElementById('date-fitness').value;
+            fTime = document.getElementById('time-fitness-val').value;
+            if (!fDate || !fTime) return alert("❌ 請完整選擇「寵物健身」的預約日期與時間！");
+        }
+
+        // 驗證住宿時間
+        if (stayType !== "無") {
+            sDate = document.getElementById('date-stay').value;
+            sTime = document.getElementById('time-stay-val').value;
+            if (!sDate || !sTime) return alert("❌ 請完整選擇「寵物住宿 / 安親」的入住日期與時間！");
+        }
+
+        const ownerName = document.getElementById('ownerName').value.trim();
+        const ownerPhone = document.getElementById('ownerPhone').value.trim();
+        const ownerEmail = document.getElementById('ownerEmail').value.trim();
+        const ownerRemarks = document.getElementById('ownerRemarks').value.trim() || "無";
+        const petName = document.getElementById('petName').value.trim() || "未提供";
+        const memberType = document.querySelector('input[name="memberType"]:checked').value;
+        const memberId = document.getElementById('memberId').value.trim();
+        const transportService = document.querySelector('input[name="transportService"]:checked').value;
+
+        if (!ownerName) return alert("❌ 請填寫主人姓名！");
+        if (!ownerPhone) return alert("❌ 請填寫聯繫方式(電話)！");
+        if (!ownerEmail) return alert("❌ 請填寫電子信箱！");
+        if (memberType !== "無" && !memberId) return alert("❌ 具備會員身分者，請務必填寫會員編號！");
+
+        const prices = calculatePrices();
+        const bookingId = "PET" + Math.floor(Math.random() * 90000 + 10000);
+
+        document.getElementById('step2-book').style.display = "none";
+
+        let transportNotice = transportService === "是" ? `<span style="color:#D8000C; font-weight:bold;">(接送費用另計，請私訊粉專或來電洽詢)</span>` : "";
+        let fitnessStr = prices.selectedFitness.length > 0 ? prices.selectedFitness.join("、") : "無";
+        let stayStr = stayType !== "無" ? `${stayType} ${stayType.includes("住宿") ? `(${prices.stayNights} 晚)` : ""}` : "無";
+
+        let scheduleHtml = "";
+        if (serviceType !== "無") scheduleHtml += `<p>📅 <b>美容預約時間：</b>${gDate} ${gTime}</p>`;
+        if (fitnessChecked) scheduleHtml += `<p>📅 <b>健身預約時間：</b>${fDate} ${fTime}</p>`;
+        if (stayType !== "無") scheduleHtml += `<p>📅 <b>住宿/安親入住時間：</b>${sDate} ${sTime}</p>`;
+
+        const receiptHtml = `
+            <h3>✅ 預約申請已送出！</h3>
+            <p>📋 <b>預約編號：</b>${bookingId}</p>
+            ${scheduleHtml}
+            <p>👤 <b>主人姓名：</b>${ownerName} / <b>電話：</b>${ownerPhone}</p>
+            <p>💬 <b>留言與備註：</b>${ownerRemarks}</p>
+            <hr>
+            <p>🐾 <b>寵物：</b>${petName} (${document.getElementById('petType').value})</p>
+            <p>✂️ <b>服務項目：</b>${serviceType}</p>
+            <p>💪 <b>寵物健身：</b>${fitnessStr}</p>
+            <p>🏠 <b>寵物住宿/安親：</b>${stayStr}</p>
+            <p>🚗 <b>接送服務：</b>${transportService} ${transportNotice}</p>
+            <p>💳 <b>預估總金額：</b>NT$ ${Math.round(prices.total)} 
+                <span style="font-size:12px; color:#888;">(含 ${memberType} 折扣)</span>
+            </p>
+            
+            <div class="notice-list">
+                <b>📌 現場評估注意事項：</b>
+                <ul>
+                    <li>嚴重打結需視情況另計清潔整理費用。</li>
+                    <li>特殊造型（如腳柱、腳球、腳靴等）由美容師依現場毛況評估後另行報價。</li>
+                    <li>局部修剪（貴賓腳、貴賓嘴、小修頭型等）依實際情況另行報價。</li>
+                    <li>依現場判斷受傷是否嚴重或是否可以是可美容清潔的情況下，而決定是否會增加額外費用(現場報價)或選擇直接現場取消該預約(畢竟須依寵物狀況為主)。</li>
+                </ul>
+            </div>
+
+            <div class="warning-text">
+                ⚠️ 重要事項：若經工作人員查詢後，發現填寫之「會員編號」不存在或資格不符時，系統將會自動取消此預約時段，員工後續會再另行寄送取消預約通知至您的信箱。
+            </div>
+            
+            <p style="text-align:center; margin-top:30px;">
+                <button class="primary-btn" onclick="location.reload()" style="width:auto; padding:10px 20px;">回首頁重新預約</button>
+            </p>
+        `;
+
+        const receiptDiv = document.getElementById('step3-receipt');
+        receiptDiv.innerHTML = receiptHtml;
+        receiptDiv.style.display = 'block';
+
+        // 將資料存入 LocalStorage 與後端 MySQL
+        saveToDatabase({
+            bookingId, gDate, gTime, fDate, fTime, sDate, sTime, ownerName, ownerPhone, ownerEmail, ownerRemarks, petName,
+            petType: document.getElementById('petType').value,
+            serviceType,
+            fitnessType: fitnessStr,
+            stayType: stayStr,
+            stayNights: prices.stayNights,
+            addonType: document.getElementById('addonType').value,
+            transportService, memberType, memberId, total: Math.round(prices.total),
+            createdAt: new Date().toLocaleString()
+        });
+
+        // 同步寫入後端 MySQL
+        try {
+            fetch('/api/bookings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    booking_date: gDate || fDate || sDate || new Date().toISOString().slice(0, 10),
+                    time_slot: gTime || fTime || sTime || "10:00",
+                    owner_name: ownerName,
+                    owner_phone: ownerPhone,
+                    owner_email: ownerEmail,
+                    pet_name: petName,
+                    pet_type: document.getElementById('petType').value,
+                    service_type: serviceType !== "無" ? serviceType : (stayType !== "無" ? stayType : "寵物健身"),
+                    stay_service: stayStr,
+                    stay_nights: prices.stayNights,
+                    addon_type: document.getElementById('addonType').value,
+                    member_type: memberType,
+                    member_id: memberId || null,
+                    notes: `住宿: ${stayStr} | 健身: ${fitnessStr} | 接送: ${transportService} | 備註: ${ownerRemarks}`
+                })
+            }).catch(err => console.warn("後端同步預約失敗:", err));
+        } catch(e) {}
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ==========================================
+    // 員工後台：匯出 Excel (CSV) 格式
+    // ==========================================
+    function saveToDatabase(data) {
+        let bookings = JSON.parse(localStorage.getItem('petBookings')) || [];
+        bookings.push(data);
+        localStorage.setItem('petBookings', JSON.stringify(bookings));
+    }
+
+    function exportToExcel() {
+        let bookings = JSON.parse(localStorage.getItem('petBookings')) || [];
+        if (bookings.length === 0) {
+            alert("目前尚無任何預約資料！");
+            return;
+        }
+
+        let csvContent = "\uFEFF"; 
+        csvContent += "建立時間,預約編號,美容日期,美容時間,健身日期,健身時間,住宿日期,住宿時間,主人姓名,電話,信箱,備註留言,寵物名字,寵物類別,服務項目,寵物健身,住宿安親,加購項目,接送服務,會員身分,會員編號,預估總價\n";
+
+        bookings.forEach(b => {
+            let safeRemarks = b.ownerRemarks ? b.ownerRemarks.replace(/\n/g, " ") : "無";
+
+            let row = [
+                `"${b.createdAt}"`, `"${b.bookingId}"`, `"${b.gDate||'無'}"`, `"${b.gTime||'無'}"`, `"${b.fDate||'無'}"`, `"${b.fTime||'無'}"`, `"${b.sDate||'無'}"`, `"${b.sTime||'無'}"`,
+                `"${b.ownerName}"`, `"${b.ownerPhone}"`, `"${b.ownerEmail}"`, `"${safeRemarks}"`, `"${b.petName}"`,
+                `"${b.petType}"`, `"${b.serviceType}"`, `"${b.fitnessType}"`, `"${b.stayType||'無'}"`, `"${b.addonType}"`, `"${b.transportService}"`,
+                `"${b.memberType}"`, `"${b.memberId||'無'}"`, `"${b.total}"`
+            ];
+            csvContent += row.join(",") + "\n";
+        });
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", `沐曦預約清單_${new Date().toISOString().slice(0, 10)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // 返回上一頁 (不卡住 loading 轉場)
+    function handleBookingBack() {
+        if (document.referrer && document.referrer.includes(window.location.host) && !document.referrer.includes("booking")) {
+            window.location.href = document.referrer;
+        } else {
+            window.location.href = "clean.html";
+        }
+    }
+
+    // ==========================================
+    // 璀璨動態流星雨與星空動畫引擎 (Meteor Shower)
+    // ==========================================
+    (function initMeteorShower() {
+        const canvas = document.getElementById("meteorShowerCanvas");
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener("resize", () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            initStars();
+        });
+
+        // 靜態與微閃背景星星
+        const stars = [];
+        const STAR_COUNT = 150;
+        function initStars() {
+            stars.length = 0;
+            for (let i = 0; i < STAR_COUNT; i++) {
+                stars.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    radius: Math.random() * 1.5 + 0.5,
+                    alpha: Math.random(),
+                    alphaChange: (Math.random() * 0.02 + 0.005) * (Math.random() > 0.5 ? 1 : -1)
+                });
+            }
+        }
+        initStars();
+
+        // 動態斜向流星
+        const meteors = [];
+        const MAX_METEORS = 8;
+
+        function createMeteor() {
+            const angle = Math.PI / 4 + (Math.random() - 0.5) * 0.15; // 大約 45 度角
+            const speed = Math.random() * 8 + 12;
+            const length = Math.random() * 100 + 80;
+            return {
+                x: Math.random() * (width + 300) - 100,
+                y: Math.random() * (height * 0.4) - 100,
+                speedX: Math.cos(angle) * speed,
+                speedY: Math.sin(angle) * speed,
+                length: length,
+                radius: Math.random() * 1.6 + 1.2,
+                alpha: 1.0,
+                decay: Math.random() * 0.008 + 0.006,
+                color: ["#FFFFFF", "#E0E7FF", "#C7D2FE", "#DDD6FE", "#FDE047"][Math.floor(Math.random() * 5)]
+            };
+        }
+
+        function render() {
+            ctx.clearRect(0, 0, width, height);
+
+            // 1. 繪製背景微閃星星
+            stars.forEach(s => {
+                s.alpha += s.alphaChange;
+                if (s.alpha <= 0.2 || s.alpha >= 1) s.alphaChange *= -1;
+
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${s.alpha * 0.8})`;
+                ctx.shadowBlur = 4;
+                ctx.shadowColor = "#FFFFFF";
+                ctx.fill();
+            });
+
+            // 2. 隨機生成新流星
+            if (meteors.length < MAX_METEORS && Math.random() < 0.08) {
+                meteors.push(createMeteor());
+            }
+
+            // 3. 繪製並更新流星
+            for (let i = meteors.length - 1; i >= 0; i--) {
+                const m = meteors[i];
+                m.x += m.speedX;
+                m.y += m.speedY;
+                m.alpha -= m.decay;
+
+                if (m.alpha <= 0 || m.x > width + 200 || m.y > height + 200) {
+                    meteors.splice(i, 1);
+                    continue;
+                }
+
+                const tailX = m.x - (m.speedX / Math.hypot(m.speedX, m.speedY)) * m.length;
+                const tailY = m.y - (m.speedY / Math.hypot(m.speedX, m.speedY)) * m.length;
+
+                const grad = ctx.createLinearGradient(m.x, m.y, tailX, tailY);
+                grad.addColorStop(0, `rgba(255, 255, 255, ${m.alpha})`);
+                grad.addColorStop(0.2, `rgba(224, 231, 255, ${m.alpha * 0.8})`);
+                grad.addColorStop(1, `rgba(167, 139, 250, 0)`);
+
+                ctx.beginPath();
+                ctx.moveTo(m.x, m.y);
+                ctx.lineTo(tailX, tailY);
+                ctx.strokeStyle = grad;
+                ctx.lineWidth = m.radius;
+                ctx.lineCap = "round";
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = m.color;
+                ctx.stroke();
+
+                // 流星頭部光暈
+                ctx.beginPath();
+                ctx.arc(m.x, m.y, m.radius * 1.5, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${m.alpha})`;
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = "#FFFFFF";
+                ctx.fill();
+            }
+
+            requestAnimationFrame(render);
+        }
+
+        render();
+    })();
+</script>
+
+<script src="/static/js/member.js"></script>
+</body>
+</html>

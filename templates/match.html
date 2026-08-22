@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}毛孩速配 (MBTI × 星座 × 居住空間 × 國家氣候推薦) - 沐曦 MuXi{% endblock %}
+{% block body_class %}booking-page-body{% endblock %}
+
+{% block content %}
+<div class="match-container">
+    <div class="match-hero-header">
+        <lottie-player src="https://lottie.host/80e92f25-83e9-4ec4-bc49-98337854d922/cT1d3Yq2aJ.json" background="transparent" speed="1" style="width: 120px; height: 120px; margin: 0 auto;" loop autoplay></lottie-player>
+        <h2>🐾 MBTI × 星座 × 居住空間 毛孩速配測驗</h2>
+        <p>每一隻毛孩都有獨特的靈魂，每一個主人都有專屬的生活節奏。<br>告訴我們您的 <b>MBTI 人格</b>、<b>星座/生日</b>、<b>居家空間</b> 與 <b>國家氣候</b>，沐曦將為您在資料庫中媒合最契合的命定毛孩。</p>
+    </div>
+
+    <!-- 步驟 1: 選擇 MBTI -->
+    <div class="section-title-step">
+        <span class="step-num">1</span>
+        <span>請選擇您的 16 型人格 (MBTI)：</span>
+    </div>
+    <div id="mbtiGroupsContainer" class="mbti-groups-container">
+        <!-- 由 match.js 動態渲染 16 型人格 -->
+    </div>
+
+    <!-- 步驟 2: 選擇居住環境 -->
+    <div class="section-title-step">
+        <span class="step-num">2</span>
+        <span>請選擇您的居家居住環境：</span>
+    </div>
+    <div id="residenceOptionsContainer" class="residence-cards-grid">
+        <!-- 由 match.js 動態渲染居住環境類型 -->
+    </div>
+
+    <!-- 步驟 3: 選擇所在國家 / 地區 -->
+    <div class="section-title-step">
+        <span class="step-num">3</span>
+        <span>請選擇您所在的國家 / 地區氣候：</span>
+    </div>
+    <div id="countryOptionsContainer" class="country-cards-grid">
+        <!-- 由 match.js 動態渲染國家選項 -->
+    </div>
+
+    <!-- 步驟 4: 選擇生日或星座 -->
+    <div class="section-title-step">
+        <span class="step-num">4</span>
+        <span>請選擇您的生日或星座：</span>
+    </div>
+    
+    <div class="birthday-picker-box">
+        <label for="birthdayInput">🎂 輸入生日自動判定星座：</label>
+        <input type="date" id="birthdayInput" class="birthday-input">
+        <span id="zodiacDetectedBadge" class="zodiac-detected-badge"></span>
+    </div>
+
+    <div id="zodiacOptionsContainer" class="zodiac-cards-grid">
+        <!-- 由 match.js 動態渲染 12 星座卡片 -->
+    </div>
+
+    <!-- 送出按鈕 -->
+    <div style="margin-top: 35px; text-align: center;">
+        <button id="btnStartMatch" class="primary-btn" onclick="submitPetMatch()" style="max-width: 420px; font-size: 20px; padding: 16px 32px;">
+            🔮 開始毛孩速配測驗
+        </button>
+    </div>
+</div>
+
+<!-- ==========================================
+     全螢幕水晶占卜 ➔ 星座星圖點星 ➔ 星星瓶收集 Overlay
+     ========================================== -->
+<div id="lotteryInteractiveOverlay" class="lottery-interactive-overlay">
+    
+    <!-- 階段一：神秘紫金水晶占卜球 -->
+    <div id="crystalDivinationStage" class="crystal-divination-stage">
+        <div class="crystal-rune-ring"></div>
+        <div class="crystal-title">🔮 水晶靈力凝聚，星象共鳴中...</div>
+        <div class="crystal-orb-wrapper">
+            <div class="crystal-ball">
+                <div class="crystal-mist"></div>
+            </div>
+            <div id="crystalRisingOrb" class="crystal-rising-orb">
+                <!-- 升起的星座幸運核 -->
+            </div>
+        </div>
+        <div class="crystal-stand"></div>
+    </div>
+
+    <!-- 階段二：星座夜空點星互動舞台 -->
+    <div id="constellationSkyStage" class="constellation-sky-stage">
+        <div class="sky-title-bar">
+            <h3 id="constellationSignTitle">✨ 獅子座 星座祝福連星 ✨</h3>
+            <p>請點擊星座上的每一顆星星，將星光收集進右下角的願望瓶。</p>
+        </div>
+
+        <div class="constellation-svg-wrapper">
+            <svg id="constellationSvg" class="constellation-svg" viewBox="0 0 480 360">
+                <!-- 由 match.js 動態繪製星座連線與星點 -->
+            </svg>
+        </div>
+    </div>
+
+    <!-- 右下角發光許願星星收集瓶 -->
+    <div id="starJarContainer" class="star-jar-container" style="display:none;">
+        <div class="jar-progress-badge">
+            ⭐ 收集進度：<span id="jarCollectedCount">0</span> / <span id="jarTotalCount">4</span>
+        </div>
+        <div class="glass-jar">
+            <div class="jar-cork"></div>
+            <div id="glassJarStars" style="display:flex; flex-wrap:wrap; gap:3px; justify-content:center; align-items:flex-end; width:100%; height:100%;">
+                <!-- 收集進瓶內的發光小星星 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 階段三：流星雨噴發容器 -->
+    <div id="meteorStormContainer" class="meteor-storm-container"></div>
+
+    <!-- 階段四：超新星白光全螢幕吞噬遮罩 -->
+    <div id="supernovaFlashScreen" class="supernova-flash-screen"></div>
+</div>
+
+<!-- ==========================================
+     階段五：獨立全螢幕神秘結果彈出視窗 (持續流星雨背景)
+     ========================================== -->
+<div id="mysticResultModal" class="mystic-result-modal">
+    <!-- 持續流星雨 Canvas 動態背景 -->
+    <canvas id="flowingMeteorsCanvas" class="flowing-meteors-canvas"></canvas>
+
+    <div class="mystic-modal-content">
+        <button class="btn-close-mystic-modal" onclick="closeMysticResultModal()" title="關閉視窗">✖</button>
+
+        <!-- 命定專屬鋼琴曲播放器卡片 (Motivation Piano - 1:10 高潮段) -->
+        <div class="piano-player-card">
+            <audio id="localBgmAudio" src="{{ url_for('static', filename='audio/bgm.mp3') }}" preload="auto" loop></audio>
+            <div class="piano-player-header">
+                <div class="piano-info">
+                    <span class="piano-music-badge">🎹 命中注定鋼琴曲</span>
+                    <span class="piano-track-title">Motivation Piano · 唯美靈魂高潮 (01:10 演奏)</span>
+                </div>
+                <div class="piano-actions">
+                    <button type="button" id="btnToggleAudio" class="btn-audio-control" onclick="toggleLocalBGM()" title="播放/暫停">⏸ 暫停音樂</button>
+                    <button type="button" class="btn-audio-replay" onclick="replayLocalBGMAtClimax()" title="重新從 1:10 高潮播放">🔄 重新從 1:10 高潮演奏</button>
+                </div>
+            </div>
+            <!-- 音訊進度條與音量調節 -->
+            <div class="piano-progress-row">
+                <span id="audioCurrentTime" class="audio-time">01:10</span>
+                <input type="range" id="audioProgressBar" class="audio-seek-slider" min="0" max="180" step="1" value="70" oninput="seekLocalBGM(this.value)">
+                <span id="audioDuration" class="audio-time">03:00</span>
+                <div class="volume-control-box">
+                    <span class="volume-icon">🔊</span>
+                    <input type="range" id="audioVolumeSlider" class="audio-volume-slider" min="0" max="1" step="0.05" value="0.8" oninput="setLocalBGMVolume(this.value)">
+                </div>
+            </div>
+        </div>
+
+        <div id="mysticModalContentArea">
+            <!-- 由 match.js 動態注入結果卡片與信箱備份表單 -->
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/match.js') }}"></script>
+{% endblock %}

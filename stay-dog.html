@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>狗狗住宿 - 沐曦 MuXi</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&family=Electrolize&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 轉場動畫遮罩區塊 -->
+    <div id="page-transition" class="transition-overlay">
+        <div class="circle-mask"></div>
+        <div class="loading-text">Loading . . . . . .</div>
+    </div>
+
+    <!-- 頂部導覽列 -->
+    <nav class="navbar">
+        <div class="logo-area">
+            <!-- 左側的 Lottie 動畫 -->
+            <dotlottie-player class="logo-lottie" src="https://lottie.host/e0ac3dd9-de3d-4343-af06-52aab927d3c4/3HUlLNShZ1.lottie" background="transparent" speed="1" loop autoplay></dotlottie-player>
+            
+            <!-- 右側的文字區塊 (把它們包在同一個 div 裡，維持上下疊加) -->
+            <div class="logo-text-group">
+                <h1>沐曦 MuXi</h1>
+                <p>GROOMING & STAY</p>
+            </div>
+        </div>
+        <div class="nav-background">
+            <ul class="nav-links">
+                <li><a href="index.html" class="page-link">首頁</a></li>
+                <li><a href="qa.html" class="page-link">常見Q&A</a></li>
+                
+                <!-- 美容清潔 下拉選單 -->
+                <li class="nav-item-dropdown">
+                    <a href="#" class="dropdown-toggle">美容清潔 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="clean.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬美容</a>
+                        <a href="clean2.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓美容</a>
+                    </div>
+                </li>
+
+                <!-- 購物商城 下拉選單 -->
+                <li class="nav-item-dropdown">
+                    <a href="#" class="dropdown-toggle">購物商城 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="shop-dog.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬糧食</a>
+                        <a href="shop-cat.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓糧食</a>
+                        <a href="shop-snacks.html" class="dropdown-item page-link"><span class="icon">🦴</span>寵物零食</a>
+                        <a href="shop-cans.html" class="dropdown-item page-link"><span class="icon">🥫</span>寵物罐罐</a>
+                    </div>
+                </li>
+                
+                <!-- 寵物住宿 下拉選單 (標記為 Active 狀態) -->
+                <li class="nav-item-dropdown active-dropdown-parent">
+                    <a href="#" class="dropdown-toggle active-nav">寵物住宿 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="stay-dog.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬住宿</a>
+                        <a href="stay-cat.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓住宿</a>
+                    </div>
+                </li>
+
+                <li><a href="gym.html" class="page-link">寵物健身</a></li>
+                <li><a href="game.html" class="page-link">趣味體驗</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 住宿分類 Tabs -->
+    <div class="salon-tabs">
+        <a href="stay-dog.html" class="tab active-tab page-link">狗狗住宿</a>
+        <span class="divider">/</span>
+        <a href="stay-cat.html" class="tab page-link">貓貓住宿</a>
+    </div>
+
+    <!-- 頂部形象大圖 (狗狗住宿) -->
+    <section class="hotel-hero dog-hero">
+        <div class="hero-text-overlay">
+            <h2>狗狗<br>住宿</h2>
+        </div>
+    </section>
+
+    <!-- 房型介紹 (3種房型) -->
+    <section class="dog-rooms-section">
+        <div class="room-card">
+            <img src="DHM.jpg" alt="一般房" class="room-image dog-room-img">
+            <h3 class="room-title title-cyan">一般房</h3>
+            <p class="room-desc">房間尺寸約104x100cm</p>
+        </div>
+        <div class="room-card">
+            <img src="DHL.jpg" alt="大型房" class="room-image dog-room-img">
+            <h3 class="room-title title-green">大型房</h3>
+            <p class="room-desc">房間尺寸約116x195cm</p>
+        </div>
+        <div class="room-card">
+            <img src="DHS.jpg" alt="小型犬" class="room-image dog-room-img">
+            <h3 class="room-title title-pink">小型犬</h3>
+            <p class="room-desc">房間尺寸約104x100cm</p>
+        </div>
+    </section>
+
+    <!-- 住宿環境介紹 -->
+    <section class="hotel-intro">
+        <p>
+            狗狗住宿區採獨立半開放設計，遠離櫃檯與貓區<br>
+            搭配柔和音樂，給予毛孩零壓力的專屬空間<br>
+            環境配備空調、吊扇與遮光簾，確保通風與舒適溫控<br>
+            裝潢嚴選 MIT 國家標準低甲醛防焰建材<br>
+            搭配保護關節的防滑石質地磚<br>
+            全館由 24 小時 21 支監視器嚴密守護<br>
+            每間客房皆預留專屬監控插座<br>
+            並貼心供應過濾礦泉水與護頸餐具<br>
+            讓狗狗的住宿體驗如同在家一般安心
+        </p>
+    </section>
+
+    <!-- 住宿價目表 -->
+    <section class="pricing-section">
+        <div class="section-header">
+            <span class="iconify icon-green" data-icon="mdi:leaf"></span>
+            <h2 class="title-green-dark">住宿（以每晚／24小時計算）</h2>
+        </div>
+        
+        <table class="pricing-table">
+            <thead>
+                <tr>
+                    <th>房型</th>
+                    <th>適合體型</th>
+                    <th>房間尺寸</th>
+                    <th>價格(每晚)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>小型犬房</td>
+                    <td>小型犬<br>
+                        (約 10kg 以下)</td>
+                    <td>104x100cm</td>
+                    <td>$ 800 起</td>
+                </tr>
+                <tr>
+                    <td>一般房</td>
+                    <td>中型犬<br>
+                        (約 10-20kg)</td>
+                    <td>104x100cm</td>
+                    <td>$ 1000 起</td>
+                </tr>
+                <tr>
+                    <td>大型房</td>
+                    <td>大型犬<br>
+                        (約 20kg 以上) 或 多犬同住</td>
+                    <td>116x195cm</td>
+                    <td>$ 1500 起</td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="discount-purple">
+            同房加倍優惠：若同家庭的第二隻狗狗入住同一間房<br>
+            會加收 300 - 500 元的共住費用 而不收取第二間房費
+        </p>
+    </section>
+
+    <!-- 安親價目表 -->
+    <section class="pricing-section" style="margin-top: 40px;">
+        <div class="section-header">
+            <span class="iconify icon-green" data-icon="mdi:leaf"></span>
+            <h2 class="title-green-dark">安親（依營業時間內計費）</h2>
+        </div>
+        
+        <table class="pricing-table">
+            <thead>
+                <tr>
+                    <th>犬犬體型</th>
+                    <th>單次計時 (每小時)</th>
+                    <th>半日托 (4-6小時)</th>
+                    <th>全日托 (6-8小時)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>小型犬</td>
+                    <td>$ 80</td>
+                    <td>$ 300</td>
+                    <td>$ 500</td>
+                </tr>
+                <tr>
+                    <td>中型犬</td>
+                    <td>$ 100</td>
+                    <td>$ 400</td>
+                    <td>$ 650</td>
+                </tr>
+                <tr>
+                    <td>大型犬</td>
+                    <td>$ 150</td>
+                    <td>$ 550</td>
+                    <td>$ 850</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 注意事項與照片 -->
+    <section class="hotel-rules-section">
+        <div class="rules-content">
+            <div class="section-header">
+                <span class="iconify icon-red" data-icon="pinhead:dog-sitting-wearing-collar-and-exclamation-point"></span>
+                <h2 class="title-red">特殊收費&注意事項</h2>
+            </div>
+            <p class="rules-text">
+                <b>健康與防護要求：</b>為保障所有毛孩的健康，入住前須出示一年內「核心疫苗施打手冊」，並確認已確實完成體內外驅蟲與除蚤。<br><br>
+                <b>自備熟悉物品：</b>建議飼主攜帶毛孩平時習慣的日常用品（如：狗狗的玩具／貓咪的慣用貓砂），以及帶有主人味道的衣物或小毛毯，能有效降低換環境的緊迫感。<br><br>
+                <b>連續住宿優惠：</b>住滿 7 天享 95 折，住滿 14 天享 9 折，並貼心加贈一次「基礎清潔」服務，讓毛孩香噴噴地回家。<br><br>
+                <b>超時接送費用：</b>若超過預定的退房時間，將自動依毛孩體型分類轉以「單次計時安親費」計價；若超過當日營業時間，將強制轉為住宿一晚，並收取一晚房費。<br><br>
+                <b>國定假日加價：</b>遇連續假期或農曆春節等特殊旺季，為控管房況品質與平衡人力成本，將設定額外加價（詳細收費依店內或粉專公告為準）。
+            </p>
+        </div>
+        <div class="rules-images">
+            <img src="img-5284 (1).jpg" alt="狗狗住宿環境1" class="rules-img-top">
+            <img src="0p1a4553_orig.jpg" alt="狗狗住宿環境2" class="rules-img-bottom">
+        </div>
+    </section>
+
+    <!-- 立即預約 CTA -->
+    <section class="cta-section">
+        <a href="booking.html" class="btn-appointment page-link">立即預約</a>
+    </section>
+
+    <!-- 頁尾 -->
+    <footer class="site-footer">
+        <dotlottie-player src="https://lottie.host/e0ac3dd9-de3d-4343-af06-52aab927d3c4/3HUlLNShZ1.lottie" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></dotlottie-player>
+        <div class="footer-info">
+            <p>地址：807高雄市三民區寶珠里建工路415號</p>
+            <p>預約專線：07-3814526 / 0939185295</p>
+            <p>LINE預約：@muxi</p>
+            <p>營業時間：9:00-17:00</p>
+        </div>
+        <div class="social-links">
+            <a href="#" class="social-icon">FB</a>
+            <a href="#" class="social-icon">IN</a>
+            <a href="#" class="social-icon">✉️</a>
+        </div>
+    </footer>
+
+<!-- 轉場與下拉選單腳本 -->
+    <script>
+        // ====== 1. 處理所有下拉選單點擊 ======
+        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', function(event) {
+                event.preventDefault(); 
+                const parentDropdown = this.parentElement;
+                document.querySelectorAll('.nav-item-dropdown').forEach(item => {
+                    if (item !== parentDropdown) { item.classList.remove('active'); }
+                });
+                parentDropdown.classList.toggle('active');
+            });
+        });
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.nav-item-dropdown')) {
+                document.querySelectorAll('.nav-item-dropdown').forEach(item => {
+                    item.classList.remove('active');
+                });
+            }
+        });
+
+        // ====== 2. 處理頁面跳轉轉場 ======
+        const pageLinks = document.querySelectorAll('.page-link');
+        if (pageLinks.length > 0) {
+            pageLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault(); 
+                    const targetUrl = this.getAttribute('href'); 
+                    document.querySelectorAll('.nav-item-dropdown').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    const transitionOverlay = document.getElementById('page-transition');
+                    if (transitionOverlay) {
+                        transitionOverlay.classList.add('active'); 
+                        setTimeout(() => { window.location.href = targetUrl; }, 1000); 
+                    } else {
+                        window.location.href = targetUrl;
+                    }
+                });
+            });
+        }
+
+        // ====== 3. 抵達新頁面時解開轉場遮罩 (最關鍵的地方❗) ======
+        window.addEventListener('pageshow', () => {
+            const transitionOverlay = document.getElementById('page-transition');
+            if (transitionOverlay) transitionOverlay.classList.remove('active');
+        });
+        window.onload = () => {
+            const transitionOverlay = document.getElementById('page-transition');
+            if (transitionOverlay) {
+                transitionOverlay.classList.remove('active'); 
+            }
+        };
+    </script>
+<script src="/static/js/member.js"></script>
+<script src="/static/js/cart.js"></script>
+</body>
+</html>

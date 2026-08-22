@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全齡犬-雞肉芒果 - 沐曦 MuXi</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&family=Electrolize&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 轉場動畫遮罩區塊 -->
+    <div id="page-transition" class="transition-overlay">
+        <div class="circle-mask"></div>
+        <div class="loading-text">Loading . . . . . .</div>
+    </div>
+
+    <!-- 頂部導覽列 (已包含最新下拉選單) -->
+    <nav class="navbar">
+        <div class="logo-area">
+            <dotlottie-player class="logo-lottie" src="https://lottie.host/e0ac3dd9-de3d-4343-af06-52aab927d3c4/3HUlLNShZ1.lottie" background="transparent" speed="1" loop autoplay></dotlottie-player>
+            <div class="logo-text-group">
+                <h1>沐曦 MuXi</h1>
+                <p>GROOMING & STAY</p>
+            </div>
+        </div>
+        <div class="nav-background">
+            <ul class="nav-links">
+                <li><a href="index.html" class="page-link">首頁</a></li>
+                <li><a href="qa.html" class="page-link">常見Q&A</a></li>
+                <li class="nav-item-dropdown">
+                    <a href="#" class="dropdown-toggle">美容清潔 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="clean.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬美容</a>
+                        <a href="clean2.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓美容</a>
+                    </div>
+                </li>
+                <li class="nav-item-dropdown active-dropdown-parent">
+                    <a href="#" class="dropdown-toggle active-nav">購物商城 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="shop-dog.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬糧食</a>
+                        <a href="shop-cat.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓糧食</a>
+                        <a href="shop-snacks.html" class="dropdown-item page-link"><span class="icon">🦴</span>寵物零食</a>
+                        <a href="shop-cans.html" class="dropdown-item page-link"><span class="icon">🥫</span>寵物罐罐</a>
+                    </div>
+                </li>
+                <li class="nav-item-dropdown">
+                    <a href="#" class="dropdown-toggle">寵物住宿 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="stay-dog.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬住宿</a>
+                        <a href="stay-cat.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓住宿</a>
+                    </div>
+                </li>
+                <li><a href="gym.html" class="page-link">寵物健身</a></li>
+                <li><a href="game.html" class="page-link">趣味體驗</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 工具列 (購物車按鈕) -->
+    <div class="shop-toolbar" style="justify-content: flex-end;">
+        <a href="#" class="cart-btn">
+            <span class="iconify" data-icon="mdi:cart-outline"></span> 我的購物車
+        </a>
+    </div>
+
+    <!-- 產品頂部標題 (移到雙欄排版的正上方) -->
+    <div class="product-main-header">
+        <h3 class="product-subtitle">法米納犬糧食</h3>
+    </div>
+
+    <!-- 產品詳細區塊 -->
+    <section class="product-detail-container">
+        <!-- 左側：產品圖片與標題 -->
+        <div class="product-image-area">
+            <!-- 替換成實際圖片檔名 -->
+            <img src="DF9.jpg" alt="法米納犬糧食 - 豬肉奇異果" class="main-product-img">
+            <p class="product-tags">小顆粒 【全齡】皆適用</p>
+            <a href="shop-dog-farmina.html" class="btn-action btn-return page-link">返回</a>
+        </div>
+
+        <!-- 右側：產品資訊與購買選項 -->
+        <div class="product-info-area">
+            <div class="product-title-deco">
+                <!-- 左邊的肉球 (加上 color 控制顏色) -->
+                <span class="iconify" data-icon="mdi:paw" style="font-size: 80px; color: #FF00FB;"></span>
+                
+                <h2 class="main-product-title">豬肉奇異果</h2>
+                
+                <!-- 右邊的肉球 (一樣加上顏色與翻轉) -->
+                <span class="iconify" data-icon="mdi:paw" style="font-size: 80px; color: #FF00FB; transform: scaleX(-1);"></span>
+            </div>
+            
+            <div class="delivery-info">
+                <p>付款方式 : 到店取貨付款</p>
+                <p>取貨方式 : 限自取 (暫時)</p>
+            </div>
+
+            <!-- 動態價格顯示 -->
+            <div class="price-display" id="product-price">原價 : $ 880</div>
+            
+            <!-- 規格選擇 (無跳轉) -->
+            <div class="weight-selector">
+                <!-- data-price 裡面放的是切換後對應的金額 -->
+                <button class="weight-btn active" data-price="880">1.5 kg</button>
+                <button class="weight-btn" data-price="2280">5 kg</button>
+            </div>
+            
+            <p class="member-discount">一般會員 9 折 黃金會員 85 折</p>
+
+            <!-- 數量選擇器 -->
+            <div class="quantity-selector">
+                <button class="qty-btn" id="btn-minus">-</button>
+                <div class="qty-number" id="display-qty">1</div>
+                <button class="qty-btn" id="btn-plus">+</button>
+            </div>
+            <p class="qty-warning">若要 5 袋以上 請與我們聯繫商談</p>
+
+            <!-- 動作按鈕 -->
+            <div class="action-buttons">
+                <button class="btn-action btn-cart"><span class="iconify" data-icon="mdi:cart-outline"></span> 加入購物車</button>
+                <button class="btn-action btn-buy"><span class="iconify" data-icon="icon-park-outline:point-out" style="transform: rotate(90deg);"></span> 立即購買</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 頁尾 -->
+    <footer class="site-footer">
+        <dotlottie-player src="https://lottie.host/e0ac3dd9-de3d-4343-af06-52aab927d3c4/3HUlLNShZ1.lottie" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></dotlottie-player>
+        <div class="footer-info">
+            <p>地址：807高雄市三民區寶珠里建工路415號</p>
+            <p>預約專線：07-3814526 / 0939185295</p>
+            <p>LINE預約：@muxi</p>
+            <p>營業時間：9:00-17:00</p>
+        </div>
+        <div class="social-links">
+            <a href="#" class="social-icon">FB</a>
+            <a href="#" class="social-icon">IN</a>
+            <a href="#" class="social-icon">✉️</a>
+        </div>
+    </footer>
+
+    <!-- 轉場與商品邏輯腳本 -->
+    <script>
+        // --- 1. 商品規格切換與價格動態變更 ---
+        const weightBtns = document.querySelectorAll('.weight-btn');
+        const priceDisplay = document.getElementById('product-price');
+
+        weightBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // 移除所有按鈕的 active 狀態
+                weightBtns.forEach(b => b.classList.remove('active'));
+                // 將點擊的按鈕加上 active 狀態
+                this.classList.add('active');
+                // 抓取按鈕上的 data-price 並更新價格顯示
+                const newPrice = this.getAttribute('data-price');
+                priceDisplay.innerText = `原價 : $ ${newPrice}`;
+            });
+        });
+
+        // --- 2. 數量加減器 ---
+        let currentQty = 1;
+        const displayQty = document.getElementById('display-qty');
+        const btnMinus = document.getElementById('btn-minus');
+        const btnPlus = document.getElementById('btn-plus');
+
+        btnMinus.addEventListener('click', () => {
+            if (currentQty > 1) {
+                currentQty--;
+                displayQty.innerText = currentQty;
+            }
+        });
+
+        btnPlus.addEventListener('click', () => {
+            if (currentQty < 5) {
+                currentQty++;
+                displayQty.innerText = currentQty;
+            } else {
+                alert("若要 5 袋以上，請與我們聯繫商談！");
+            }
+        });
+
+        // --- 3. 下拉選單邏輯 ---
+        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', function(event) {
+                event.preventDefault(); 
+                const parentDropdown = this.parentElement;
+                document.querySelectorAll('.nav-item-dropdown').forEach(item => {
+                    if (item !== parentDropdown) { item.classList.remove('active'); }
+                });
+                parentDropdown.classList.toggle('active');
+            });
+        });
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.nav-item-dropdown')) {
+                document.querySelectorAll('.nav-item-dropdown').forEach(item => {
+                    item.classList.remove('active');
+                });
+            }
+        });
+
+        // --- 4. 轉場邏輯 ---
+        const pageLinks = document.querySelectorAll('.page-link');
+        if (pageLinks.length > 0) {
+            pageLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault(); 
+                    const targetUrl = this.getAttribute('href'); 
+                    const transitionOverlay = document.getElementById('page-transition');
+                    if (transitionOverlay) {
+                        transitionOverlay.classList.add('active'); 
+                        setTimeout(() => { window.location.href = targetUrl; }, 1000); 
+                    } else {
+                        window.location.href = targetUrl;
+                    }
+                });
+            });
+        }
+        window.addEventListener('pageshow', () => {
+            const transitionOverlay = document.getElementById('page-transition');
+            if (transitionOverlay) transitionOverlay.classList.remove('active');
+        });
+        window.onload = () => {
+            const transitionOverlay = document.getElementById('page-transition');
+            if (transitionOverlay) {
+                transitionOverlay.classList.remove('active'); 
+            }
+        };
+    </script>
+<script src="/static/js/member.js"></script>
+<script src="/static/js/cart.js"></script>
+</body>
+</html>

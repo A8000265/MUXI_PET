@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>趣味體驗 (毛孩速配測驗) - 沐曦 MuXi</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&family=Electrolize&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 轉場動畫遮罩區塊 -->
+    <div id="page-transition" class="transition-overlay">
+        <div class="circle-mask"></div>
+        <div class="loading-text">Loading . . . . . .</div>
+    </div>
+
+    <!-- 頂部導覽列 (全站統一樣式) -->
+    <nav class="navbar">
+        <div class="logo-area">
+            <!-- 左側的 Lottie 動畫 -->
+            <dotlottie-player class="logo-lottie" src="https://lottie.host/e0ac3dd9-de3d-4343-af06-52aab927d3c4/3HUlLNShZ1.lottie" background="transparent" speed="1" loop autoplay></dotlottie-player>
+            
+            <!-- 右側文字區塊 -->
+            <div class="logo-text-group">
+                <h1>沐曦 MuXi</h1>
+                <p>GROOMING & STAY</p>
+            </div>
+        </div>
+        <div class="nav-background">
+            <ul class="nav-links">
+                <li><a href="index.html" class="page-link">首頁</a></li>
+                <li><a href="qa.html" class="page-link">常見Q&A</a></li>
+                
+                <!-- 美容清潔 下拉選單 -->
+                <li class="nav-item-dropdown">
+                    <a href="#" class="dropdown-toggle">美容清潔 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="clean.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬美容</a>
+                        <a href="clean2.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓美容</a>
+                    </div>
+                </li>
+
+                <!-- 購物商城 下拉選單 -->
+                <li class="nav-item-dropdown">
+                    <a href="#" class="dropdown-toggle">購物商城 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="shop-dog.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬糧食</a>
+                        <a href="shop-cat.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓糧食</a>
+                        <a href="shop-snacks.html" class="dropdown-item page-link"><span class="icon">🦴</span>寵物零食</a>
+                        <a href="shop-cans.html" class="dropdown-item page-link"><span class="icon">🥫</span>寵物罐罐</a>
+                    </div>
+                </li>
+                
+                <!-- 寵物住宿 下拉選單 -->
+                <li class="nav-item-dropdown">
+                    <a href="#" class="dropdown-toggle">寵物住宿 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="stay-dog.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬住宿</a>
+                        <a href="stay-cat.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓住宿</a>
+                    </div>
+                </li>
+
+                <li><a href="gym.html" class="page-link">寵物健身</a></li>
+                <li><a href="game.html" class="active-nav page-link">趣味體驗</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 主要測驗內容區塊 -->
+    <main>
+        <div class="match-container">
+            <div class="match-hero-header">
+                <dotlottie-player src="https://lottie.host/e0ac3dd9-de3d-4343-af06-52aab927d3c4/3HUlLNShZ1.lottie" background="transparent" speed="1" style="width: 110px; height: 110px; margin: 0 auto 10px auto;" loop autoplay></dotlottie-player>
+                <h2>🐾 MBTI × 星座 × 居住空間 毛孩速配測驗</h2>
+        <p>每一隻毛孩都有獨特的靈魂，每一個主人都有專屬的生活節奏。<br>告訴我們您的 <b>MBTI 人格</b>、<b>星座/生日</b>、<b>居家空間</b> 與 <b>國家氣候</b>，沐曦將為您在資料庫中媒合最契合的命定毛孩。</p>
+    </div>
+
+    <!-- 步驟 1: 選擇 MBTI -->
+    <div class="section-title-step">
+        <span class="step-num">1</span>
+        <span>請選擇您的 16 型人格 (MBTI)：</span>
+    </div>
+    <div id="mbtiGroupsContainer" class="mbti-groups-container">
+        <!-- 由 match.js 動態渲染 16 型人格 -->
+    </div>
+
+    <!-- 步驟 2: 選擇居住環境 -->
+    <div class="section-title-step">
+        <span class="step-num">2</span>
+        <span>請選擇您的居家居住環境：</span>
+    </div>
+    <div id="residenceOptionsContainer" class="residence-cards-grid">
+        <!-- 由 match.js 動態渲染居住環境類型 -->
+    </div>
+
+    <!-- 步驟 3: 選擇所在國家 / 地區 -->
+    <div class="section-title-step">
+        <span class="step-num">3</span>
+        <span>請選擇您所在的國家 / 地區氣候：</span>
+    </div>
+    <div id="countryOptionsContainer" class="country-cards-grid">
+        <!-- 由 match.js 動態渲染國家選項 -->
+    </div>
+
+    <!-- 步驟 4: 選擇生日或星座 -->
+    <div class="section-title-step">
+        <span class="step-num">4</span>
+        <span>請選擇您的生日或星座：</span>
+    </div>
+    
+    <div class="birthday-picker-box">
+        <label for="birthdayInput">🎂 輸入生日自動判定星座：</label>
+        <input type="date" id="birthdayInput" class="birthday-input">
+        <span id="zodiacDetectedBadge" class="zodiac-detected-badge"></span>
+    </div>
+
+    <div id="zodiacOptionsContainer" class="zodiac-cards-grid">
+        <!-- 由 match.js 動態渲染 12 星座卡片 -->
+    </div>
+
+    <!-- 送出按鈕 -->
+    <div style="margin-top: 35px; text-align: center;">
+        <button id="btnStartMatch" class="primary-btn" onclick="submitPetMatch()" style="max-width: 420px; font-size: 20px; padding: 16px 32px;">
+            🔮 開始毛孩速配測驗
+        </button>
+    </div>
+</div>
+
+<!-- ==========================================
+     全螢幕水晶占卜 ➔ 星座星圖點星 ➔ 星星瓶收集 Overlay
+     ========================================== -->
+<div id="lotteryInteractiveOverlay" class="lottery-interactive-overlay">
+    
+    <!-- 階段一：神秘紫金水晶占卜球 -->
+    <div id="crystalDivinationStage" class="crystal-divination-stage">
+        <div class="crystal-rune-ring"></div>
+        <div class="crystal-title">🔮 水晶靈力凝聚，星象共鳴中...</div>
+        <div class="crystal-orb-wrapper">
+            <div class="crystal-ball">
+                <div class="crystal-mist"></div>
+            </div>
+            <div id="crystalRisingOrb" class="crystal-rising-orb">
+                <!-- 升起的星座幸運核 -->
+            </div>
+        </div>
+        <div class="crystal-stand"></div>
+    </div>
+
+    <!-- 階段二：星座夜空點星互動舞台 -->
+    <div id="constellationSkyStage" class="constellation-sky-stage">
+        <div class="sky-title-bar">
+            <h3 id="constellationSignTitle">✨ 獅子座 星座祝福連星 ✨</h3>
+            <p>請點擊星座上的每一顆星星，將星光收集進右下角的願望瓶。</p>
+        </div>
+
+        <div class="constellation-svg-wrapper">
+            <svg id="constellationSvg" class="constellation-svg" viewBox="0 0 480 360">
+                <!-- 由 match.js 動態繪製星座連線與星點 -->
+            </svg>
+        </div>
+    </div>
+
+    <!-- 右下角發光許願星星收集瓶 -->
+    <div id="starJarContainer" class="star-jar-container" style="display:none;">
+        <div class="jar-progress-badge">
+            ⭐ 收集進度：<span id="jarCollectedCount">0</span> / <span id="jarTotalCount">4</span>
+        </div>
+        <div class="glass-jar">
+            <div class="jar-cork"></div>
+            <div id="glassJarStars" style="display:flex; flex-wrap:wrap; gap:3px; justify-content:center; align-items:flex-end; width:100%; height:100%;">
+                <!-- 收集進瓶內的發光小星星 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 階段三：流星雨噴發容器 -->
+    <div id="meteorStormContainer" class="meteor-storm-container"></div>
+
+    <!-- 階段四：超新星白光全螢幕吞噬遮罩 -->
+    <div id="supernovaFlashScreen" class="supernova-flash-screen"></div>
+</div>
+
+<!-- ==========================================
+     階段五：獨立全螢幕神秘結果彈出視窗 (持續流星雨背景)
+     ========================================== -->
+<div id="mysticResultModal" class="mystic-result-modal">
+    <!-- 持續流星雨 Canvas 動態背景 -->
+    <canvas id="flowingMeteorsCanvas" class="flowing-meteors-canvas"></canvas>
+
+    <div class="mystic-modal-content">
+        <button class="btn-close-mystic-modal" onclick="closeMysticResultModal()" title="關閉視窗">✖</button>
+
+                <!-- 命定專屬鋼琴曲播放器卡片 (Motivation Piano - 1:10 高潮段) -->
+                <div class="piano-player-card">
+                    <audio id="localBgmAudio" src="leberch-motivation-piano-580533.mp3" preload="auto" loop></audio>
+                    <div class="piano-player-header">
+                        <div class="piano-info">
+                            <span class="piano-music-badge">🎹 命中注定鋼琴曲</span>
+                            <span class="piano-track-title">Motivation Piano · 唯美靈魂高潮 (01:10 演奏)</span>
+                        </div>
+                        <div class="piano-actions">
+                            <button type="button" id="btnToggleAudio" class="btn-audio-control" onclick="toggleLocalBGM()" title="播放/暫停">⏸ 暫停音樂</button>
+                            <button type="button" class="btn-audio-replay" onclick="replayLocalBGMAtClimax()" title="重新從 1:10 高潮播放">🔄 重新從 1:10 高潮演奏</button>
+                        </div>
+                    </div>
+                    <!-- 音訊進度條與音量調節 -->
+                    <div class="piano-progress-row">
+                        <span id="audioCurrentTime" class="audio-time">01:10</span>
+                        <input type="range" id="audioProgressBar" class="audio-seek-slider" min="0" max="180" step="1" value="70" oninput="seekLocalBGM(this.value)">
+                        <span id="audioDuration" class="audio-time">03:00</span>
+                        <div class="volume-control-box">
+                            <span class="volume-icon">🔊</span>
+                            <input type="range" id="audioVolumeSlider" class="audio-volume-slider" min="0" max="1" step="0.05" value="0.8" oninput="setLocalBGMVolume(this.value)">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="mysticModalContentArea">
+                    <!-- 由 match.js 動態注入結果卡片與信箱備份表單 -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 頁尾 (全站統一樣式) -->
+    <footer class="site-footer">
+        <dotlottie-player src="https://lottie.host/e0ac3dd9-de3d-4343-af06-52aab927d3c4/3HUlLNShZ1.lottie" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></dotlottie-player>
+        <div class="footer-info">
+            <p>地址：807高雄市三民區寶珠里建工路415號</p>
+            <p>預約專線：07-3814526 / 0939185295</p>
+            <p>LINE預約：@muxi</p>
+            <p>營業時間：9:00-17:00</p>
+        </div>
+        <div class="social-links">
+            <a href="#" class="social-icon">FB</a>
+            <a href="#" class="social-icon">IN</a>
+            <a href="#" class="social-icon">✉️</a>
+        </div>
+    </footer>
+
+    <!-- 轉場與下拉選單腳本 -->
+    <script>
+        // ====== 1. 處理所有下拉選單點擊 ======
+        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', function(event) {
+                event.preventDefault(); 
+                const parentDropdown = this.parentElement;
+                document.querySelectorAll('.nav-item-dropdown').forEach(item => {
+                    if (item !== parentDropdown) { item.classList.remove('active'); }
+                });
+                parentDropdown.classList.toggle('active');
+            });
+        });
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.nav-item-dropdown')) {
+                document.querySelectorAll('.nav-item-dropdown').forEach(item => {
+                    item.classList.remove('active');
+                });
+            }
+        });
+
+        // ====== 2. 轉場動畫與換頁 ======
+        const pageLinks = document.querySelectorAll('.page-link');
+        const transitionOverlay = document.getElementById('page-transition');
+
+        if (pageLinks.length > 0 && transitionOverlay) {
+            pageLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault(); 
+                    const targetUrl = this.getAttribute('href'); 
+                    document.querySelectorAll('.nav-item-dropdown').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    transitionOverlay.classList.add('active'); 
+                    setTimeout(() => { window.location.href = targetUrl; }, 1000); 
+                });
+            });
+        }
+
+        // ====== 3. 抵達新頁面時解開轉場遮罩 (支援 bfcache / 返回) ======
+        window.addEventListener('pageshow', () => {
+            const transitionOverlay = document.getElementById('page-transition');
+            if (transitionOverlay) transitionOverlay.classList.remove('active');
+        });
+        window.onload = () => {
+            const transitionOverlay = document.getElementById('page-transition');
+            if (transitionOverlay) transitionOverlay.classList.remove('active');
+        };
+    </script>
+
+    <!-- 會員、測驗與購物車腳本 -->
+    <script src="static/js/match.js"></script>
+    <script src="/static/js/member.js"></script>
+    <script src="/static/js/cart.js"></script>
+</body>
+</html>

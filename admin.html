@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>員工後台管理系統 - 沐曦 MuXi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&family=Electrolize&display=swap" rel="stylesheet">
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        body {
+            background-color: #F4F6F9;
+            font-family: 'PingFang TC', 'Heiti TC', '微軟正黑體', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        /* 員工登入閘門卡片 */
+        .employee-login-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #4338CA 100%);
+            padding: 20px;
+        }
+
+        .employee-login-card {
+            background: #FFFFFF;
+            width: 100%;
+            max-width: 440px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            padding: 40px;
+            text-align: center;
+        }
+
+        .employee-login-card .logo-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 70px;
+            height: 70px;
+            background: #EEF2FF;
+            color: #4F46E5;
+            border-radius: 50%;
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .employee-login-card h2 {
+            margin: 0 0 8px 0;
+            color: #1E1B4B;
+            font-size: 24px;
+        }
+
+        .employee-login-card p {
+            color: #6B7280;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .emp-input-group {
+            text-align: left;
+            margin-bottom: 18px;
+        }
+
+        .emp-input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .emp-input-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #D1D5DB;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+            box-sizing: border-box;
+            transition: 0.2s;
+        }
+
+        .emp-input-group input:focus {
+            border-color: #4F46E5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
+
+        .btn-emp-login {
+            width: 100%;
+            background: linear-gradient(135deg, #4F46E5, #4338CA);
+            color: #FFFFFF;
+            border: none;
+            padding: 13px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-emp-login:hover {
+            opacity: 0.92;
+            transform: translateY(-1px);
+        }
+
+        .btn-return-home {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            margin-top: 12px;
+            padding: 11px;
+            border-radius: 8px;
+            border: 1.5px solid #D1D5DB;
+            background-color: #FFFFFF;
+            color: #4B5563;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+
+        .btn-return-home:hover {
+            background-color: #F3F4F6;
+            color: #111827;
+            border-color: #9CA3AF;
+            transform: translateY(-1px);
+        }
+
+        .emp-demo-creds {
+            margin-top: 20px;
+            padding: 12px;
+            background: #F3F4F6;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #4B5563;
+            line-height: 1.6;
+            text-align: left;
+        }
+
+        /* 後台內部樣式 */
+        .admin-main-container {
+            display: none; /* 登入後顯示 */
+            max-width: 1380px;
+            margin: 0 auto;
+            padding: 30px 20px 60px 20px;
+        }
+
+        .admin-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #FFFFFF;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+            margin-bottom: 25px;
+        }
+
+        .admin-nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .admin-nav-brand h1 {
+            font-size: 20px;
+            margin: 0;
+            color: #111827;
+        }
+
+        .admin-user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-user-badge {
+            background: #EEF2FF;
+            color: #4F46E5;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .btn-logout {
+            background: #FEE2E2;
+            color: #DC2626;
+            border: none;
+            padding: 7px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: #FCA5A5;
+        }
+
+        /* 頂部四分頁 Tab */
+        .admin-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #E5E7EB;
+            padding-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .admin-tab-btn {
+            background: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            color: #4B5563;
+            padding: 11px 22px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+
+        .admin-tab-btn.active {
+            background: #4F46E5;
+            color: #FFFFFF;
+            border-color: #4F46E5;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+        }
+
+        /* 統計儀表板卡片 */
+        .admin-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            border-left: 4px solid #4F46E5;
+        }
+        .stat-card.blue { border-left-color: #2563EB; }
+        .stat-card.green { border-left-color: #10B981; }
+        .stat-card.purple { border-left-color: #8B5CF6; }
+        .stat-card.orange { border-left-color: #F59E0B; }
+
+        .stat-label {
+            font-size: 13px;
+            color: #6B7280;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 26px;
+            font-weight: bold;
+            color: #111827;
+        }
+
+        /* 篩選操作列 */
+        .admin-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #FFFFFF;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .toolbar-filters {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .toolbar-filters input, .toolbar-filters select {
+            padding: 9px 13px;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .toolbar-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-tool {
+            padding: 9px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            border: 1px solid #D1D5DB;
+            background: #FFFFFF;
+            transition: 0.2s;
+        }
+        .btn-tool.primary {
+            background: #4F46E5;
+            color: #FFFFFF;
+            border-color: #4F46E5;
+        }
+        .btn-tool.success {
+            background: #10B981;
+            color: #FFFFFF;
+            border-color: #10B981;
+        }
+
+        /* 資料表格 */
+        .admin-table-container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            overflow-x: auto;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .admin-table th {
+            background: #F9FAFB;
+            color: #4B5563;
+            font-weight: bold;
+            padding: 14px 16px;
+            border-bottom: 1px solid #E5E7EB;
+            white-space: nowrap;
+        }
+
+        .admin-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #F3F4F6;
+            vertical-align: middle;
+        }
+
+        .admin-table tr:hover {
+            background-color: #F8FAFC;
+        }
+
+        /* 標籤 Pill */
+        .pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .pill-verified-gold { background: #FEF3C7; color: #D97706; border: 1px solid #FDE68A; }
+        .pill-verified-member { background: #EEF2FF; color: #4F46E5; border: 1px solid #C7D2FE; }
+        .pill-guest { background: #F3F4F6; color: #6B7280; }
+
+        .pill-status-confirmed { background: #DBEAFE; color: #1E40AF; }
+        .pill-status-completed { background: #D1FAE5; color: #065F46; }
+        .pill-status-cancelled { background: #FEE2E2; color: #991B1B; }
+        .pill-status-pending { background: #FEF3C7; color: #92400E; }
+
+        .btn-status-act {
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            margin-right: 4px;
+        }
+        .btn-act-complete { background: #10B981; color: #fff; }
+        .btn-act-cancel { background: #EF4444; color: #fff; }
+
+        /* 商品清單明細展示 */
+        .order-items-badge-list {
+            font-size: 12px;
+            line-height: 1.6;
+        }
+        .order-item-chip {
+            background: #F3F4F6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-bottom: 3px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. 員工登入閘門 (未登入時顯示) -->
+    <div id="employeeLoginGate" class="employee-login-wrapper">
+        <div class="employee-login-card">
+            <div class="logo-badge">🔐</div>
+            <h2>沐曦 MuXi 員工後台</h2>
+            <p>請輸入員工編號與密碼以進入管理系統</p>
+
+            <form onsubmit="handleEmployeeLogin(event)">
+                <div class="emp-input-group">
+                    <label for="empNoInput">員工編號 (Employee ID)</label>
+                    <input type="text" id="empNoInput" placeholder="例如：EMP001 或 MUXI888" required autofocus>
+                </div>
+                <div class="emp-input-group">
+                    <label for="empPwdInput">員工密碼</label>
+                    <input type="password" id="empPwdInput" placeholder="請輸入密碼" required>
+                </div>
+                <button type="submit" id="btnEmpLogin" class="btn-emp-login">登入後台系統</button>
+                <a href="index.html" class="btn-return-home">🏠 返回沐曦官網首頁 (index.html)</a>
+            </form>
+
+            <div class="emp-demo-creds">
+                <b>💡 測試員工編號清單：</b><br>
+                • <code>EMP001</code> / 密碼：<code>admin123</code> (沐曦店長)<br>
+                • <code>EMP002</code> / 密碼：<code>admin123</code> (店員-小美)<br>
+                • <code>MUXI888</code> / 密碼：<code>muxi2026</code> (資深美容師-阿翔)
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 後台管理系統主介面 (登入後顯示) -->
+    <div id="adminMainContainer" class="admin-main-container">
+        
+        <!-- 頂部導航列 -->
+        <nav class="admin-navbar">
+            <div class="admin-nav-brand">
+                <span style="font-size: 28px;">🐾</span>
+                <div>
+                    <h1>沐曦 MuXi 寵物生活館 - 員工營運後台</h1>
+                    <span style="font-size: 12px; color:#6B7280;">即時預約、商城訂單追蹤與會員資格庫</span>
+                </div>
+            </div>
+            <div class="admin-user-info">
+                <a href="index.html" class="btn-return-home" style="width:auto; margin:0; padding:6px 14px; background:#F3F4F6; border:1px solid #D1D5DB;">🏠 回前台首頁</a>
+                <span id="adminEmpBadge" class="admin-user-badge">員工：載入中...</span>
+                <button class="btn-logout" onclick="handleEmployeeLogout()">安全登出</button>
+            </div>
+        </nav>
+
+        <!-- 營運數據卡片 -->
+        <div class="admin-stats-grid">
+            <div class="stat-card blue">
+                <div class="stat-label">累積預約總數 (件)</div>
+                <div id="statTotalBookings" class="stat-value">0</div>
+            </div>
+            <div class="stat-card orange">
+                <div class="stat-label">待取貨商城訂單 (件)</div>
+                <div id="statPendingOrders" class="stat-value">0</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-label">預約+商城 累計營業額</div>
+                <div id="statTotalRevenue" class="stat-value">NT$ 0</div>
+            </div>
+            <div class="stat-card purple">
+                <div class="stat-label">註冊會員總數</div>
+                <div id="statTotalMembers" class="stat-value">0</div>
+            </div>
+        </div>
+
+        <!-- 模組功能切換分頁 Tab -->
+        <div class="admin-tabs">
+            <button class="admin-tab-btn active" onclick="switchAdminTab('bookings')">
+                <span class="iconify" data-icon="mdi:calendar-check"></span> 📋 顧客預約追蹤
+            </button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('orders')">
+                <span class="iconify" data-icon="mdi:shopping-outline"></span> 🛍️ 購物訂單追蹤
+            </button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('members')">
+                <span class="iconify" data-icon="mdi:account-group"></span> 👥 會員資格庫與對比
+            </button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('matches')">
+                <span class="iconify" data-icon="mdi:crystal-ball"></span> 🔮 毛孩速配測驗紀錄
+            </button>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 1: 預約追蹤模組 -->
+        <!-- ========================================== -->
+        <div id="tabPanelBookings" class="admin-tab-panel">
+            <div class="admin-toolbar">
+                <div class="toolbar-filters">
+                    <input type="date" id="bookingFilterDate" onchange="loadBookings()">
+                    <select id="bookingFilterStatus" onchange="loadBookings()">
+                        <option value="">全部狀態</option>
+                        <option value="confirmed">已確認 (confirmed)</option>
+                        <option value="completed">已完成 (completed)</option>
+                        <option value="cancelled">已取消 (cancelled)</option>
+                    </select>
+                    <input type="text" id="bookingSearchInput" placeholder="搜尋姓名 / 電話 / 單號 / 寵物" onkeyup="if(event.key==='Enter') loadBookings()">
+                    <button class="btn-tool" onclick="loadBookings()">🔍 搜尋</button>
+                </div>
+                <div class="toolbar-actions">
+                    <button class="btn-tool" onclick="loadBookings()">🔄 重新整理</button>
+                    <button class="btn-tool success" onclick="exportBookingsCSV()">📥 匯出預約 CSV</button>
+                </div>
+            </div>
+
+            <div class="admin-table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>預約單號</th>
+                            <th>預約時段</th>
+                            <th>顧客姓名與會員比對</th>
+                            <th>聯絡電話 / Email</th>
+                            <th>毛孩資訊</th>
+                            <th>服務項目 / 加購</th>
+                            <th>總金額</th>
+                            <th>狀態</th>
+                            <th>管理操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingsTableBody">
+                        <tr><td colspan="9" style="text-align:center; padding:30px;">載入中...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 2: 商城訂單追蹤模組 -->
+        <!-- ========================================== -->
+        <div id="tabPanelOrders" class="admin-tab-panel" style="display:none;">
+            <div class="admin-toolbar">
+                <div class="toolbar-filters">
+                    <select id="orderFilterStatus" onchange="loadOrders()">
+                        <option value="">全部訂單狀態</option>
+                        <option value="pending_pickup">待取貨付款 (pending_pickup)</option>
+                        <option value="completed">已取貨完成 (completed)</option>
+                        <option value="cancelled">已取消 (cancelled)</option>
+                    </select>
+                    <input type="text" id="orderSearchInput" placeholder="搜尋訂單編號 / 顧客姓名 / 電話" onkeyup="if(event.key==='Enter') loadOrders()">
+                    <button class="btn-tool" onclick="loadOrders()">🔍 搜尋</button>
+                </div>
+                <div class="toolbar-actions">
+                    <button class="btn-tool" onclick="loadOrders()">🔄 重新整理</button>
+                    <button class="btn-tool success" onclick="exportOrdersCSV()">📥 匯出訂單 CSV</button>
+                </div>
+            </div>
+
+            <div class="admin-table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>訂單編號</th>
+                            <th>下單時間</th>
+                            <th>顧客姓名 / 會員對比</th>
+                            <th>聯絡電話 / 信箱</th>
+                            <th>購買商品清單</th>
+                            <th>取貨 / 付款方式</th>
+                            <th>訂單金額</th>
+                            <th>訂單狀態</th>
+                            <th>管理操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTableBody">
+                        <tr><td colspan="9" style="text-align:center; padding:30px;">載入中...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 3: 會員資格庫模組 -->
+        <!-- ========================================== -->
+        <div id="tabPanelMembers" class="admin-tab-panel" style="display:none;">
+            <div class="admin-toolbar">
+                <div class="toolbar-filters">
+                    <input type="text" id="memberSearchInput" placeholder="搜尋會員編號 / 姓名 / 電話 / 信箱" onkeyup="if(event.key==='Enter') loadMembers()">
+                    <button class="btn-tool" onclick="loadMembers()">🔍 搜尋比對會員</button>
+                </div>
+                <div class="toolbar-actions">
+                    <button class="btn-tool" onclick="loadMembers()">🔄 重新整理名冊</button>
+                </div>
+            </div>
+
+            <div class="admin-table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>會員編號</th>
+                            <th>姓名</th>
+                            <th>手機號碼</th>
+                            <th>電子信箱</th>
+                            <th>會員等級</th>
+                            <th>專屬折扣</th>
+                            <th>累積預約次數</th>
+                            <th>累積商城訂單</th>
+                            <th>註冊日期</th>
+                        </tr>
+                    </thead>
+                    <tbody id="membersTableBody">
+                        <tr><td colspan="9" style="text-align:center; padding:30px;">載入中...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 4: 毛孩速配測驗紀錄模組 -->
+        <!-- ========================================== -->
+        <div id="tabPanelMatches" class="admin-tab-panel" style="display:none;">
+            <div class="admin-toolbar">
+                <div class="toolbar-filters">
+                    <input type="text" id="matchSearchInput" placeholder="搜尋信箱 / 家長姓名 / 品種" onkeyup="if(event.key==='Enter') loadMatches()">
+                    <button class="btn-tool" onclick="loadMatches()">🔍 搜尋</button>
+                </div>
+                <div class="toolbar-actions">
+                    <button class="btn-tool" onclick="loadMatches()">🔄 重新整理</button>
+                </div>
+            </div>
+
+            <div class="admin-table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>測驗編號</th>
+                            <th>家長姓名 / 信箱</th>
+                            <th>MBTI 類型</th>
+                            <th>星座 / 生日</th>
+                            <th>命定毛孩品種</th>
+                            <th>契合度</th>
+                            <th>信箱備份狀態</th>
+                            <th>測驗時間</th>
+                        </tr>
+                    </thead>
+                    <tbody id="matchesTableBody">
+                        <tr><td colspan="8" style="text-align:center; padding:30px;">載入中...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 引入後台管理邏輯 JS -->
+    <script src="/static/js/admin.js"></script>
+</body>
+</html>

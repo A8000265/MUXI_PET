@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>常見Q&A - 沐曦 MuXi</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&family=Electrolize&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 轉場動畫遮罩區塊 -->
+    <div id="page-transition" class="transition-overlay">
+        <div class="circle-mask"></div>
+        <div class="loading-text">Loading . . . . . .</div>
+    </div>
+
+    <!-- 頂部導覽列 -->
+    <nav class="navbar">
+        <div class="logo-area">
+            <dotlottie-player class="logo-lottie" src="https://lottie.host/e0ac3dd9-de3d-4343-af06-52aab927d3c4/3HUlLNShZ1.lottie" background="transparent" speed="1" loop autoplay></dotlottie-player>
+            <div class="logo-text-group">
+                <h1>沐曦 MuXi</h1>
+                <p>GROOMING & STAY</p>
+            </div>
+        </div>
+        <div class="nav-background">
+            <ul class="nav-links">
+                <li><a href="index.html" class="page-link">首頁</a></li>
+                <li><a href="qa.html" class="active-nav page-link">常見Q&A</a></li>
+                
+                <li class="nav-item-dropdown">
+                    <a href="#" class="dropdown-toggle">美容清潔 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="clean.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬美容</a>
+                        <a href="clean2.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓美容</a>
+                    </div>
+                </li>
+
+                <!-- 購物商城 下拉選單 -->
+                <li class="nav-item-dropdown">
+                    <a href="#" class="dropdown-toggle">購物商城 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="shop-dog.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬糧食</a>
+                        <a href="shop-cat.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓糧食</a>
+                        <a href="shop-snacks.html" class="dropdown-item page-link"><span class="icon">🦴</span>寵物零食</a>
+                        <a href="shop-cans.html" class="dropdown-item page-link"><span class="icon">🥫</span>寵物罐罐</a>
+                    </div>
+                </li>
+                
+                <li class="nav-item-dropdown">
+                    <a href="#" class="dropdown-toggle">寵物住宿 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="stay-dog.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬住宿</a>
+                        <a href="stay-cat.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓住宿</a>
+                    </div>
+                </li>
+                <li><a href="gym.html" class="page-link">寵物健身</a></li>
+                <li><a href="game.html" class="page-link">趣味體驗</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Q&A 標題 -->
+    <div class="qa-header">
+        <h2 class="title-orange" style="font-size: 60px;">常見 Q & A</h2>
+    </div>
+
+    <!-- Q&A 列表區塊 -->
+    <section class="qa-list-section">
+        <!-- 透過 onclick 呼叫 JS 函數並傳入對應的問題編號 -->
+        <div class="qa-item" onclick="openAnswer('q1')">
+            <span class="iconify qa-icon" data-icon="ic:outline-question-answer"></span>
+            <p>來美容需要提前預約嗎？</p>
+        </div>
+        <div class="qa-item" onclick="openAnswer('q2')">
+            <span class="iconify qa-icon" data-icon="ic:outline-question-answer"></span>
+            <p>毛孩有特殊狀況，不確定能不能美容怎麼辦？</p>
+        </div>
+        <div class="qa-item" onclick="openAnswer('q3')">
+            <span class="iconify qa-icon" data-icon="ic:outline-question-answer"></span>
+            <p>可以當天預約美容清潔嗎？</p>
+        </div>
+        <div class="qa-item" onclick="openAnswer('q4')">
+            <span class="iconify qa-icon" data-icon="ic:outline-question-answer"></span>
+            <p>接送服務需要多久前預約？</p>
+        </div>
+        <div class="qa-item" onclick="openAnswer('q5')">
+            <span class="iconify qa-icon" data-icon="ic:outline-question-answer"></span>
+            <p>基礎洗澡和大美容要如何選擇？</p>
+        </div>
+        <div class="qa-item" onclick="openAnswer('q6')">
+            <span class="iconify qa-icon" data-icon="ic:outline-question-answer"></span>
+            <p>想預約「手剪造型」要注意什麼？</p>
+        </div>
+        <div class="qa-item" onclick="openAnswer('q7')">
+            <span class="iconify qa-icon" data-icon="ic:outline-question-answer"></span>
+            <p>想替毛孩子預約「草本浴」可以嗎？</p>
+        </div>
+        <div class="qa-item" onclick="openAnswer('q8')">
+            <span class="iconify qa-icon" data-icon="ic:outline-question-answer"></span>
+            <p>貓咪也需要定期美容嗎？多久洗一次比較好？</p>
+        </div>
+        <div class="qa-item" onclick="openAnswer('q9')">
+            <span class="iconify qa-icon" data-icon="ic:outline-question-answer"></span>
+            <p>服務價格會不會因為毛孩狀況不同而調整？</p>
+        </div>
+        <div class="qa-item" onclick="openAnswer('q10')">
+            <span class="iconify qa-icon" data-icon="ic:outline-question-answer"></span>
+            <p>為什麼最終帳單價格會和一開始的報價不一樣？</p>
+        </div>
+        <div class="qa-item" onclick="openAnswer('q11')">
+            <span class="iconify qa-icon" data-icon="ic:outline-question-answer"></span>
+            <p>美容前需要幫毛孩做什麼準備嗎？</p>
+        </div>
+        <div class="qa-item" onclick="openAnswer('q12')">
+            <span class="iconify qa-icon" data-icon="ic:outline-question-answer"></span>
+            <p>毛孩很怕生或很害怕美容怎麼辦？</p>
+        </div>
+        <div class="qa-item" onclick="openAnswer('q13')">
+            <span class="iconify qa-icon" data-icon="ic:outline-question-answer"></span>
+            <p>為什麼寶貝在家很乖，到美容店卻特別兇或緊張？</p>
+        </div>
+        <div class="qa-item" onclick="openAnswer('q14')">
+            <span class="iconify qa-icon" data-icon="ic:outline-question-answer"></span>
+            <p>為什麼美容後貓咪指甲或牙齒會流血？</p>
+        </div>
+        <div class="qa-item" onclick="openAnswer('q15')">
+            <span class="iconify qa-icon" data-icon="ic:outline-question-answer"></span>
+            <p>美容過程中會記錄寶貝的狀況嗎？</p>
+        </div>
+    </section>
+
+    <!-- 彈跳視窗 Modal (預設隱藏) -->
+    <div id="answer-modal" class="modal-overlay" onclick="closeAnswer()">
+        <!-- 加入 event.stopPropagation() 防止點擊內容時關閉視窗 -->
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="close-modal-btn" onclick="closeAnswer()">×</button>
+            <p id="modal-text-content" class="modal-text"></p>
+        </div>
+    </div>
+
+    <!-- 頁尾 -->
+    <footer class="site-footer">
+        <dotlottie-player src="https://lottie.host/e0ac3dd9-de3d-4343-af06-52aab927d3c4/3HUlLNShZ1.lottie" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></dotlottie-player>
+        <div class="footer-info">
+            <p>地址：807高雄市三民區寶珠里建工路415號</p>
+            <p>預約專線：07-3814526 / 0939185295</p>
+            <p>LINE預約：@muxi</p>
+            <p>營業時間：9:00-17:00</p>
+        </div>
+        <div class="social-links">
+            <a href="#" class="social-icon">FB</a>
+            <a href="#" class="social-icon">IN</a>
+            <a href="#" class="social-icon">✉️</a>
+        </div>
+    </footer>
+
+    <!-- 轉場與 Q&A 互動腳本 -->
+    <script>
+        // --- 1. Q&A 彈跳視窗資料與邏輯 ---
+        const qaData = {
+            'q1': '是的，每次美容皆採網站預約制。為了簡化流程並避免重複排班，我們統一透過網站系統安排時段，流程簡單明瞭，讓您輕鬆快速完成預約。',
+            'q2': '若毛孩有特殊情況或疑慮，歡迎先透過電話 或至我們的 FB 粉絲專頁 / IG 官方帳號私訊聯繫，我們會為您評估與解答，確認適合美容後，再請您至網站完成預約即可。',
+            'q3': '若預約未滿，以現場預約客完成後，排程下個順位進行美容。完成時間會較不確定，依現場狀況可能需要等待，您可以先帶寶貝來現場等候。若當天預約已滿，則會為您安排其他天進行。',
+            'q4': '因為每天都有許多貓貓狗狗需要接送，請務必提前 2~3 天於網站預約，以便我們為您安排最佳的接送路徑。',
+            'q5': '【基礎清潔】只需要日常洗澡除臭，完全不需要剪毛時<br>【小美容】只想稍微修整眼周、嘴邊或腳緣的雜毛時<br>【大美容】毛髮已經過長，需要「全身」大修剪長度或換造型時',
+            'q6': '手剪美容限定成犬，且品種為博美、貴賓、馬爾濟斯、鬆獅犬。不同犬種會依條件各有不同價位，歡迎提前洽詢。',
+            'q7': '為提供適合寶貝的護理，美容師會先評估毛孩當前的皮膚狀況，提供專業建議後再行安排草本浴。',
+            'q8': '建議定期洗澡、修剪指甲並清除廢毛（特別是長毛貓容易打結，定期護理可減少皮膚問題）。一般建議每 3~4 週定期洗澡修毛一次；長毛或容易打結的毛孩可視情況縮短週期。',
+            'q9': '會歐~ 每隻寶貝狀況不同，實際費用會依寵物種類、體型、體重、毛長/毛量及毛況（如是否嚴重打結）做調整。詳細報價歡迎來電或透過 FB/IG 詢問。',
+            'q10': '若美容過程中遇到毛孩情緒較不穩定、較兇或較難施作的情況，美容師需要花費更多時間與精力引導，因此會酌收相應的加收費用。',
+            'q11': '建議美容前先帶毛孩適度散步活動、消耗體力，並避免在餐後立即進行美容，讓毛孩能以最放鬆的狀態享受服務。',
+            'q12': '請放心！狗狗美容區採用半開放空間，讓毛孩能與美容師互動。針對貓咪則會全程放輕動作、輕聲安撫，並依毛孩狀況放慢節奏，盡力減少牠們的緊張與不安。',
+            'q13': '寵物到達陌生的環境與面對不熟悉的人事物時，容易產生警覺或不適應的情形，這是很正常的自然反應。',
+            'q14': '貓咪緊張不適應時常會掙扎逃脫，而美容桌與設備多為鐵製品，即使美容師過程再小心，毛孩仍可能因掙扎碰撞而傷到自己。特別是第一次美容的貓咪，較容易發生指甲斷裂、剝落或牙齒輕微碰撞流血等狀況。',
+            'q15': '會的！來美容的寶貝我們每次都會拍攝照片與小影片，讓主人能即時了解毛孩在門市的施作情形與狀態。'
+        };
+
+        const modal = document.getElementById('answer-modal');
+        const modalText = document.getElementById('modal-text-content');
+
+        // 打開視窗
+        function openAnswer(questionId) {
+            modalText.innerHTML = qaData[questionId]; // 填入答案
+            modal.classList.add('show-modal'); // 顯示視窗
+        }
+
+        // 關閉視窗
+        function closeAnswer() {
+            modal.classList.remove('show-modal');
+        }
+
+        // --- 2. 下拉選單邏輯 ---
+        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', function(event) {
+                event.preventDefault(); 
+                const parentDropdown = this.parentElement;
+                document.querySelectorAll('.nav-item-dropdown').forEach(item => {
+                    if (item !== parentDropdown) { item.classList.remove('active'); }
+                });
+                parentDropdown.classList.toggle('active');
+            });
+        });
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.nav-item-dropdown')) {
+                document.querySelectorAll('.nav-item-dropdown').forEach(item => {
+                    item.classList.remove('active');
+                });
+            }
+        });
+
+        // --- 3. 轉場邏輯 ---
+        const pageLinks = document.querySelectorAll('.page-link');
+        if (pageLinks.length > 0) {
+            pageLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault(); 
+                    const targetUrl = this.getAttribute('href'); 
+                    const transitionOverlay = document.getElementById('page-transition');
+                    if (transitionOverlay) {
+                        transitionOverlay.classList.add('active'); 
+                        setTimeout(() => { window.location.href = targetUrl; }, 1000); 
+                    } else {
+                        window.location.href = targetUrl;
+                    }
+                });
+            });
+        }
+        function removeTransition() {
+            const transitionOverlay = document.getElementById('page-transition');
+            if (transitionOverlay) {
+                transitionOverlay.classList.remove('active'); 
+            }
+        }
+        document.addEventListener('DOMContentLoaded', removeTransition);
+        window.addEventListener('load', removeTransition);
+        setTimeout(removeTransition, 100);
+    </script>
+<script src="/static/js/member.js"></script>
+<script src="/static/js/cart.js"></script>
+</body>
+</html>

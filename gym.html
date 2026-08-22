@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>寵物健身 - 沐曦 MuXi</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&family=Electrolize&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 轉場動畫遮罩區塊 -->
+    <div id="page-transition" class="transition-overlay">
+        <div class="circle-mask"></div>
+        <div class="loading-text">Loading . . . . . .</div>
+    </div>
+
+    <!-- 頂部導覽列 -->
+    <nav class="navbar">
+        <div class="logo-area">
+            <dotlottie-player class="logo-lottie" src="https://lottie.host/e0ac3dd9-de3d-4343-af06-52aab927d3c4/3HUlLNShZ1.lottie" background="transparent" speed="1" loop autoplay></dotlottie-player>
+            <div class="logo-text-group">
+                <h1>沐曦 MuXi</h1>
+                <p>GROOMING & STAY</p>
+            </div>
+        </div>
+        <div class="nav-background">
+            <ul class="nav-links">
+                <li><a href="index.html" class="page-link">首頁</a></li>
+                <li><a href="qa.html" class="page-link">常見Q&A</a></li>
+                
+                <li class="nav-item-dropdown">
+                    <a href="#" class="dropdown-toggle">美容清潔 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="clean.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬美容</a>
+                        <a href="clean2.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓美容</a>
+                    </div>
+                </li>
+
+                <li class="nav-item-dropdown">
+                    <a href="#" class="dropdown-toggle">購物商城 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="shop-dog.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬糧食</a>
+                        <a href="shop-cat.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓糧食</a>
+                        <a href="shop-snacks.html" class="dropdown-item page-link"><span class="icon">🦴</span>寵物零食</a>
+                        <a href="shop-cans.html" class="dropdown-item page-link"><span class="icon">🥫</span>寵物罐罐</a>
+                    </div>
+                </li>
+                
+                <li class="nav-item-dropdown">
+                    <a href="#" class="dropdown-toggle">寵物住宿 ▾</a>
+                    <div class="dropdown-menu">
+                        <a href="stay-dog.html" class="dropdown-item page-link"><span class="icon">🐕</span>犬犬住宿</a>
+                        <a href="stay-cat.html" class="dropdown-item page-link"><span class="icon">🐈</span>貓貓住宿</a>
+                    </div>
+                </li>
+
+                <!-- 寵物健身 標記為 Active 狀態 -->
+                <li><a href="gym.html" class="active-nav page-link">寵物健身</a></li>
+                <li><a href="game.html" class="page-link">趣味體驗</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 頂部形象大圖 (毛孩浪浪/水療) -->
+    <section class="hotel-hero gym-hero">
+        <!-- 👇 換成這個專門用來置中的 class 👇 -->
+        <div class="hero-center-overlay">
+            <h2>毛孩水療</h2>
+        </div>
+    </section>
+
+    <!-- 理念介紹區塊 -->
+    <section class="gym-intro-section">
+        <div class="gym-intro-text">
+            【愛，是給他最無負擔的呵護】<br>
+            在爸媽心中 毛孩永遠是長不大的孩子<br>
+            但他們一樣會老、會生病 且從不開口抱怨<br>
+            總以為「強迫走路」能防止退化<br>
+            卻忽略了他們強忍的關節疼痛<br>
+            為了不讓毛孩默默承受不適<br>
+            我們打造了專屬的水中健身房<br>
+            提供另一種相對溫和的運動方式<br>
+            幫助他們重拾活力與關節健康！
+        </div>
+    </section>
+
+    <!-- 優勢介紹區塊 -->
+    <section class="gym-benefits">
+        <div class="section-header">
+            <span class="iconify icon-green" data-icon="si:sun-fill"></span>
+            <h2 class="title-green-dark">無懼天氣，最舒適的運動環境</h2>
+        </div>
+        <p class="benefits-text">
+            避開高溫與燙腳柏油路：毛孩缺乏汗腺，室內水療讓運動不再是痛苦的熱力考驗<br>
+            無畏颳風下雨：全天候舒適的室內空間，隨時都能進行溫和的全身鍛鍊
+        </p>
+    </section>
+
+    <!-- 服務一：水中跑步機 -->
+    <section class="gym-service-block">
+        <div class="gym-service-content">
+            <div class="section-header">
+                <span class="iconify" data-icon="streamline-ultimate:swimming-pool-stairs-bold" style="font-size: 50px; color: #22E0E0;"></span>
+                <h2 class="title-cyan" style="font-size: 48px;">水中跑步機</h2>
+            </div>
+            <p class="service-desc" style="color: #22E0E0;">
+                藉由水的「阻力」與「浮力」支撐體重，大幅降低關節承重負擔。不僅能提升心肺耐力、訓練肌肉力量，更能讓年老、肥胖或需要復健的狗狗，在不傷關節的情況下達到全身運動的絕佳效果
+            </p>
+        </div>
+        <div class="gym-service-images">
+            <!-- 左側：兩張圖片上下直線排列 -->
+            <div class="gym-photos-col">
+                <img src="W1.jpg" alt="水中跑步機1" class="gym-img-stacked">
+                <img src="W2.jpg" alt="水中跑步機2" class="gym-img-stacked">
+            </div>
+            <!-- 右側：直向影片完整靠右排列 -->
+            <div class="gym-video-box">
+                <video id="gym-video" src="video.mp4" controls loop autoplay muted playsinline preload="auto">
+                    <source src="video.mp4" type="video/mp4">
+                    您的瀏覽器不支援影片播放。
+                </video>
+            </div>
+        </div>
+    </section>
+
+    <!-- 服務二：牛奶浴 -->
+    <section class="gym-service-block"> <!-- 👈 移除了 reverse-layout -->
+        
+        <!-- 牛奶浴的圖片區塊 -->
+        <div class="milk-bath-images">
+            <!-- 替換成實際圖片檔名 -->
+            <img src="M1.jpg" alt="牛奶浴" class="gym-img-bottom-left">
+            <img src="M2.jpg" alt="牛奶浴" class="gym-img-bottom-right">
+        </div>
+        
+        <!-- 右邊：文字區塊 (後寫放右邊) -->
+        <div class="gym-service-content">
+            <!-- 標題區 (拿掉了 justify-content: flex-end 讓它自然靠左) -->
+            <div class="section-header">
+                <span class="iconify" data-icon="tdesign:milk" style="font-size: 80px; color: #EEA465;"></span>
+                <h2 class="title-orange" style="font-size: 60px; margin:0; color: #EEA465;">牛 奶 浴</h2>
+            </div>
+            <!-- 內文區 (拿掉了 text-align: right 讓字靠左，閱讀更舒服) -->
+            <p class="service-desc" style="color: #EEA465;">
+                純天然、無添加！運用雙核心專利技術（分子對撞及超高頻磁波切割），將自來水轉換為乳白色奈米超微細氣泡。<br><br>
+                深層清潔：水分子奈米化後能迅速滲透毛孔，溫和除去全身老舊角質與深層油垢<br>
+                活氧舒緩：高含氧磁化水增加保濕與血液含氧量，促進新陳代謝，讓毛髮蓬鬆柔軟有彈性<br>
+                對抗潮濕敏感：減少過度使用洗劑的化學殘留，舒緩海島氣候引起的肌膚發炎與抓癢困擾<br>
+                極致放鬆：泡澡同時配合頭部、頸肩及腿部輕柔按摩，徹底放鬆緊繃肌肉
+            </p>
+        </div>
+        
+    </section>
+
+    <!-- 設備規格與價格 -->
+    <section class="gym-pricing-section">
+        <div class="pricing-intro">
+            <span class="iconify" data-icon="hugeicons:tools" style="font-size: 50px; color: #9500FF;"></span>
+            <p>設備規格與價格<br>百分百台灣製造（MIT）並榮獲國內發明獎的專業水療機型<br>過程皆搭配嚴選無化學藥劑、無濃郁香味的專業低敏洗劑</p>
+            <span class="iconify" data-icon="hugeicons:tools" style="font-size: 50px; color: #9500FF;"></span>
+        </div>
+
+        <h3 class="pricing-table-title">水中跑步機</h3>
+        <table class="purple-table">
+            <thead>
+                <tr>
+                    <th>設備機型</th>
+                    <th>適合體型</th>
+                    <th>單堂(約40分鐘)</th>
+                    <th>特色功能與優勢</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>旗艦版<br>4個水中鏡頭</td>
+                    <td>70 KG 以下<br>中大型犬</td>
+                    <td>$ 1200<br>買 5 送 1<br>買 10 送 3</td>
+                    <td>🏆台大同款機型！<br>・鏡頭無死角，掌握水下運動狀況<br>・可自由調節速度與「升降坡度」<br>・可選用純氧牛奶浴（具殺菌效果）</td>
+                </tr>
+                <tr>
+                    <td>小型版<br>
+                        1個水中鏡頭</td>
+                    <td>20 KG 以下<br>
+                        中小型犬</td>
+                    <td>$ 1000<br>買 5 送 1<br>買 10 送 3</td>
+                    <td>・專為小型犬設計<br>・可調節速度<br>循序漸進達到最佳復健與運動效果</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3 class="pricing-table-title" style="margin-top: 60px;">牛奶浴</h3>
+        <table class="purple-table">
+            <thead>
+                <tr>
+                    <th>體型分類</th>
+                    <th>單次(約30分 / 旗艦版)</th>
+                    <th>單次(約30分 / 豪華版)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>小型毛孩</td>
+                    <td>$ 400<br>買 5 送 1</td>
+                    <td>$ 600<br>買 5 送 1</td>
+                </tr>
+                <tr>
+                    <td>中型毛孩</td>
+                    <td>$ 600<br>買 5 送 1</td>
+                    <td>$ 800<br>買 5 送 1</td>
+                </tr>
+                <tr>
+                    <td>大型毛孩</td>
+                    <td>$ 800<br>買 5 送 1</td>
+                    <td>$ 1200<br>買 5 送 1</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 立即預約 CTA -->
+    <section class="cta-section">
+        <a href="booking.html" class="btn-appointment page-link">立即預約</a>
+    </section>
+
+    <!-- 頁尾 -->
+    <footer class="site-footer">
+        <dotlottie-player src="https://lottie.host/e0ac3dd9-de3d-4343-af06-52aab927d3c4/3HUlLNShZ1.lottie" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></dotlottie-player>
+        <div class="footer-info">
+            <p>地址：807高雄市三民區寶珠里建工路415號</p>
+            <p>預約專線：07-3814526 / 0939185295</p>
+            <p>LINE預約：@muxi</p>
+            <p>營業時間：9:00-17:00</p>
+        </div>
+        <div class="social-links">
+            <a href="#" class="social-icon">FB</a>
+            <a href="#" class="social-icon">IN</a>
+            <a href="#" class="social-icon">✉️</a>
+        </div>
+    </footer>
+
+    <!-- 轉場與下拉選單腳本 -->
+    <script>
+        // 下拉選單邏輯
+        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', function(event) {
+                event.preventDefault(); 
+                const parentDropdown = this.parentElement;
+                document.querySelectorAll('.nav-item-dropdown').forEach(item => {
+                    if (item !== parentDropdown) { item.classList.remove('active'); }
+                });
+                parentDropdown.classList.toggle('active');
+            });
+        });
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.nav-item-dropdown')) {
+                document.querySelectorAll('.nav-item-dropdown').forEach(item => {
+                    item.classList.remove('active');
+                });
+            }
+        });
+
+        // 轉場邏輯
+        const pageLinks = document.querySelectorAll('.page-link');
+        if (pageLinks.length > 0) {
+            pageLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault(); 
+                    const targetUrl = this.getAttribute('href'); 
+                    const transitionOverlay = document.getElementById('page-transition');
+                    if (transitionOverlay) {
+                        transitionOverlay.classList.add('active'); 
+                        setTimeout(() => { window.location.href = targetUrl; }, 1000); 
+                    } else {
+                        window.location.href = targetUrl;
+                    }
+                });
+            });
+        }
+        window.addEventListener('pageshow', () => {
+            const transitionOverlay = document.getElementById('page-transition');
+            if (transitionOverlay) transitionOverlay.classList.remove('active');
+        });
+        window.onload = () => {
+            const transitionOverlay = document.getElementById('page-transition');
+            if (transitionOverlay) {
+                transitionOverlay.classList.remove('active'); 
+            }
+        };
+    </script>
+<script src="/static/js/member.js"></script>
+<script src="/static/js/cart.js"></script>
+</body>
+</html>
