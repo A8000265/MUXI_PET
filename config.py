@@ -1,7 +1,10 @@
 import os
-from dotenv import load_dotenv
 
-load_dotenv()
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "muxi_secret_key_2026")
