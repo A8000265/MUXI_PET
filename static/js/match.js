@@ -955,12 +955,17 @@ async function openMysticResultModal() {
     // 啟動 Motivation Piano 鋼琴背景音樂 (自 01:10 高潮段開始)
     playLocalBGM(true);
 
-    // 等待後端配對數據就緒 (最多等待 3 秒)
+    // 等待後端配對數據就緒 (最多等待 2 秒)
     if (!currentMatchData || !currentMatchData.match) {
-        for (let i = 0; i < 20; i++) {
+        for (let i = 0; i < 15; i++) {
             if (currentMatchData && currentMatchData.match) break;
-            await new Promise(resolve => setTimeout(resolve, 150));
+            await new Promise(resolve => setTimeout(resolve, 100));
         }
+    }
+
+    // 若後端回應正常，使用後端數據；若極端延遲，啟動前端備援配對引擎
+    if (!currentMatchData || !currentMatchData.match) {
+        currentMatchData = getClientSideFallbackMatch(selectedMBTI, selectedResidence, selectedZodiac, selectedCountry);
     }
 
     if (currentMatchData && currentMatchData.match) {
@@ -974,6 +979,39 @@ async function openMysticResultModal() {
         modal.scrollTop = 0;
         showToast("🎉 願星光照亮您與毛孩的相遇。", "success");
     }
+}
+
+// 前端備援配對資料庫 (確保 100% 保證渲染)
+function getClientSideFallbackMatch(mbti, residence, zodiac, country) {
+    const fallbackMap = {
+        "INFP": { breed_name: "英國短毛貓", pet_type: "短毛貓", title: "治癒系安靜守護者", personality_traits: "溫柔沉靜、獨立不黏人、低噪不擾鄰", match_score: 98, image_icon: "🐱", match_reason: "INFP 內心細膩需要個人放鬆空間，英國短毛貓獨立安靜，不會過度索求關注，能給予彼此最適當的心靈慰藉。", care_tips: "英短日常需定期梳除廢毛以防毛球症，建議定期預約沐曦「純清潔」與「深層護髮SPA」。", recommended_service: "純清潔 + 深層護髮SPA" },
+        "ENFP": { breed_name: "威爾斯柯基犬", pet_type: "中型犬", title: "活力四射的快樂泉源", personality_traits: "熱情開朗、幽默頑皮、親和力滿分", match_score: 99, image_icon: "🐕", match_reason: "ENFP 充滿好奇心與活力，短腿大屁股的柯基總是元氣滿滿，兩者相處每天都充滿歡笑與驚喜！", care_tips: "柯基短毛但掉毛量大且易胖，建議定期來沐曦體驗「純清潔」排廢毛與「碳酸泉浴」舒緩關節肌肉。", recommended_service: "純清潔 + 碳酸泉浴" },
+        "INFJ": { breed_name: "俄羅斯藍貓", pet_type: "短毛貓", title: "神秘優雅的沉思者", personality_traits: "安靜害羞、忠誠專一、極度安靜", match_score: 98, image_icon: "🐱", match_reason: "INFJ 喜歡深度的靈魂共鳴與寧靜，俄羅斯藍貓動作優雅，只對最信任的主人敞開心房，是生活中的寧靜伴侶。", care_tips: "短密毛髮護理簡便，推薦沐曦「純清潔」溫和洗劑調理，維持銀藍色皮毛的光澤質感。", recommended_service: "純清潔" },
+        "ENFJ": { breed_name: "比熊犬", pet_type: "小型犬", title: "人見人愛的小棉花糖", personality_traits: "樂觀友善、極愛撒嬌、社交達人", match_score: 98, image_icon: "🐩", match_reason: "ENFJ 喜歡照顧他人且極具號召力，比熊犬圓滾滾的棉花糖外型與樂天個性，能激發 ENFJ 的滿滿愛心！", care_tips: "比熊需維持經典圓頭造型，推薦沐曦「大美容（精緻手剪）」搭配「深層護髮SPA」，維持雪白蓬鬆！", recommended_service: "大美容 + 深層護髮SPA" },
+        "INTJ": { breed_name: "德國牧羊犬", pet_type: "大型犬", title: "冷靜敏銳的戰略護衛", personality_traits: "極高服從度、聰明機警、忠心不二", match_score: 97, image_icon: "🐕", match_reason: "INTJ 欣賞聰明與執行力，德國牧羊犬具備頂級智商與工作能力，是能與 INTJ 達成默契的高智商夥伴。", care_tips: "大型工作犬關節皮毛保養至關重要，建議施作沐曦「大美容」與「碳酸泉浴」維護肌肉關節健康。", recommended_service: "大美容 + 碳酸泉浴" },
+        "ENTJ": { breed_name: "杜賓犬", pet_type: "大型犬", title: "威嚴果斷的領導風範", personality_traits: "自信從容、紀律嚴明、高貴敏捷", match_score: 97, image_icon: "🐕", match_reason: "ENTJ 天生領導者氣場強大，杜賓犬身形矯健、忠心耿耿且服從性高，展現王者風範！", care_tips: "短毛但需注意皮脂分泌與毛孔健康，推薦沐曦「小美容」與「除蚤藥浴 / 草本浴」。", recommended_service: "小美容 + 草本浴" },
+        "INTP": { breed_name: "米克斯貓", pet_type: "短毛貓", title: "奇思妙想的哲學家貓", personality_traits: "自得其樂、好奇心強、低維護成本", match_score: 96, image_icon: "🐱", match_reason: "INTP 沉浸於自己的思想世界，米克斯貓極度聰明且獨立，在生活中能自得其樂探索世界，不會打擾思考節奏。", care_tips: "定期基本梳洗剪指甲，交給沐曦「純清潔」輕鬆搞定！", recommended_service: "純清潔" },
+        "ENTP": { breed_name: "邊境牧羊犬", pet_type: "中型犬", title: "機智滿分的高智商挑戰者", personality_traits: "反應極快、鬼點子多、學習力超群", match_score: 96, image_icon: "🐕", match_reason: "ENTP 熱愛智力挑戰與創新，邊牧智商犬界第一，兩者在一起就像智商對決，隨時能互動訓練把戲！", care_tips: "邊牧活動量大毛髮易髒，建議預約沐曦「大美容」進行深層清潔與廢毛梳整。", recommended_service: "大美容" },
+        "ISFJ": { breed_name: "布偶貓", pet_type: "長毛貓", title: "溫柔撫慰的家庭天使", personality_traits: "黏人貼心、極具母愛、性格溫和", match_score: 99, image_icon: "🐱", match_reason: "ISFJ 善於照顧他人且富有同情心，布偶貓渴望愛撫與陪伴，兩者相處就像溫暖的互相擁抱！", care_tips: "布偶貓絲滑長毛需細緻護理，推薦沐曦「大美容」與日本 Afloat「深層護髮SPA」。", recommended_service: "大美容 + 深層護髮SPA" },
+        "ESFJ": { breed_name: "博美犬", pet_type: "小型犬", title: "熱情洋溢的社交小狐狸", personality_traits: "開朗活潑、討人喜歡、極具存在感", match_score: 97, image_icon: "🐶", match_reason: "ESFJ 喜歡熱鬧與照顧朋友，博美犬蓬鬆毛量與靈動雙眼隨時帶來滿滿歡樂！", care_tips: "博美犬雙層毛需維持圓球立體感，推薦沐曦「大美容（精緻手剪）」呈現最完美的蓬鬆圓球造型！", recommended_service: "大美容" },
+        "ISTJ": { breed_name: "迷你雪納瑞", pet_type: "小型犬", title: "守規矩的忠實小老頭", personality_traits: "不掉毛、機警守規律、適應力極強", match_score: 98, image_icon: "🐕", match_reason: "ISTJ 重視責任感與生活規律，雪納瑞個性沉穩有原則，定時作息，不掉毛特質非常適合規律生活。", care_tips: "雪納瑞招牌鬍鬚與眉毛造型，推薦沐曦「小美容」定期精準修剪保持帥氣！", recommended_service: "小美容" },
+        "ESTJ": { breed_name: "拉布拉多犬", pet_type: "大型犬", title: "紀律嚴明的家庭保衛者", personality_traits: "忠實果敢、服從命令、具責任感", match_score: 98, image_icon: "🐕", match_reason: "ESTJ 重視秩序與組織力，拉布拉多的服從與高度責任感能完美配合家庭步調。", care_tips: "推薦定期預約沐曦「大美容」進行皮毛保養與筋骨舒緩碳酸泉浴。", recommended_service: "大美容 + 碳酸泉浴" },
+        "ISFP": { breed_name: "金吉拉貓", pet_type: "長毛貓", title: "優雅安靜的藝術品", personality_traits: "氣質優雅、不吵不鬧、愛乾淨、神情溫柔", match_score: 97, image_icon: "🐱", match_reason: "ISFP 具備藝術家審美與敏感心靈，金吉拉貓宛如行走的藝術品，帶來視覺與心靈的和諧美感。", care_tips: "金吉拉毛髮飄逸需防打結，推薦沐曦「深層護髮SPA」與「純清潔」維持毛髮柔順。", recommended_service: "純清潔 + 深層護髮SPA" },
+        "ESFP": { breed_name: "黃金獵犬", pet_type: "大型犬", title: "陽光燦爛的派對之星", personality_traits: "超級熱情、人來瘋、自帶陽光笑容", match_score: 99, image_icon: "🐕", match_reason: "ESFP 熱愛派對與歡笑，黃金獵犬搖著大尾巴迎接每個人，生活無時無刻都是嘉年華！", care_tips: "大型長毛犬洗澡吹整耗時，沐曦專業設備提供「大美容」及「深層護髮SPA」。", recommended_service: "大美容 + 深層護髮SPA" },
+        "ISTP": { breed_name: "柴犬", pet_type: "中型犬", title: "獨立冷酷的武士犬", personality_traits: "有主見、不黏人、愛乾淨、身手矯捷", match_score: 96, image_icon: "🐕", match_reason: "ISTP 享受個人空間與獨立行事，柴犬自律愛乾淨且不黏人，彼此尊重邊界，默契絕佳！", care_tips: "柴犬換毛季毛量驚人，推薦沐曦「小美容」深層除廢毛與清潔耳道。", recommended_service: "小美容" },
+        "ESTP": { breed_name: "傑克羅素梗", pet_type: "小型犬", title: "永不疲倦的極限運動家", personality_traits: "精力充沛、無所畏懼、靈敏敏捷", match_score: 97, image_icon: "🐶", match_reason: "ESTP 熱愛冒險與挑戰，傑克羅素梗電力滿格、反應極快，是陪你上山下海的最佳戶外搭檔！", care_tips: "戶外活動頻繁需預防體外寄生蟲，推薦沐曦「小美容」與「除蚤藥浴」。", recommended_service: "小美容 + 除蚤藥浴" }
+    };
+    const m = fallbackMap[mbti] || fallbackMap["INFP"];
+    return {
+        match: m,
+        query: { mbti: mbti || "INFP", residence: residence || "電梯大樓", country: country || "台灣", zodiac: zodiac || "獅子座" },
+        country_advice: "🇹🇼 【台灣海島氣候照護重點】：台灣氣候長年潮濕悶熱，毛孩容易有皮脂分泌過盛、耳道潮濕發炎與體外寄生蟲困擾。沐曦特別推薦定期施作「除蚤藥浴」與「草本泥浴」，有效淨化毛囊、舒緩換季皮膚搔癢！",
+        zodiac_advice: `✨ ${zodiac || "獅子座"} 的星象祝福注入靈魂默契，讓您與 ${m.breed_name} 的相遇充滿星光共鳴與溫暖守護。`,
+        alternatives: [
+            { breed_name: "英國短毛貓", pet_type: "短毛貓", title: "溫柔治癒系", personality_traits: "安靜沉穩、低噪獨立", image_icon: "🐱" },
+            { breed_name: "黃金獵犬", pet_type: "大型犬", title: "陽光大天使", personality_traits: "友善親人、熱愛陪伴", image_icon: "🐕" }
+        ]
+    };
 }
 
 // 關閉神秘結果視窗

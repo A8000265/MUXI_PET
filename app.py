@@ -1237,13 +1237,30 @@ def match_pet():
                 match_row = cur.fetchone()
 
             # 4. 取得其他 2 隻備選推薦毛孩
-            cur.execute("""
-                SELECT * FROM pet_matches 
-                WHERE id != %s 
-                ORDER BY RAND() 
-                LIMIT 2;
-            """, (match_row["id"],))
-            alt_rows = cur.fetchall()
+            try:
+                cur.execute("""
+                    SELECT * FROM pet_matches 
+                    WHERE id != %s 
+                    ORDER BY RANDOM() 
+                    LIMIT 2;
+                """, (match_row["id"],))
+                alt_rows = cur.fetchall()
+            except Exception:
+                try:
+                    cur.execute("""
+                        SELECT * FROM pet_matches 
+                        WHERE id != %s 
+                        ORDER BY RAND() 
+                        LIMIT 2;
+                    """, (match_row["id"],))
+                    alt_rows = cur.fetchall()
+                except Exception:
+                    cur.execute("""
+                        SELECT * FROM pet_matches 
+                        WHERE id != %s 
+                        LIMIT 2;
+                    """, (match_row["id"],))
+                    alt_rows = cur.fetchall()
 
         conn.close()
 
