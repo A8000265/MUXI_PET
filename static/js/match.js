@@ -11,6 +11,18 @@ let currentMatchData = null;
 let zodiacProfilesList = [];
 let audioCtx = null;
 let meteorAnimationId = null;
+let divinationTimers = [];
+
+function clearAllDivinationTimers() {
+    divinationTimers.forEach(t => clearTimeout(t));
+    divinationTimers = [];
+}
+
+function addDivinationTimeout(fn, delay) {
+    const t = setTimeout(fn, delay);
+    divinationTimers.push(t);
+    return t;
+}
 
 // 初始化 Web Audio API 音效引擎
 function getAudioContext() {
@@ -462,6 +474,7 @@ async function submitPetMatch() {
     }
 
     getAudioContext(); // 確保 AudioContext 被使用者點擊啟用
+    currentMatchData = null; // 清除前次配對暫存
 
     const btn = document.getElementById("btnStartMatch");
     if (btn) {
@@ -496,30 +509,41 @@ async function submitPetMatch() {
 
 // 10. 水晶占卜階段 ➔ 幸運光球升起 ➔ 展開星座夜空
 function startCrystalDivinationExperience() {
+    clearAllDivinationTimers();
+
     const overlay = document.getElementById("lotteryInteractiveOverlay");
     const crystalStage = document.getElementById("crystalDivinationStage");
     const skyStage = document.getElementById("constellationSkyStage");
     const risingOrb = document.getElementById("crystalRisingOrb");
     const starJar = document.getElementById("starJarContainer");
     const jarStars = document.getElementById("glassJarStars");
+    const stormContainer = document.getElementById("meteorStormContainer");
+    const flashScreen = document.getElementById("supernovaFlashScreen");
+    const svgEl = document.getElementById("constellationSvg");
 
     if (!overlay || !crystalStage || !skyStage) return;
 
     overlay.style.display = "flex";
     crystalStage.style.display = "flex";
     skyStage.style.display = "none";
+    if (risingOrb) {
+        risingOrb.style.display = "none";
+        risingOrb.innerText = "";
+    }
     if (starJar) {
         starJar.style.display = "none";
-        starJar.classList.remove("pouring");
+        starJar.classList.remove("pouring", "jar-jiggle");
     }
     if (jarStars) jarStars.innerHTML = "";
-    if (risingOrb) risingOrb.style.display = "none";
+    if (stormContainer) stormContainer.innerHTML = "";
+    if (flashScreen) flashScreen.style.opacity = "0";
+    if (svgEl) svgEl.innerHTML = "";
 
     // 播放神秘環境音
     playGlassWindChimeEcho(0);
 
     // 1.3 秒後升起星座幸運核
-    setTimeout(() => {
+    addDivinationTimeout(() => {
         if (risingOrb) {
             risingOrb.innerText = getZodiacIcon(selectedZodiac);
             risingOrb.style.display = "flex";
@@ -527,7 +551,7 @@ function startCrystalDivinationExperience() {
         playGlassWindChimeEcho(3);
 
         // 1.1 秒後展開星座夜空與右下角許願星星瓶
-        setTimeout(() => {
+        addDivinationTimeout(() => {
             crystalStage.style.display = "none";
             skyStage.style.display = "flex";
             if (starJar) starJar.style.display = "flex";
@@ -1029,6 +1053,46 @@ function closeMysticResultModal() {
     }
     // 停止 Motivation Piano 鋼琴背景音樂
     stopLocalBGM();
+
+    // 清除所有排隊中的占卜動畫計時器
+    clearAllDivinationTimers();
+    currentMatchData = null;
+
+    // 重設占卜各階段 DOM 元素，確保二次測驗完全乾淨
+    const overlay = document.getElementById("lotteryInteractiveOverlay");
+    const crystalStage = document.getElementById("crystalDivinationStage");
+    const skyStage = document.getElementById("constellationSkyStage");
+    const risingOrb = document.getElementById("crystalRisingOrb");
+    const starJar = document.getElementById("starJarContainer");
+    const jarStars = document.getElementById("glassJarStars");
+    const stormContainer = document.getElementById("meteorStormContainer");
+    const flashScreen = document.getElementById("supernovaFlashScreen");
+    const svgEl = document.getElementById("constellationSvg");
+
+    if (overlay) overlay.style.display = "none";
+    if (crystalStage) crystalStage.style.display = "none";
+    if (skyStage) skyStage.style.display = "none";
+    if (risingOrb) {
+        risingOrb.style.display = "none";
+        risingOrb.innerText = "";
+    }
+    if (starJar) {
+        starJar.style.display = "none";
+        starJar.classList.remove("pouring", "jar-jiggle");
+    }
+    if (jarStars) jarStars.innerHTML = "";
+    if (stormContainer) stormContainer.innerHTML = "";
+    if (flashScreen) flashScreen.style.opacity = "0";
+    if (svgEl) svgEl.innerHTML = "";
+
+    const btn = document.getElementById("btnStartMatch");
+    if (btn) {
+        btn.disabled = false;
+        btn.innerText = "🔮 開始毛孩速配測驗";
+    }
+
+    // 捲動回測驗選項頂部
+    window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 // 15. Canvas 流星雨持續流動背景
