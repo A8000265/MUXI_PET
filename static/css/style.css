@@ -4121,25 +4121,156 @@ img, video, iframe, canvas, svg {
         border-radius: 10px !important;
     }
 
-    /* 4. 首頁 (index.html) */
-    .index-hero {
-        padding: 30px 15px !important;
-    }
-    .service-cards-container, .service-cards {
-        display: flex !important;
+    /* 4. 首頁 (index.html) Banner 下方「關於沐曦」與「主要內容區」手機垂直自適應排版 */
+    .about-section {
         flex-direction: column !important;
-        gap: 15px !important;
-        width: 100% !important;
-        padding: 0 10px !important;
-    }
-    .service-card {
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 30px 15px !important;
+        gap: 20px !important;
         width: 100% !important;
         max-width: 100% !important;
+        overflow: hidden !important;
+    }
+    .about-graphic.left {
+        flex: none !important;
+        width: 100% !important;
+        max-width: 220px !important;
+        margin: 0 auto !important;
+        order: 2 !important;
+    }
+    .about-graphic.left svg {
+        width: 100% !important;
+        height: auto !important;
+        max-height: 200px !important;
+    }
+    .about-content {
+        flex: none !important;
+        min-width: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 10px !important;
+        order: 1 !important;
+        text-align: center !important;
+    }
+    .about-content dotlottie-player {
+        width: 110px !important;
+        height: 110px !important;
+        margin: 0 auto !important;
+    }
+    .about-content .title-orange {
+        font-size: 28px !important;
+        margin: 8px 0 !important;
+    }
+    .about-text {
+        font-size: 15px !important;
+        line-height: 1.8 !important;
+        max-width: 100% !important;
+        word-break: break-word !important;
+        padding: 0 5px !important;
+    }
+    .about-graphic.right {
+        flex: none !important;
+        width: 100% !important;
+        max-width: 180px !important;
+        margin: 0 auto !important;
+        order: 3 !important;
+    }
+    .paw-graphic {
+        max-width: 150px !important;
+        height: auto !important;
+    }
+
+    /* 首頁主要內容區 (左邊 FAQ + 右邊服務項目) */
+    .main-content {
+        flex-direction: column !important;
+        padding: 20px 15px !important;
+        gap: 30px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: hidden !important;
+    }
+    .faq-container {
+        flex: none !important;
+        min-width: 0 !important;
+        width: 100% !important;
+    }
+    .faq-container .title-pink {
+        font-size: 28px !important;
+        margin-bottom: 15px !important;
+        text-align: center !important;
+    }
+    .faq-item {
+        padding: 14px 12px !important;
+        margin-bottom: 12px !important;
+    }
+    .faq-item .question {
+        font-size: 15px !important;
+    }
+    .faq-item .answer {
+        font-size: 13.5px !important;
+        line-height: 1.6 !important;
+    }
+    .services-container {
+        flex: none !important;
+        min-width: 0 !important;
+        width: 100% !important;
+    }
+    .services-header {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 5px !important;
+        margin-bottom: 15px !important;
+    }
+    .services-header dotlottie-player {
+        width: 50px !important;
+        height: 50px !important;
+    }
+    .services-header .title-cyan {
+        font-size: 28px !important;
         margin: 0 !important;
     }
-    .index-gallery-grid {
-        grid-template-columns: 1fr 1fr !important;
-        gap: 10px !important;
+    .services-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px !important;
+        width: 100% !important;
+    }
+    .service-card {
+        padding: 15px 8px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    .service-card .icon-box {
+        width: 56px !important;
+        height: 56px !important;
+        font-size: 26px !important;
+        line-height: 50px !important;
+    }
+    .service-card h4 {
+        font-size: 15px !important;
+        margin-top: 6px !important;
+    }
+
+    /* 頁尾 (site-footer) 手機排版 */
+    .site-footer {
+        flex-direction: column !important;
+        text-align: center !important;
+        padding: 30px 15px !important;
+        gap: 15px !important;
+    }
+    .site-footer dotlottie-player {
+        width: 160px !important;
+        height: 160px !important;
+        margin: 0 auto !important;
+    }
+    .footer-info p {
+        font-size: 13px !important;
+        margin: 4px 0 !important;
+    }
+    .social-links {
+        justify-content: center !important;
     }
 
     /* 5. 寵物美容 (clean.html, clean2.html) */
@@ -4205,58 +4336,127 @@ img, video, iframe, canvas, svg {
 
     /* 8. MBTI 毛孩速配測驗 (game.html / match.html) */
     .match-container {
-        width: 96% !important;
+        width: 95% !important;
+        max-width: 100% !important;
         padding: 15px 8px !important;
+        margin: 15px auto !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+    }
+    .match-hero-header {
+        padding: 10px 5px !important;
     }
     .match-hero-header h2 {
         font-size: 20px !important;
+        line-height: 1.3 !important;
+    }
+    .match-hero-header p {
+        font-size: 13.5px !important;
+        line-height: 1.6 !important;
+    }
+    .section-title-step {
+        font-size: 16px !important;
+        margin: 20px 0 10px 0 !important;
+        flex-wrap: wrap !important;
     }
     .mbti-groups-container {
         grid-template-columns: 1fr !important;
         gap: 12px !important;
+        width: 100% !important;
     }
-    .mbti-grid {
-        grid-template-columns: 1fr 1fr !important;
+    .mbti-group {
+        padding: 12px 10px !important;
+    }
+    .mbti-cards-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
         gap: 8px !important;
     }
     .mbti-card {
-        padding: 10px 8px !important;
+        padding: 8px 6px !important;
     }
     .mbti-code {
         font-size: 15px !important;
     }
-    .residence-grid, .country-grid {
-        grid-template-columns: 1fr !important;
-        gap: 10px !important;
+    .mbti-name {
+        font-size: 12px !important;
     }
-    .zodiac-grid {
+    .mbti-keyword {
+        font-size: 11px !important;
+    }
+    .residence-cards-grid, .country-cards-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+        width: 100% !important;
+    }
+    .residence-card, .country-card {
+        padding: 10px 6px !important;
+    }
+    .residence-name, .country-name {
+        font-size: 13px !important;
+    }
+    .zodiac-cards-grid {
         grid-template-columns: repeat(3, 1fr) !important;
         gap: 6px !important;
+        width: 100% !important;
     }
     .zodiac-card {
         padding: 8px 4px !important;
     }
-    .zodiac-card .zodiac-icon {
-        font-size: 20px !important;
+    .zodiac-icon {
+        font-size: 22px !important;
     }
-    .zodiac-card .zodiac-name {
+    .zodiac-name {
         font-size: 12px !important;
+    }
+    .zodiac-dates {
+        font-size: 10px !important;
+    }
+    .birthday-picker-box {
+        padding: 12px 10px !important;
+        font-size: 14px !important;
+    }
+    .birthday-input {
+        font-size: 16px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    #btnStartMatch {
+        width: 100% !important;
+        max-width: 100% !important;
+        font-size: 17px !important;
+        padding: 14px 20px !important;
     }
 
     /* 水晶占卜全螢幕遮罩手機縮放 */
     .crystal-ball-container {
-        width: 220px !important;
-        height: 220px !important;
+        width: 200px !important;
+        height: 200px !important;
+    }
+    .crystal-divination-stage {
+        padding: 15px 10px !important;
+    }
+    .crystal-title {
+        font-size: 17px !important;
     }
     .constellation-sky-box {
-        width: 95vw !important;
-        height: 72vh !important;
+        width: 96vw !important;
+        height: 70vh !important;
     }
     .star-jar-container {
-        bottom: 12px !important;
-        right: 12px !important;
-        transform: scale(0.85);
-        transform-origin: bottom right;
+        bottom: 10px !important;
+        right: 10px !important;
+        transform: scale(0.8) !important;
+        transform-origin: bottom right !important;
+    }
+    .match-result-modal-content {
+        width: 95% !important;
+        padding: 18px 12px !important;
+        max-height: 90vh !important;
+    }
+    .result-pet-avatar {
+        width: 100px !important;
+        height: 100px !important;
+        font-size: 50px !important;
     }
 
     /* 神秘結果彈窗手機最佳化 */
