@@ -1660,6 +1660,101 @@ def list_saved_matches():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
+
+@app.route("/api/contact", methods=["POST"])
+def submit_contact_inquiry():
+    """處理顧客線上聯絡客服留言，寫入資料庫並即時寄發通知信至官方信箱 muxipet.service@gmail.com"""
+    data = request.get_json() or {}
+    name = data.get("name", "").strip()
+    phone = data.get("phone", "").strip()
+    email = data.get("email", "").strip()
+    category = data.get("category", "一般諮詢").strip()
+    message = data.get("message", "").strip()
+
+    if not name or not email or not message:
+        return jsonify({"success": False, "error": "請填寫完整姓名、聯絡信箱與諮詢內容！"}), 400
+
+    # 1. 寫入資料庫 contact_inquiries (防禦性自動建表)
+    try:
+        conn = get_db_connection()
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS `contact_inquiries` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `name` VARCHAR(100) NOT NULL,
+                    `phone` VARCHAR(50) DEFAULT '',
+                    `email` VARCHAR(150) NOT NULL,
+                    `category` VARCHAR(100) DEFAULT '一般諮詢',
+                    `message` TEXT NOT NULL,
+                    `status` VARCHAR(50) DEFAULT 'pending',
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+            """)
+            cur.execute("""
+                INSERT INTO contact_inquiries (name, phone, email, category, message)
+                VALUES (%s, %s, %s, %s, %s);
+            """, (name, phone, email, category, message))
+        conn.close()
+    except Exception as e:
+        print(f"[Contact DB Notice] {e}")
+
+    # 2. 發送真實通知信至沐曦官方客服信箱 (muxipet.service@gmail.com)
+    official_admin_email = os.getenv("MAIL_USERNAME", "muxipet.service@gmail.com")
+    now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    admin_notify_html = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #FFE4D6; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        <div style="background: #FE7000; color: #FFF; padding: 20px; text-align: center;">
+            <h2 style="margin: 0; font-size: 22px;">📬 沐曦官網 - 新增顧客客服留言諮詢</h2>
+        </div>
+        <div style="padding: 24px; color: #333; line-height: 1.6;">
+            <p>親愛的沐曦管理團隊您好：</p>
+            <p>官網剛剛收到一則新的顧客線上留言諮詢，詳細資訊如下：</p>
+            <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+                <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666; width: 100px;">顧客姓名</td><td style="font-weight: bold;">{name}</td></tr>
+                <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">聯絡電話</td><td>{phone or "未提供"}</td></tr>
+                <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">顧客信箱</td><td><a href="mailto:{email}" style="color: #FE7000; font-weight: bold;">{email}</a></td></tr>
+                <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">諮詢類別</td><td><span style="background: #FFF0E5; color: #FE7000; padding: 3px 10px; border-radius: 12px; font-size: 13px; font-weight: bold;">{category}</span></td></tr>
+                <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">留言時間</td><td>{now_str}</td></tr>
+            </table>
+            <div style="background: #F9FAFB; padding: 15px; border-radius: 8px; border-left: 4px solid #FE7000; margin: 15px 0;">
+                <p style="margin: 0 0 5px 0; font-weight: bold; color: #374151;">💬 顧客諮詢內容：</p>
+                <p style="margin: 0; color: #4B5563; white-space: pre-wrap;">{message}</p>
+            </div>
+            <p style="text-align: center; margin-top: 25px; font-size: 12px; color: #999;">沐曦 MuXi 寵物生活館 線上客服系統</p>
+        </div>
+    </div>
+    """
+    send_smtp_email(official_admin_email, f"📬【沐曦客服通知】來自 {name} 的「{category}」諮詢信件", admin_notify_html)
+
+    # 3. 發送感謝確認信副本給顧客
+    customer_receipt_html = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        <div style="background: #111827; color: #FFF; padding: 20px; text-align: center;">
+            <h2 style="margin: 0; font-size: 22px;">🐾 沐曦 MuXi - 客服留言確認函</h2>
+        </div>
+        <div style="padding: 24px; color: #333; line-height: 1.6;">
+            <p>親愛的 <b>{name}</b> 您好：</p>
+            <p>感謝您聯繫沐曦寵物生活館！我們已收到您的諮詢留言：</p>
+            <div style="background: #F3F4F6; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                <p style="margin: 0 0 5px 0;"><b>諮詢類別：</b>{category}</p>
+                <p style="margin: 0 0 5px 0;"><b>您的留言：</b><br>{message}</p>
+            </div>
+            <p style="color: #6B7280; font-size: 14px;">
+                門市客服專員將於營業時間內（9:00 - 17:00）儘速回覆您的信箱或透過電話聯繫您。<br>
+                若有緊急毛孩照護或預約需求，亦可直接致電專線：07-3814526 / 0939185295。
+            </p>
+            <p style="text-align: center; margin-top: 25px; font-size: 12px; color: #999;">沐曦 MuXi 寵物生活館 敬上</p>
+        </div>
+    </div>
+    """
+    send_smtp_email(email, "【沐曦 MuXi】我們已收到您的客服諮詢留言！", customer_receipt_html)
+
+    return jsonify({
+        "success": True,
+        "message": "您的諮詢留言已成功送達沐曦客服信箱 (muxipet.service@gmail.com)！我們將儘速與您聯繫！"
+    }), 200
+
 # 模組載入時自動初始化資料庫 (確保在 Gunicorn / Render 雲端環境啟動時自動建立全部資料表與種子資料)
 try:
     init_db()
