@@ -1414,9 +1414,29 @@ def send_match_backup():
     care_tips = match_data.get("care_tips", "")
 
     try:
-        # 1. 寫入 MySQL saved_matches 資料表
+        # 1. 寫入 saved_matches 資料表 (防禦性確保資料表存在)
         conn = get_db_connection()
         with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS `saved_matches` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `email` VARCHAR(150) NOT NULL,
+                    `owner_name` VARCHAR(100) DEFAULT '親愛的毛孩家長',
+                    `mbti` VARCHAR(10) NOT NULL,
+                    `residence` VARCHAR(50) NOT NULL,
+                    `country` VARCHAR(50) NOT NULL,
+                    `birthday` VARCHAR(20) DEFAULT '',
+                    `zodiac` VARCHAR(30) DEFAULT '',
+                    `breed_name` VARCHAR(100) NOT NULL,
+                    `pet_type` VARCHAR(50) NOT NULL,
+                    `title` VARCHAR(150) NOT NULL,
+                    `match_score` INT NOT NULL,
+                    `match_reason` TEXT NOT NULL,
+                    `care_tips` TEXT NOT NULL,
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    INDEX `idx_email` (`email`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+            """)
             cur.execute("""
                 INSERT INTO saved_matches (
                     email, owner_name, mbti, residence, country, birthday, zodiac,
@@ -1501,9 +1521,13 @@ def list_saved_matches():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
+# 模組載入時自動初始化資料庫 (確保在 Gunicorn / Render 雲端環境啟動時自動建立全部資料表與種子資料)
+try:
+    init_db()
+except Exception as e:
+    print(f"[Init DB Notice] {e}")
 
 if __name__ == "__main__":
-    init_db()
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
 
