@@ -19,37 +19,50 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 def send_smtp_email(to_email, subject, html_content):
-    """透過免費 Gmail SMTP 或其他 SMTP 伺服器發送真實信件 (安全容錯防崩潰)"""
+    """透過 Gmail SMTP 發送真實信件 (支援 Port 587 TLS 與 Port 465 SSL 雙重自動備援)"""
     if not to_email or "@" not in to_email:
         return False
-    smtp_server = os.getenv("MAIL_SERVER", "smtp.gmail.com")
-    smtp_port = int(os.getenv("MAIL_PORT", 587))
     mail_user = os.getenv("MAIL_USERNAME", "").strip()
     mail_pass = os.getenv("MAIL_PASSWORD", "").strip().replace(" ", "")
     sender_name = os.getenv("MAIL_SENDER_NAME", "沐曦 MuXi 寵物生活館")
 
     if not mail_user or not mail_pass:
-        print(f"[Email Notice] 模擬發送通知信至 {to_email}：{subject}")
+        print(f"[Email Notice] 未設定 MAIL_USERNAME 或 MAIL_PASSWORD，跳過寄信至: {to_email}")
         return True
 
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = subject
+    msg["From"] = f"{sender_name} <{mail_user}>"
+    msg["To"] = to_email
+
+    part = MIMEText(html_content, "html", "utf-8")
+    msg.attach(part)
+
+    # 1. 優先嘗試 TLS (Port 587)
     try:
-        msg = MIMEMultipart("alternative")
-        msg["Subject"] = subject
-        msg["From"] = f"{sender_name} <{mail_user}>"
-        msg["To"] = to_email
-
-        part = MIMEText(html_content, "html", "utf-8")
-        msg.attach(part)
-
-        server = smtplib.SMTP(smtp_server, smtp_port, timeout=8)
+        server = smtplib.SMTP("smtp.gmail.com", 587, timeout=12)
+        server.ehlo()
         server.starttls()
+        server.ehlo()
         server.login(mail_user, mail_pass)
         server.sendmail(mail_user, [to_email], msg.as_string())
         server.quit()
-        print(f"[Email Success] 成功寄送真實信件至: {to_email}")
+        print(f"[Email Success] 成功透過 Port 587 寄送真實信件至: {to_email}")
         return True
-    except Exception as e:
-        print(f"[Email Notice] 寄信失敗 (不影響網頁流程): {e}")
+    except Exception as e1:
+        print(f"[Email Port 587 Fail] {e1}，嘗試切換至 SSL Port 465...")
+
+    # 2. 備援嘗試 SSL (Port 465)
+    try:
+        server = smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=12)
+        server.ehlo()
+        server.login(mail_user, mail_pass)
+        server.sendmail(mail_user, [to_email], msg.as_string())
+        server.quit()
+        print(f"[Email Success] 成功透過 Port 465 SSL 寄送真實信件至: {to_email}")
+        return True
+    except Exception as e2:
+        print(f"[Email Error] 寄信失敗: {e2}")
         return False
 
 # ==========================================
