@@ -22,16 +22,43 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 def _send_email_worker(to_email, subject, html_content):
-    """真正執行發信的工作函式 (支援 Resend HTTPS API 與 Gmail SMTP 雙重引擎)"""
+    """真正執行發信的工作函式 (支援 Brevo HTTPS API、Resend HTTPS API 與 Gmail SMTP 多重引擎)"""
     if not to_email or "@" not in to_email:
         return False
 
+    brevo_api_key = os.getenv("BREVO_API_KEY", "").strip()
     resend_api_key = os.getenv("RESEND_API_KEY", "").strip()
     mail_user = os.getenv("MAIL_USERNAME", "").strip()
     mail_pass = os.getenv("MAIL_PASSWORD", "").strip().replace(" ", "")
     sender_name = os.getenv("MAIL_SENDER_NAME", "沐曦 MuXi 寵物生活館")
 
-    # 1. 優先使用 Resend 免費 HTTPS API (免除任何雲端防火牆通訊埠阻擋)
+    # 1. 優先使用 Brevo (Sendinblue) HTTPS API (Port 443，可自由寄送至全球任何信箱，免網域驗證)
+    if brevo_api_key:
+        try:
+            payload = json.dumps({
+                "sender": {"name": sender_name, "email": mail_user or "muxipet.service@gmail.com"},
+                "to": [{"email": to_email}],
+                "subject": subject,
+                "htmlContent": html_content
+            }, ensure_ascii=False).encode("utf-8")
+
+            req = urllib.request.Request(
+                "https://api.brevo.com/v3/smtp/email",
+                data=payload,
+                headers={
+                    "api-key": brevo_api_key,
+                    "Content-Type": "application/json; charset=utf-8",
+                    "accept": "application/json"
+                },
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=6) as resp:
+                print(f"[Email Success (Brevo API)] 成功寄出信件至: {to_email}")
+                return True
+        except Exception as e:
+            print(f"[Email Brevo Notice] {e}")
+
+    # 2. 次選使用 Resend HTTPS API (Port 443，若為測試沙盒且受限則智慧轉送至註冊主信箱)
     if resend_api_key:
         try:
             payload = json.dumps({
@@ -55,10 +82,39 @@ def _send_email_worker(to_email, subject, html_content):
                 res_data = json.loads(resp.read().decode("utf-8"))
                 print(f"[Email Success (Resend API)] 成功寄出信件至: {to_email}, ID: {res_data.get('id')}")
                 return True
+        except urllib.error.HTTPError as he:
+            # 若因 Resend 免費沙盒僅能寄給主帳號 (403 Forbidden)
+            err_body = he.read().decode("utf-8", errors="ignore")
+            print(f"[Email Resend Sandbox Restriction] {err_body}")
+            # 備援轉送給主管理員信箱 (a8000265@gmail.com) 確保通知絕不遺漏
+            fallback_admin = "a8000265@gmail.com"
+            if to_email != fallback_admin:
+                try:
+                    fallback_payload = json.dumps({
+                        "from": "沐曦 MuXi <onboarding@resend.dev>",
+                        "to": [fallback_admin],
+                        "subject": f"[轉寄客服通知 (原收件者: {to_email})] {subject}",
+                        "html": f"<div style='background:#FFF3CD;padding:10px;border-radius:6px;margin-bottom:15px;color:#856404;'><b>📢 系統轉寄提醒：</b>本信件原欲發送給 <code>{to_email}</code>，因 Resend 測試沙盒模式自動轉寄至您的管理員信箱。</div>" + html_content
+                    }, ensure_ascii=False).encode("utf-8")
+                    req_fb = urllib.request.Request(
+                        "https://api.resend.com/emails",
+                        data=fallback_payload,
+                        headers={
+                            "Authorization": f"Bearer {resend_api_key}",
+                            "Content-Type": "application/json; charset=utf-8",
+                            "User-Agent": "MuXi-App"
+                        },
+                        method="POST"
+                    )
+                    with urllib.request.urlopen(req_fb, timeout=6) as resp_fb:
+                        print(f"[Email Success (Resend Fallback)] 成功轉寄至管理員信箱: {fallback_admin}")
+                        return True
+                except Exception as fb_err:
+                    print(f"[Email Resend Fallback Notice] {fb_err}")
         except Exception as e:
             print(f"[Email Resend Notice] {e}")
 
-    # 2. 次選使用 Gmail SMTP (Port 587 TLS)
+    # 3. 次選使用 Gmail SMTP (Port 587 TLS)
     if mail_user and mail_pass:
         msg = MIMEMultipart("alternative")
         msg["Subject"] = subject
@@ -1615,7 +1671,7 @@ def send_match_backup():
                 </div>
             </div>
             """
-            send_smtp_email(email, f"✨【沐曦 MuXi】您的命定毛孩速配報告：{breed_name} (契合度 {match_score}%)", match_email_html)
+            send_smtp_email(email, f"【沐曦 MuXi】{owner_name} 您好，您的毛孩速配測驗報告（命定推薦：{breed_name}）", match_email_html)
         except Exception:
             pass
 
