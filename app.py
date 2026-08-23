@@ -14,61 +14,96 @@ app.secret_key = "muxi_secret_session_key_2026_secure"
 
 ALL_SLOTS = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"]
 
+import json
+import threading
 import smtplib
+import urllib.request
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-def send_smtp_email(to_email, subject, html_content):
-    """透過 Gmail SMTP 發送真實信件 (支援 Port 587 TLS 與 Port 465 SSL 雙重自動備援)"""
+def _send_email_worker(to_email, subject, html_content):
+    """真正執行發信的工作函式 (支援 Resend HTTPS API 與 Gmail SMTP 雙重引擎)"""
     if not to_email or "@" not in to_email:
         return False
+
+    resend_api_key = os.getenv("RESEND_API_KEY", "").strip()
     mail_user = os.getenv("MAIL_USERNAME", "").strip()
     mail_pass = os.getenv("MAIL_PASSWORD", "").strip().replace(" ", "")
     sender_name = os.getenv("MAIL_SENDER_NAME", "沐曦 MuXi 寵物生活館")
 
-    if not mail_user or not mail_pass:
-        print(f"[Email Notice] 未設定 MAIL_USERNAME 或 MAIL_PASSWORD，跳過寄信至: {to_email}")
-        return True
+    # 1. 優先使用 Resend 免費 HTTPS API (免除任何雲端防火牆通訊埠阻擋)
+    if resend_api_key:
+        try:
+            payload = json.dumps({
+                "from": "沐曦 MuXi <onboarding@resend.dev>",
+                "to": [to_email],
+                "subject": subject,
+                "html": html_content
+            }, ensure_ascii=False).encode("utf-8")
 
-    msg = MIMEMultipart("alternative")
-    msg["Subject"] = subject
-    msg["From"] = f"{sender_name} <{mail_user}>"
-    msg["To"] = to_email
+            req = urllib.request.Request(
+                "https://api.resend.com/emails",
+                data=payload,
+                headers={
+                    "Authorization": f"Bearer {resend_api_key}",
+                    "Content-Type": "application/json; charset=utf-8",
+                    "User-Agent": "MuXi-App"
+                },
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=6) as resp:
+                res_data = json.loads(resp.read().decode("utf-8"))
+                print(f"[Email Success (Resend API)] 成功寄出信件至: {to_email}, ID: {res_data.get('id')}")
+                return True
+        except Exception as e:
+            print(f"[Email Resend Notice] {e}")
 
-    part = MIMEText(html_content, "html", "utf-8")
-    msg.attach(part)
+    # 2. 次選使用 Gmail SMTP (Port 587 TLS)
+    if mail_user and mail_pass:
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = subject
+        msg["From"] = f"{sender_name} <{mail_user}>"
+        msg["To"] = to_email
+        msg.attach(MIMEText(html_content, "html", "utf-8"))
 
-    # 1. 優先嘗試 TLS (Port 587)
-    try:
-        server = smtplib.SMTP("smtp.gmail.com", 587, timeout=12)
-        server.ehlo()
-        server.starttls()
-        server.ehlo()
-        server.login(mail_user, mail_pass)
-        server.sendmail(mail_user, [to_email], msg.as_string())
-        server.quit()
-        print(f"[Email Success] 成功透過 Port 587 寄送真實信件至: {to_email}")
-        return True
-    except Exception as e1:
-        print(f"[Email Port 587 Fail] {e1}，嘗試切換至 SSL Port 465...")
+        try:
+            server = smtplib.SMTP("smtp.gmail.com", 587, timeout=5)
+            server.ehlo()
+            server.starttls()
+            server.ehlo()
+            server.login(mail_user, mail_pass)
+            server.sendmail(mail_user, [to_email], msg.as_string())
+            server.quit()
+            print(f"[Email Success (Port 587)] 成功寄出信件至: {to_email}")
+            return True
+        except Exception as e1:
+            print(f"[Email Port 587 Fail] {e1}")
 
-    # 2. 備援嘗試 SSL (Port 465)
-    try:
-        server = smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=12)
-        server.ehlo()
-        server.login(mail_user, mail_pass)
-        server.sendmail(mail_user, [to_email], msg.as_string())
-        server.quit()
-        print(f"[Email Success] 成功透過 Port 465 SSL 寄送真實信件至: {to_email}")
-        return True
-    except Exception as e2:
-        print(f"[Email Error] 寄信失敗: {e2}")
-        return False
+        try:
+            server = smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=5)
+            server.ehlo()
+            server.login(mail_user, mail_pass)
+            server.sendmail(mail_user, [to_email], msg.as_string())
+            server.quit()
+            print(f"[Email Success (Port 465 SSL)] 成功寄出信件至: {to_email}")
+            return True
+        except Exception as e2:
+            print(f"[Email SMTP Fail] {e2}")
+
+    print(f"[Email Notice] 尚未設定金鑰或網路連線逾時，已妥善紀錄: {to_email}")
+    return False
+
+def send_smtp_email(to_email, subject, html_content):
+    """非同步非阻塞發送信件 (0.01 秒立即回傳前端，保證網頁絕不卡住)"""
+    thread = threading.Thread(target=_send_email_worker, args=(to_email, subject, html_content), daemon=True)
+    thread.start()
+    return True
 
 @app.route("/api/test-email", methods=["GET"])
 def test_email_diagnostic():
-    """診斷 Gmail SMTP 發信狀態 API (回傳詳細除錯資訊)"""
+    """診斷發信狀態 API (支援 Resend API 與 Gmail SMTP，5秒快速回傳)"""
     to_email = request.args.get("to", "a8000265@gmail.com").strip()
+    resend_api_key = os.getenv("RESEND_API_KEY", "").strip()
     mail_user = os.getenv("MAIL_USERNAME", "").strip()
     mail_pass = os.getenv("MAIL_PASSWORD", "").strip().replace(" ", "")
     
@@ -76,6 +111,7 @@ def test_email_diagnostic():
     
     diagnostic = {
         "target_email": to_email,
+        "RESEND_API_KEY_found": bool(resend_api_key),
         "MAIL_USERNAME_found": bool(mail_user),
         "MAIL_USERNAME_preview": masked_user,
         "MAIL_PASSWORD_found": bool(mail_pass),
@@ -83,52 +119,77 @@ def test_email_diagnostic():
         "attempts": []
     }
 
-    if not mail_user or not mail_pass:
-        diagnostic["success"] = False
-        diagnostic["error"] = "Render 環境變數中找不到 MAIL_USERNAME 或 MAIL_PASSWORD！請確認 Render 的 Environment 是否已儲存且變數名稱完全相符。"
-        return jsonify(diagnostic), 400
+    # 1. 測試 Resend 免費 HTTPS API
+    if resend_api_key:
+        try:
+            req = urllib.request.Request(
+                "https://api.resend.com/emails",
+                data=json.dumps({
+                    "from": "沐曦 MuXi <onboarding@resend.dev>",
+                    "to": [to_email],
+                    "subject": "🐾【沐曦 MuXi】Resend HTTPS API 測試信件",
+                    "html": f"<h2>🐾 沐曦 MuXi 雲端發信成功！</h2><p>親愛的測試者您好，這是一封透過 <b>Resend HTTPS API</b> 寄出的真實信件。<br>當您收到這封信時，代表系統發信功能已 100% 正常連線！</p>"
+                }).encode("utf-8"),
+                headers={
+                    "Authorization": f"Bearer {resend_api_key}",
+                    "Content-Type": "application/json",
+                    "User-Agent": "MuXi-App"
+                },
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=5) as resp:
+                res_data = json.loads(resp.read().decode("utf-8"))
+                diagnostic["attempts"].append({"method": "Resend HTTPS API", "status": "success", "id": res_data.get("id")})
+                diagnostic["success"] = True
+                diagnostic["message"] = f"🎉 恭喜！已成功透過 Resend HTTPS API 發送測試信至 {to_email}！請檢查您的信箱！"
+                return jsonify(diagnostic), 200
+        except Exception as e:
+            diagnostic["attempts"].append({"method": "Resend HTTPS API", "status": "failed", "error": str(e)})
 
-    # 1. 嘗試 Port 587 TLS
-    try:
-        server = smtplib.SMTP("smtp.gmail.com", 587, timeout=12)
-        server.ehlo()
-        server.starttls()
-        server.ehlo()
-        server.login(mail_user, mail_pass)
-        msg = MIMEText(f"<h2>🐾 沐曦 MuXi 郵件系統測試成功！</h2><p>親愛的測試者您好，這是一封來自 <b>{mail_user}</b> 的真實測試信件。<br>當您看到這封信時，代表網站的 Gmail SMTP 發信功能已 100% 正常連線成功！</p>", "html", "utf-8")
-        msg["Subject"] = "🐾【沐曦 MuXi】Gmail SMTP 連線診斷測試信"
-        msg["From"] = f"沐曦 MuXi 寵物生活館 <{mail_user}>"
-        msg["To"] = to_email
-        server.sendmail(mail_user, [to_email], msg.as_string())
-        server.quit()
-        diagnostic["attempts"].append({"port": 587, "status": "success"})
-        diagnostic["success"] = True
-        diagnostic["message"] = f"🎉 恭喜！已成功透過 Port 587 發送測試信至 {to_email}！請檢查您的信箱！"
-        return jsonify(diagnostic), 200
-    except Exception as e1:
-        diagnostic["attempts"].append({"port": 587, "status": "failed", "error": str(e1)})
+    # 2. 測試 Gmail SMTP
+    if mail_user and mail_pass:
+        try:
+            server = smtplib.SMTP("smtp.gmail.com", 587, timeout=4)
+            server.ehlo()
+            server.starttls()
+            server.ehlo()
+            server.login(mail_user, mail_pass)
+            msg = MIMEText(f"<h2>🐾 沐曦 MuXi 郵件系統測試成功！</h2><p>親愛的測試者您好，這是一封來自 <b>{mail_user}</b> 的真實測試信件。<br>當您看到這封信時，代表網站的 Gmail SMTP 發信功能已 100% 正常連線成功！</p>", "html", "utf-8")
+            msg["Subject"] = "🐾【沐曦 MuXi】Gmail SMTP 測試信件"
+            msg["From"] = f"沐曦 MuXi 寵物生活館 <{mail_user}>"
+            msg["To"] = to_email
+            server.sendmail(mail_user, [to_email], msg.as_string())
+            server.quit()
+            diagnostic["attempts"].append({"method": "Gmail SMTP Port 587", "status": "success"})
+            diagnostic["success"] = True
+            diagnostic["message"] = f"🎉 恭喜！已成功透過 Gmail SMTP 發送測試信至 {to_email}！請檢查您的信箱！"
+            return jsonify(diagnostic), 200
+        except Exception as e1:
+            diagnostic["attempts"].append({"method": "Gmail SMTP Port 587", "status": "failed", "error": str(e1)})
 
-    # 2. 嘗試 Port 465 SSL
-    try:
-        server = smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=12)
-        server.ehlo()
-        server.login(mail_user, mail_pass)
-        msg = MIMEText(f"<h2>🐾 沐曦 MuXi 郵件系統測試成功 (SSL)！</h2><p>親愛的測試者您好，這是一封來自 <b>{mail_user}</b> 的真實測試信件。<br>當您看到這封信時，代表網站的 Gmail SMTP (Port 465 SSL) 發信功能已 100% 正常連線成功！</p>", "html", "utf-8")
-        msg["Subject"] = "🐾【沐曦 MuXi】Gmail SMTP (SSL) 連線診斷測試信"
-        msg["From"] = f"沐曦 MuXi 寵物生活館 <{mail_user}>"
-        msg["To"] = to_email
-        server.sendmail(mail_user, [to_email], msg.as_string())
-        server.quit()
-        diagnostic["attempts"].append({"port": 465, "status": "success"})
-        diagnostic["success"] = True
-        diagnostic["message"] = f"🎉 恭喜！已成功透過 Port 465 (SSL) 發送測試信至 {to_email}！請檢查您的信箱！"
-        return jsonify(diagnostic), 200
-    except Exception as e2:
-        diagnostic["attempts"].append({"port": 465, "status": "failed", "error": str(e2)})
+        try:
+            server = smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=4)
+            server.ehlo()
+            server.login(mail_user, mail_pass)
+            msg = MIMEText(f"<h2>🐾 沐曦 MuXi 郵件系統測試成功 (SSL)！</h2><p>親愛的測試者您好，這是一封來自 <b>{mail_user}</b> 的真實測試信件。<br>當您看到這封信時，代表網站的 Gmail SMTP (Port 465 SSL) 發信功能已 100% 正常連線成功！</p>", "html", "utf-8")
+            msg["Subject"] = "🐾【沐曦 MuXi】Gmail SMTP (SSL) 測試信件"
+            msg["From"] = f"沐曦 MuXi 寵物生活館 <{mail_user}>"
+            msg["To"] = to_email
+            server.sendmail(mail_user, [to_email], msg.as_string())
+            server.quit()
+            diagnostic["attempts"].append({"method": "Gmail SMTP Port 465 SSL", "status": "success"})
+            diagnostic["success"] = True
+            diagnostic["message"] = f"🎉 恭喜！已成功透過 Port 465 SSL 發送測試信至 {to_email}！請檢查您的信箱！"
+            return jsonify(diagnostic), 200
+        except Exception as e2:
+            diagnostic["attempts"].append({"method": "Gmail SMTP Port 465 SSL", "status": "failed", "error": str(e2)})
 
     diagnostic["success"] = False
-    diagnostic["error"] = "Google 拒絕連線或驗證失敗。最常見原因是：16 位應用程式密碼錯誤，或者尚未在該 Gmail 開啟兩步驟驗證。"
-    return jsonify(diagnostic), 500
+    if not mail_user or not mail_pass:
+        diagnostic["error"] = "Render 環境變數中找不到 MAIL_USERNAME 或 MAIL_PASSWORD！請確認 Render 的 Environment 是否已儲存且變數名稱完全相符。"
+    else:
+        diagnostic["error"] = "Google 拒絕連線或驗證失敗。最常見原因是：16 位應用程式密碼錯誤，或者尚未在該 Gmail 開啟兩步驟驗證。"
+    return jsonify(diagnostic), 400
 
 # ==========================================
 # 前端靜態資源與全頁面路由
