@@ -6,8 +6,8 @@ function ensureContactModalDOM() {
     if (document.getElementById('contactModalOverlay')) return;
 
     var modalHTML = ''
-        + '<div id="contactModalOverlay" class="contact-modal-overlay" onclick="closeContactModal(event)">'
-        + '  <div class="contact-modal-card" onclick="event.stopPropagation()">'
+        + '<div id="contactModalOverlay" class="contact-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.65); z-index: 99999; align-items: center; justify-content: center; padding: 15px; box-sizing: border-box;" onclick="closeContactModal(event)">'
+        + '  <div class="contact-modal-card" style="background: #FFF; border-radius: 20px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; border: 2px solid #FFE4D6; box-shadow: 0 20px 50px rgba(0,0,0,0.3); box-sizing: border-box;" onclick="event.stopPropagation()">'
         + '    <div class="contact-modal-header">'
         + '      <button type="button" class="contact-modal-close" onclick="closeContactModal()">&times;</button>'
         + '      <h3>🐾 聯絡沐曦客服</h3>'
@@ -60,6 +60,7 @@ function openContactModal(event) {
     ensureContactModalDOM();
     var overlay = document.getElementById('contactModalOverlay');
     if (overlay) {
+        overlay.style.display = 'flex';
         overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
     }
@@ -71,6 +72,7 @@ function closeContactModal(event) {
     }
     var overlay = document.getElementById('contactModalOverlay');
     if (overlay) {
+        overlay.style.display = 'none';
         overlay.classList.remove('active');
         document.body.style.overflow = '';
     }
@@ -131,7 +133,6 @@ async function submitContactInquiry() {
 }
 
 function bindFooterEmailIcons() {
-    ensureContactModalDOM();
     var links = document.querySelectorAll('.social-icon, .social-links a');
     links.forEach(function(link) {
         var text = link.innerText || link.textContent || '';
