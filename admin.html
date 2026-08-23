@@ -327,16 +327,22 @@
             border-color: #10B981;
         }
 
-        /* 資料表格 */
+        /* 資料表格容器與平滑滑動 */
         .admin-table-container {
             background: #FFFFFF;
             border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-            overflow-x: auto;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+            border: 1px solid #E5E7EB;
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            width: 100% !important;
+            box-sizing: border-box;
+            margin-bottom: 25px;
         }
 
         .admin-table {
             width: 100%;
+            min-width: 1100px !important; /* 強制保證所有 9 欄都有充裕且優雅的展開空間，不擠壓 */
             border-collapse: collapse;
             text-align: left;
             font-size: 14px;
@@ -348,13 +354,14 @@
             font-weight: bold;
             padding: 14px 16px;
             border-bottom: 1px solid #E5E7EB;
-            white-space: nowrap;
+            white-space: nowrap !important;
         }
 
         .admin-table td {
             padding: 14px 16px;
             border-bottom: 1px solid #F3F4F6;
             vertical-align: middle;
+            white-space: nowrap !important;
         }
 
         .admin-table tr:hover {
@@ -379,13 +386,21 @@
         .pill-status-pending { background: #FEF3C7; color: #92400E; }
 
         .btn-status-act {
-            padding: 5px 10px;
+            padding: 7px 12px;
             border-radius: 6px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: bold;
             border: none;
             cursor: pointer;
             margin-right: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: 0.2s;
+        }
+        .btn-status-act:hover {
+            opacity: 0.9;
+            transform: scale(1.03);
         }
         .btn-act-complete { background: #10B981; color: #fff; }
         .btn-act-cancel { background: #EF4444; color: #fff; }
@@ -401,6 +416,94 @@
             border-radius: 4px;
             margin-bottom: 3px;
             display: inline-block;
+        }
+
+        /* 📱 手機滑動提示徽章 */
+        .table-scroll-hint {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #EFF6FF;
+            color: #1D4ED8;
+            border: 1px solid #BFDBFE;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* 手機與平板全響應式排版 (Mobile & Tablet RWD) */
+        @media (max-width: 992px) {
+            .admin-main-container {
+                padding: 15px 10px 40px 10px !important;
+            }
+            .admin-navbar {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 12px !important;
+                padding: 14px 16px !important;
+            }
+            .admin-user-info {
+                width: 100% !important;
+                justify-content: space-between !important;
+                flex-wrap: wrap !important;
+                gap: 8px !important;
+            }
+            .admin-stats-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 10px !important;
+            }
+            .stat-card {
+                padding: 12px 14px !important;
+            }
+            .stat-value {
+                font-size: 20px !important;
+            }
+            .admin-tabs {
+                display: flex !important;
+                overflow-x: auto !important;
+                flex-wrap: nowrap !important;
+                gap: 8px !important;
+                padding-bottom: 8px !important;
+                -webkit-overflow-scrolling: touch !important;
+            }
+            .admin-tab-btn {
+                flex: 0 0 auto !important;
+                padding: 8px 14px !important;
+                font-size: 13px !important;
+                white-space: nowrap !important;
+            }
+            .admin-toolbar {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                padding: 12px 14px !important;
+                gap: 10px !important;
+            }
+            .toolbar-filters {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 8px !important;
+                width: 100% !important;
+            }
+            .toolbar-filters input, .toolbar-filters select, .toolbar-filters button {
+                width: 100% !important;
+                box-sizing: border-box !important;
+                font-size: 14px !important;
+            }
+            .toolbar-actions {
+                width: 100% !important;
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 8px !important;
+            }
+            .toolbar-actions .btn-tool {
+                width: 100% !important;
+                padding: 10px 6px !important;
+                font-size: 13px !important;
+                text-align: center !important;
+                box-sizing: border-box !important;
+            }
         }
     </style>
 </head>
@@ -512,6 +615,11 @@
                 </div>
             </div>
 
+            <div class="table-scroll-hint">
+                <span class="iconify" data-icon="mdi:gesture-swipe-horizontal"></span>
+                <span><b>手機滑動提示：</b>表格可向左/向右滑動，查看完整「電話、毛孩資訊、金額與管理按鈕」</span>
+            </div>
+
             <div class="admin-table-container">
                 <table class="admin-table">
                     <thead>
@@ -555,6 +663,11 @@
                 </div>
             </div>
 
+            <div class="table-scroll-hint">
+                <span class="iconify" data-icon="mdi:gesture-swipe-horizontal"></span>
+                <span><b>手機滑動提示：</b>表格可向左/向右滑動，查看完整「購買明細、取貨方式、金額與管理按鈕」</span>
+            </div>
+
             <div class="admin-table-container">
                 <table class="admin-table">
                     <thead>
@@ -591,6 +704,11 @@
                 </div>
             </div>
 
+            <div class="table-scroll-hint">
+                <span class="iconify" data-icon="mdi:gesture-swipe-horizontal"></span>
+                <span><b>手機滑動提示：</b>表格可向左/向右滑動，查看完整「手機、信箱、等級折扣與累積次數」</span>
+            </div>
+
             <div class="admin-table-container">
                 <table class="admin-table">
                     <thead>
@@ -625,6 +743,11 @@
                 <div class="toolbar-actions">
                     <button class="btn-tool" onclick="loadMatches()">🔄 重新整理</button>
                 </div>
+            </div>
+
+            <div class="table-scroll-hint">
+                <span class="iconify" data-icon="mdi:gesture-swipe-horizontal"></span>
+                <span><b>手機滑動提示：</b>表格可向左/向右滑動，查看完整「MBTI、星座、推薦毛孩與契合度」</span>
             </div>
 
             <div class="admin-table-container">
