@@ -3895,3 +3895,501 @@ select:focus, input:focus, textarea:focus {
     from { transform: scale(0.9); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
 }
+
+/* =========================================
+   14. 全站行動裝置與平板全面響應式優化 (Mobile & Tablet RWD)
+   ========================================= */
+
+/* --- 基礎防跑版全域規則 --- */
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+img, video, iframe, canvas, svg {
+    max-width: 100%;
+    height: auto;
+}
+
+/* =========================================
+   平板裝置優化 (Max-width: 992px)
+   ========================================= */
+@media (max-width: 992px) {
+    /* 頂部導覽列 */
+    .navbar {
+        padding: 12px 10px;
+    }
+    .logo-area {
+        gap: 10px;
+    }
+    .logo-area h1, .logo-text-group h1 {
+        font-size: 32px;
+    }
+    .nav-background {
+        width: 95%;
+        padding: 10px 20px;
+        border-radius: 30px;
+        margin-top: 14px;
+    }
+    .nav-links {
+        gap: 6px 12px;
+    }
+    .nav-links li a, .dropdown-toggle {
+        font-size: 16px;
+        padding: 5px 10px;
+    }
+
+    /* 水療健身區塊 */
+    .gym-service-block {
+        flex-direction: column !important;
+        align-items: center;
+        gap: 25px;
+        padding: 30px 20px;
+    }
+    .gym-service-content {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    .gym-service-images {
+        width: 100% !important;
+        justify-content: center;
+    }
+
+    /* 住宿房型 */
+    .stay-room-grid, .room-cards-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 20px;
+    }
+
+    /* 購物商城 */
+    .shopping-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 15px;
+    }
+}
+
+/* =========================================
+   手機與小螢幕裝置優化 (Max-width: 768px)
+   ========================================= */
+@media (max-width: 768px) {
+    /* 1. 導覽列與 Logo 縮放 */
+    .navbar {
+        padding: 10px 8px;
+    }
+    .logo-area {
+        gap: 8px;
+    }
+    .logo-lottie {
+        width: 50px !important;
+        height: 50px !important;
+    }
+    .logo-area h1, .logo-text-group h1 {
+        font-size: 24px !important;
+    }
+    .logo-area p, .logo-text-group p {
+        font-size: 11px !important;
+        letter-spacing: 1px;
+    }
+    .nav-background {
+        width: 96% !important;
+        padding: 8px 10px !important;
+        border-radius: 18px !important;
+        margin-top: 10px !important;
+    }
+    .nav-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px 6px;
+    }
+    .nav-links li a, .dropdown-toggle {
+        font-size: 13px !important;
+        padding: 3px 6px !important;
+    }
+    .active-nav {
+        padding: 3px 8px !important;
+        font-size: 13px !important;
+        border-radius: 20px !important;
+    }
+    .dropdown-menu {
+        width: 130px !important;
+        top: 32px !important;
+        padding: 8px 0 !important;
+        border-radius: 10px !important;
+    }
+    .dropdown-menu a {
+        font-size: 13px !important;
+        padding: 4px 10px !important;
+    }
+
+    /* 2. Hero 橫幅與文字排版 */
+    .hero-center-overlay h2, .hero-title, .title-cyan, .title-orange, .title-green-dark {
+        font-size: 26px !important;
+        line-height: 1.25 !important;
+    }
+    .hero-center-overlay {
+        padding: 15px !important;
+    }
+    .gym-intro-section, .intro-section {
+        padding: 25px 12px !important;
+    }
+    .gym-intro-text, .intro-text {
+        font-size: 14px !important;
+        line-height: 1.8 !important;
+        padding: 12px !important;
+        width: 100% !important;
+        letter-spacing: 0.5px !important;
+    }
+    .section-header {
+        gap: 8px !important;
+    }
+    .section-header .iconify {
+        font-size: 32px !important;
+    }
+
+    /* 3. 寵物健身水療頁 (gym.html) 手機 RWD */
+    .gym-benefits {
+        padding: 20px 12px !important;
+    }
+    .benefits-text {
+        font-size: 14px !important;
+        line-height: 1.7 !important;
+    }
+    .gym-service-block {
+        flex-direction: column !important;
+        padding: 20px 12px !important;
+        gap: 15px !important;
+        margin: 15px 0 !important;
+        border-radius: 16px !important;
+    }
+    .gym-service-content {
+        width: 100% !important;
+        text-align: left !important;
+    }
+    .gym-service-content .section-header {
+        justify-content: flex-start !important;
+    }
+    .service-desc {
+        font-size: 14px !important;
+        line-height: 1.7 !important;
+    }
+    .gym-service-images {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        gap: 12px !important;
+        align-items: center !important;
+    }
+    .gym-photos-col {
+        display: flex !important;
+        flex-direction: row !important;
+        width: 100% !important;
+        justify-content: center !important;
+        gap: 10px !important;
+    }
+    .gym-img-stacked {
+        width: calc(50% - 5px) !important;
+        max-width: 170px !important;
+        height: 125px !important;
+        object-fit: cover !important;
+        border-radius: 10px !important;
+    }
+    .gym-video-box {
+        width: 100% !important;
+        max-width: 320px !important;
+        margin: 0 auto !important;
+    }
+    .gym-video-box video {
+        width: 100% !important;
+        height: auto !important;
+        max-height: 400px !important;
+        border-radius: 12px !important;
+    }
+    .milk-bath-images {
+        display: flex !important;
+        flex-direction: row !important;
+        width: 100% !important;
+        justify-content: center !important;
+        gap: 10px !important;
+        margin-bottom: 12px !important;
+    }
+    .gym-img-bottom-left, .gym-img-bottom-right {
+        width: calc(50% - 5px) !important;
+        max-width: 170px !important;
+        height: 125px !important;
+        object-fit: cover !important;
+        border-radius: 10px !important;
+    }
+
+    /* 4. 首頁 (index.html) */
+    .index-hero {
+        padding: 30px 15px !important;
+    }
+    .service-cards-container, .service-cards {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 15px !important;
+        width: 100% !important;
+        padding: 0 10px !important;
+    }
+    .service-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+    }
+    .index-gallery-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 10px !important;
+    }
+
+    /* 5. 寵物美容 (clean.html, clean2.html) */
+    .clean-package-card, .clean-process-card {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    .pricing-table-container {
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        border-radius: 10px !important;
+    }
+    .pricing-table {
+        min-width: 480px !important;
+        font-size: 13px !important;
+    }
+    .pricing-table th, .pricing-table td {
+        padding: 8px 10px !important;
+    }
+
+    /* 6. 寵物住宿 (stay-dog.html, stay-cat.html) */
+    .stay-room-grid, .room-cards-grid {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+        padding: 0 10px !important;
+    }
+    .room-card, .stay-card {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    .room-card img, .stay-card img {
+        height: 180px !important;
+    }
+
+    /* 7. 線上預約 (booking.html) */
+    .booking-page-container {
+        padding: 15px 8px !important;
+        width: 100% !important;
+    }
+    .booking-layout, .booking-form-box {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 18px 12px !important;
+        border-radius: 14px !important;
+    }
+    .booking-form-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+    .addon-selection-grid {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+    }
+    .booking-form-box input, .booking-form-box select, .booking-form-box textarea {
+        font-size: 16px !important; /* 避免 iOS 縮放觸發 */
+        padding: 10px !important;
+    }
+    .btn-booking-submit {
+        font-size: 16px !important;
+        padding: 12px !important;
+    }
+
+    /* 8. MBTI 毛孩速配測驗 (game.html / match.html) */
+    .match-container {
+        width: 96% !important;
+        padding: 15px 8px !important;
+    }
+    .match-hero-header h2 {
+        font-size: 20px !important;
+    }
+    .mbti-groups-container {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+    .mbti-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+    }
+    .mbti-card {
+        padding: 10px 8px !important;
+    }
+    .mbti-code {
+        font-size: 15px !important;
+    }
+    .residence-grid, .country-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+    }
+    .zodiac-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 6px !important;
+    }
+    .zodiac-card {
+        padding: 8px 4px !important;
+    }
+    .zodiac-card .zodiac-icon {
+        font-size: 20px !important;
+    }
+    .zodiac-card .zodiac-name {
+        font-size: 12px !important;
+    }
+
+    /* 水晶占卜全螢幕遮罩手機縮放 */
+    .crystal-ball-container {
+        width: 220px !important;
+        height: 220px !important;
+    }
+    .constellation-sky-box {
+        width: 95vw !important;
+        height: 72vh !important;
+    }
+    .star-jar-container {
+        bottom: 12px !important;
+        right: 12px !important;
+        transform: scale(0.85);
+        transform-origin: bottom right;
+    }
+
+    /* 神秘結果彈窗手機最佳化 */
+    .mystic-result-modal {
+        width: 96% !important;
+        max-width: 96% !important;
+        padding: 20px 12px !important;
+        margin: 15px auto !important;
+        border-radius: 16px !important;
+    }
+    .mystic-card-header {
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        gap: 10px !important;
+    }
+    .mystic-pet-avatar {
+        width: 75px !important;
+        height: 75px !important;
+        font-size: 38px !important;
+    }
+    .mystic-pet-name {
+        font-size: 22px !important;
+    }
+    .match-score-badge {
+        font-size: 16px !important;
+        padding: 3px 10px !important;
+    }
+    .alternative-pets-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+    }
+    .save-email-input-group {
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+    .save-email-input-group input, .save-email-input-group button {
+        width: 100% !important;
+        border-radius: 8px !important;
+    }
+
+    /* 9. 商城購物 (shop-*.html) */
+    .shopping-container {
+        padding: 15px 8px !important;
+    }
+    .shopping-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 10px !important;
+    }
+    .product-card {
+        padding: 10px 8px !important;
+        border-radius: 12px !important;
+    }
+    .product-img {
+        height: 130px !important;
+    }
+    .product-title {
+        font-size: 13px !important;
+        line-height: 1.3 !important;
+    }
+    .product-price {
+        font-size: 15px !important;
+    }
+    .btn-add-cart {
+        font-size: 12px !important;
+        padding: 6px 10px !important;
+    }
+
+    /* 購物車抽屜與結帳彈窗 */
+    .cart-drawer {
+        width: 100vw !important;
+        max-width: 100vw !important;
+    }
+    .checkout-modal-card, .order-success-card {
+        width: 95% !important;
+        padding: 20px 14px !important;
+        border-radius: 14px !important;
+    }
+    .checkout-form-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+    }
+    .checkout-form-grid input, .checkout-form-grid select {
+        font-size: 16px !important;
+    }
+
+    /* 10. 頁尾 Footer 手機置中友善排版 */
+    .footer {
+        padding: 30px 15px 20px 15px !important;
+    }
+    .footer-container, .footer-content {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        gap: 20px !important;
+    }
+    .footer-col, .footer-info, .footer-links {
+        width: 100% !important;
+        align-items: center !important;
+        text-align: center !important;
+    }
+    .footer-links ul {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        gap: 8px 14px !important;
+        padding: 0 !important;
+    }
+}
+
+/* =========================================
+   超小螢幕手機微調 (Max-width: 420px)
+   ========================================= */
+@media (max-width: 420px) {
+    .nav-links li a, .dropdown-toggle {
+        font-size: 12px !important;
+        padding: 2px 4px !important;
+    }
+    .logo-area h1, .logo-text-group h1 {
+        font-size: 20px !important;
+    }
+    .hero-center-overlay h2 {
+        font-size: 22px !important;
+    }
+    .zodiac-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    .shopping-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 6px !important;
+    }
+    .product-img {
+        height: 110px !important;
+    }
+}

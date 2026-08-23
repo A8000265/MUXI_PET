@@ -14,6 +14,44 @@ app.secret_key = "muxi_secret_session_key_2026_secure"
 
 ALL_SLOTS = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"]
 
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+def send_smtp_email(to_email, subject, html_content):
+    """透過免費 Gmail SMTP 或其他 SMTP 伺服器發送真實信件 (安全容錯防崩潰)"""
+    if not to_email or "@" not in to_email:
+        return False
+    smtp_server = os.getenv("MAIL_SERVER", "smtp.gmail.com")
+    smtp_port = int(os.getenv("MAIL_PORT", 587))
+    mail_user = os.getenv("MAIL_USERNAME", "").strip()
+    mail_pass = os.getenv("MAIL_PASSWORD", "").strip().replace(" ", "")
+    sender_name = os.getenv("MAIL_SENDER_NAME", "沐曦 MuXi 寵物生活館")
+
+    if not mail_user or not mail_pass:
+        print(f"[Email Notice] 模擬發送通知信至 {to_email}：{subject}")
+        return True
+
+    try:
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = subject
+        msg["From"] = f"{sender_name} <{mail_user}>"
+        msg["To"] = to_email
+
+        part = MIMEText(html_content, "html", "utf-8")
+        msg.attach(part)
+
+        server = smtplib.SMTP(smtp_server, smtp_port, timeout=8)
+        server.starttls()
+        server.login(mail_user, mail_pass)
+        server.sendmail(mail_user, [to_email], msg.as_string())
+        server.quit()
+        print(f"[Email Success] 成功寄送真實信件至: {to_email}")
+        return True
+    except Exception as e:
+        print(f"[Email Notice] 寄信失敗 (不影響網頁流程): {e}")
+        return False
+
 # ==========================================
 # 前端靜態資源與全頁面路由
 # ==========================================
@@ -367,6 +405,35 @@ def create_booking():
             ))
 
         conn.close()
+
+        # 發送預約確認通知信 (若有設定 SMTP 則自動寄發真實信件)
+        try:
+            booking_email_html = f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #FFE4D6; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                <div style="background: #FE7000; color: #FFF; padding: 22px; text-align: center;">
+                    <h2 style="margin: 0; font-size: 22px;">🐾 沐曦 MuXi 寵物預約確認通知函</h2>
+                </div>
+                <div style="padding: 24px; color: #333; line-height: 1.6;">
+                    <p>親愛的 <b>{owner_name}</b> 您好：</p>
+                    <p>感謝您預約沐曦寵物生活館服務，以下是您的預約明細：</p>
+                    <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+                        <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">預約編號</td><td style="font-weight: bold; color: #FE7000;">{booking_id}</td></tr>
+                        <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">毛孩姓名 / 體型</td><td><b>{pet_name}</b> ({pet_type})</td></tr>
+                        <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">預約時段</td><td><b>{booking_date} {time_slot}</b></td></tr>
+                        <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">美容項目</td><td>{service_type}</td></tr>
+                        <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">住宿/加購項目</td><td>{stay_service} / {addon_type}</td></tr>
+                        <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">預計總金額</td><td style="font-weight: bold; font-size: 18px; color: #FE7000;">NT$ {total_price:,}</td></tr>
+                    </table>
+                    <p style="background: #FFF8F0; padding: 12px 16px; border-left: 4px solid #FE7000; border-radius: 4px; font-size: 13px; color: #666;">
+                        💡 貼心提醒：請於預約時間前 5~10 分鐘抵達門市，若需更改或取消預約，請隨時於網站查詢或來電告知。
+                    </p>
+                    <p style="text-align: center; margin-top: 25px; font-size: 12px; color: #999;">沐曦 MuXi 寵物生活館 敬上</p>
+                </div>
+            </div>
+            """
+            send_smtp_email(owner_email, f"【沐曦 MuXi】寵物服務預約確認 ({booking_id})", booking_email_html)
+        except Exception:
+            pass
 
         return jsonify({
             "success": True,
@@ -829,6 +896,38 @@ def create_order():
         conn.close()
 
         offline_notice = "【感謝顧客的購買與理解，對於無法線上付款這件事情深感抱歉，後續會再做出系統上的更新】"
+
+        # 發送商城訂單確認通知信 (若有設定 SMTP 則自動發送真實信件)
+        try:
+            items_html = "".join([
+                f"<tr style='border-bottom: 1px solid #EEE;'><td style='padding: 8px 0;'>{item.get('name', '商品')} ({item.get('spec', '標準')})</td><td style='text-align: center;'>x{item.get('qty', 1)}</td><td style='text-align: right;'>NT$ {int(item.get('price', 0)) * int(item.get('qty', 1)):,}</td></tr>"
+                for item in items
+            ])
+            order_email_html = f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                <div style="background: #111827; color: #FFF; padding: 22px; text-align: center;">
+                    <h2 style="margin: 0; font-size: 22px;">🛍️ 沐曦 MuXi 線上商城訂單確認通知</h2>
+                </div>
+                <div style="padding: 24px; color: #333; line-height: 1.6;">
+                    <p>親愛的 <b>{customer_name}</b> 您好：</p>
+                    <p>我們已收到您的商城預訂商品訂單！明細如下：</p>
+                    <p><b>訂單編號：</b><span style="color: #4F46E5; font-weight: bold;">{order_no}</span></p>
+                    <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+                        <tr style="background: #F3F4F6; color: #374151; font-weight: bold;"><th style="padding: 8px; text-align: left;">商品名稱</th><th style="padding: 8px; text-align: center;">數量</th><th style="padding: 8px; text-align: right;">小計</th></tr>
+                        {items_html}
+                        <tr><td colspan="2" style="padding: 12px 0; font-weight: bold; border-top: 2px solid #E5E7EB;">總計金額 ({member_type})</td><td style="padding: 12px 0; text-align: right; font-weight: bold; font-size: 18px; color: #4F46E5; border-top: 2px solid #E5E7EB;">NT$ {total_amount:,}</td></tr>
+                    </table>
+                    <p style="background: #FEF3C7; padding: 12px 16px; border-radius: 6px; font-size: 13px; color: #92400E; border: 1px solid #FDE68A;">
+                        📌 取貨方式：門市自取｜付款方式：到店付款 (暫不接受線上付款)<br>
+                        門市人員將為您備貨，請於 3 日內至沐曦門市出示此信件或訂單編號領取。
+                    </p>
+                    <p style="text-align: center; margin-top: 25px; font-size: 12px; color: #999;">沐曦 MuXi 寵物生活館 敬上</p>
+                </div>
+            </div>
+            """
+            send_smtp_email(customer_email, f"【沐曦 MuXi】商城訂單成立通知 ({order_no})", order_email_html)
+        except Exception:
+            pass
 
         return jsonify({
             "success": True,
@@ -1328,6 +1427,38 @@ def send_match_backup():
                 breed_name, pet_type, title, match_score, match_reason, care_tips
             ))
         conn.close()
+
+        # 發送測驗結果報告信件 (若有設定 SMTP 則自動寄發真實信件)
+        try:
+            match_email_html = f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #FFE4D6; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                <div style="background: linear-gradient(135deg, #1E1B4B, #4338CA); color: #FFF; padding: 24px; text-align: center;">
+                    <h2 style="margin: 0; font-size: 22px;">✨ 沐曦 MuXi 毛孩速配靈魂測驗報告</h2>
+                    <p style="margin: 6px 0 0 0; font-size: 14px; opacity: 0.85;">MBTI × 星座 × 居住空間 專屬命定推薦</p>
+                </div>
+                <div style="padding: 24px; color: #333; line-height: 1.6;">
+                    <p>親愛的 <b>{owner_name}</b> 您好：</p>
+                    <p>星光指引了您與命定毛孩的相遇！以下為您的專屬媒合報告：</p>
+                    
+                    <div style="background: #F5F3FF; border-radius: 10px; padding: 18px; text-align: center; margin: 15px 0;">
+                        <h3 style="margin: 0; color: #4338CA; font-size: 22px;">🐾 命定毛孩：{breed_name}</h3>
+                        <p style="margin: 5px 0 0 0; color: #6D28D9; font-weight: bold;">靈魂契合度：{match_score}% · {title}</p>
+                    </div>
+
+                    <p><b>🧩 測驗條件：</b> MBTI: {mbti} ｜ 星座: {zodiac} ｜ 空間: {residence} ｜ 地區: {country}</p>
+                    <p><b>💖 契合原因：</b><br>{match_reason}</p>
+                    <p><b>🌿 照護與洗護指南：</b><br>{care_tips}</p>
+
+                    <div style="text-align: center; margin-top: 25px;">
+                        <a href="https://muxi-pet.onrender.com/booking.html" style="background: #FE7000; color: #FFF; padding: 10px 24px; text-decoration: none; border-radius: 25px; font-weight: bold; display: inline-block;">立即為毛孩預約頂級洗護</a>
+                    </div>
+                    <p style="text-align: center; margin-top: 25px; font-size: 12px; color: #999;">沐曦 MuXi 寵物生活館 · 讓愛與陪伴更美好</p>
+                </div>
+            </div>
+            """
+            send_smtp_email(email, f"✨【沐曦 MuXi】您的命定毛孩速配報告：{breed_name} (契合度 {match_score}%)", match_email_html)
+        except Exception:
+            pass
 
         return jsonify({
             "success": True,
