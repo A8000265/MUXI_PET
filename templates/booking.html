@@ -887,7 +887,7 @@
     // ==========================================
     // 提交預約與本地儲存
     // ==========================================
-    function submitBooking() {
+    async function submitBooking() {
         const serviceType = document.getElementById('serviceType').value;
         const fitnessChecked = document.querySelectorAll('input[name="fitness"]:checked').length > 0;
         const stayType = document.getElementById('stayType').value;
@@ -919,7 +919,7 @@
         const ownerPhone = document.getElementById('ownerPhone').value.trim();
         const ownerEmail = document.getElementById('ownerEmail').value.trim();
         const ownerRemarks = document.getElementById('ownerRemarks').value.trim() || "無";
-        const petName = document.getElementById('petName').value.trim() || "未提供";
+        const petName = document.getElementById('petName').value.trim() || "未命名";
         const memberType = document.querySelector('input[name="memberType"]:checked').value;
         const memberId = document.getElementById('memberId').value.trim();
         const transportService = document.querySelector('input[name="transportService"]:checked').value;
@@ -929,14 +929,60 @@
         if (!ownerEmail) return alert("❌ 請填寫電子信箱！");
         if (memberType !== "無" && !memberId) return alert("❌ 具備會員身分者，請務必填寫會員編號！");
 
-        const prices = calculatePrices();
-        const bookingId = "PET" + Math.floor(Math.random() * 90000 + 10000);
+        const submitBtn = document.querySelector("#step2-book button.primary-btn");
+        const originalBtnText = submitBtn ? submitBtn.innerText : "確認預約並送出";
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerText = "⏳ 正在傳送預約並發送確認信...";
+        }
 
-        document.getElementById('step2-book').style.display = "none";
+        const prices = calculatePrices();
+        const targetDate = gDate || fDate || sDate || new Date().toISOString().slice(0, 10);
+        const targetSlot = (gTime || fTime || sTime || "10:00").slice(0, 5);
 
         let transportNotice = transportService === "是" ? `<span style="color:#D8000C; font-weight:bold;">(接送費用另計，請私訊粉專或來電洽詢)</span>` : "";
         let fitnessStr = prices.selectedFitness.length > 0 ? prices.selectedFitness.join("、") : "無";
         let stayStr = stayType !== "無" ? `${stayType} ${stayType.includes("住宿") ? `(${prices.stayNights} 晚)` : ""}` : "無";
+
+        let finalBookingId = "PET-" + new Date().toISOString().slice(0, 10).replace(/-/g, "") + "-" + Math.floor(Math.random() * 9000 + 1000);
+
+        try {
+            const res = await fetch('/api/bookings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    booking_date: targetDate,
+                    time_slot: targetSlot,
+                    owner_name: ownerName,
+                    owner_phone: ownerPhone,
+                    owner_email: ownerEmail,
+                    pet_name: petName,
+                    pet_type: document.getElementById('petType').value,
+                    service_type: serviceType !== "無" ? serviceType : (stayType !== "無" ? stayType : "寵物健身"),
+                    stay_service: stayStr,
+                    stay_nights: prices.stayNights,
+                    addon_type: document.getElementById('addonType').value,
+                    member_type: memberType,
+                    member_id: memberId || null,
+                    notes: `住宿: ${stayStr} | 健身: ${fitnessStr} | 接送: ${transportService} | 備註: ${ownerRemarks}`
+                })
+            });
+            const data = await res.json();
+            if (data.success && data.booking) {
+                finalBookingId = data.booking.booking_id || finalBookingId;
+            } else if (!data.success) {
+                alert("❌ 預約未成功: " + (data.error || "請確認預約資料後重試！"));
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = originalBtnText;
+                }
+                return;
+            }
+        } catch (err) {
+            console.warn("後端連線異常，轉由本地存檔:", err);
+        }
+
+        document.getElementById('step2-book').style.display = "none";
 
         let scheduleHtml = "";
         if (serviceType !== "無") scheduleHtml += `<p>📅 <b>美容預約時間：</b>${gDate} ${gTime}</p>`;
@@ -944,8 +990,12 @@
         if (stayType !== "無") scheduleHtml += `<p>📅 <b>住宿/安親入住時間：</b>${sDate} ${sTime}</p>`;
 
         const receiptHtml = `
-            <h3>✅ 預約申請已送出！</h3>
-            <p>📋 <b>預約編號：</b>${bookingId}</p>
+            <h3>✅ 預約申請已成功送達沐曦系統！</h3>
+            <div style="background:#D1FAE5; border-left:4px solid #10B981; padding:12px 16px; border-radius:6px; margin:15px 0; color:#065F46; font-size:14px; line-height:1.6;">
+                📧 <b>預約確認函已自動發送至您的信箱：</b><code>${ownerEmail}</code><br>
+                歡迎至您的收件匣（或最新快訊/垃圾郵件）查閱預約存查！
+            </div>
+            <p>📋 <b>預約編號：</b><span style="font-size:18px; color:#FE7000; font-weight:bold;">${finalBookingId}</span></p>
             ${scheduleHtml}
             <p>👤 <b>主人姓名：</b>${ownerName} / <b>電話：</b>${ownerPhone}</p>
             <p>💬 <b>留言與備註：</b>${ownerRemarks}</p>
@@ -984,7 +1034,7 @@
 
         // 將資料存入 LocalStorage 與後端 MySQL
         saveToDatabase({
-            bookingId, gDate, gTime, fDate, fTime, sDate, sTime, ownerName, ownerPhone, ownerEmail, ownerRemarks, petName,
+            bookingId: finalBookingId, gDate, gTime, fDate, fTime, sDate, sTime, ownerName, ownerPhone, ownerEmail, ownerRemarks, petName,
             petType: document.getElementById('petType').value,
             serviceType,
             fitnessType: fitnessStr,
@@ -995,30 +1045,6 @@
             createdAt: new Date().toLocaleString()
         });
 
-        // 同步寫入後端 MySQL
-        try {
-            fetch('/api/bookings', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    booking_date: gDate || fDate || sDate || new Date().toISOString().slice(0, 10),
-                    time_slot: gTime || fTime || sTime || "10:00",
-                    owner_name: ownerName,
-                    owner_phone: ownerPhone,
-                    owner_email: ownerEmail,
-                    pet_name: petName,
-                    pet_type: document.getElementById('petType').value,
-                    service_type: serviceType !== "無" ? serviceType : (stayType !== "無" ? stayType : "寵物健身"),
-                    stay_service: stayStr,
-                    stay_nights: prices.stayNights,
-                    addon_type: document.getElementById('addonType').value,
-                    member_type: memberType,
-                    member_id: memberId || null,
-                    notes: `住宿: ${stayStr} | 健身: ${fitnessStr} | 接送: ${transportService} | 備註: ${ownerRemarks}`
-                })
-            }).catch(err => console.warn("後端同步預約失敗:", err));
-        } catch(e) {}
-        
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 

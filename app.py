@@ -497,7 +497,7 @@ def create_booking():
     data = request.get_json() or {}
 
     booking_date = data.get("booking_date", "").strip()
-    time_slot = data.get("time_slot", "").strip()
+    time_slot = data.get("time_slot", "").strip()[:5]  # 正規化為 HH:MM
     owner_name = data.get("owner_name", "").strip()
     owner_phone = data.get("owner_phone", "").strip()
     owner_email = data.get("owner_email", "").strip()
@@ -518,14 +518,14 @@ def create_booking():
     if not service_type and stay_service == "無":
         return jsonify({"success": False, "error": "請至少選擇一項服務 (美容、健身或住宿/安親)"}), 400
 
-    if time_slot not in ALL_SLOTS:
-        return jsonify({"success": False, "error": "選擇的時段無效"}), 400
+    if time_slot not in ALL_SLOTS and len(time_slot) < 5:
+        return jsonify({"success": False, "error": f"選擇的時段「{time_slot}」無效"}), 400
 
     try:
-        # 驗證日期不能為過去
+        # 驗證日期不能為過去 (依台灣時區 UTC+8)
         booking_dt = datetime.date.fromisoformat(booking_date)
-        today = datetime.date.today()
-        if booking_dt < today:
+        tw_now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8)))
+        if booking_dt < tw_now.date():
             return jsonify({"success": False, "error": "不能預約過去的日期"}), 400
 
         conn = get_db_connection()
@@ -601,8 +601,9 @@ def create_booking():
 
         conn.close()
 
-        # 發送預約確認通知信 (若有設定 SMTP 則自動寄發真實信件)
+        # 發送預約確認通知信 (發送至顧客信箱與官方管理員信箱)
         try:
+            # 1. 顧客預約確認函
             booking_email_html = f"""
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #FFE4D6; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
                 <div style="background: #FE7000; color: #FFF; padding: 22px; text-align: center;">
@@ -615,7 +616,7 @@ def create_booking():
                         <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">預約編號</td><td style="font-weight: bold; color: #FE7000;">{booking_id}</td></tr>
                         <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">毛孩姓名 / 體型</td><td><b>{pet_name}</b> ({pet_type})</td></tr>
                         <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">預約時段</td><td><b>{booking_date} {time_slot}</b></td></tr>
-                        <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">美容項目</td><td>{service_type}</td></tr>
+                        <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">服務項目</td><td>{service_type}</td></tr>
                         <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">住宿/加購項目</td><td>{stay_service} / {addon_type}</td></tr>
                         <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">預計總金額</td><td style="font-weight: bold; font-size: 18px; color: #FE7000;">NT$ {total_price:,}</td></tr>
                     </table>
@@ -626,7 +627,35 @@ def create_booking():
                 </div>
             </div>
             """
-            send_smtp_email(owner_email, f"【沐曦 MuXi】寵物服務預約確認 ({booking_id})", booking_email_html)
+            send_smtp_email(owner_email, f"【沐曦 MuXi】寵物服務預約確認通知 ({booking_id})", booking_email_html)
+
+            # 2. 同步發送官方管理員通知 (muxipet.service@gmail.com / a8000265@gmail.com)
+            admin_booking_html = f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #FFE4D6; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                <div style="background: #111827; color: #FFF; padding: 20px; text-align: center;">
+                    <h2 style="margin: 0; font-size: 22px;">🐾 沐曦官網 - 收到新的顧客線上預約！</h2>
+                </div>
+                <div style="padding: 24px; color: #333; line-height: 1.6;">
+                    <p>親愛的沐曦管理團隊您好：</p>
+                    <p>官網剛剛收到一筆新的線上預約申請，詳細明細如下：</p>
+                    <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+                        <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666; width: 120px;">預約編號</td><td style="font-weight: bold; color: #FE7000;">{booking_id}</td></tr>
+                        <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">顧客姓名</td><td><b>{owner_name}</b> ({member_type})</td></tr>
+                        <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">聯絡電話</td><td>{owner_phone}</td></tr>
+                        <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">電子信箱</td><td><a href="mailto:{owner_email}" style="color: #FE7000; font-weight: bold;">{owner_email}</a></td></tr>
+                        <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">毛孩資訊</td><td><b>{pet_name}</b> ({pet_type})</td></tr>
+                        <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">預約日期與時段</td><td><b>{booking_date} {time_slot}</b></td></tr>
+                        <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">服務項目</td><td>{service_type}</td></tr>
+                        <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">住宿/健身/加購</td><td>{stay_service} / {addon_type}</td></tr>
+                        <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">預計總金額</td><td style="font-weight: bold; font-size: 18px; color: #FE7000;">NT$ {total_price:,}</td></tr>
+                        <tr style="border-bottom: 1px solid #EEE;"><td style="padding: 8px 0; color: #666;">顧客備註</td><td>{notes or "無"}</td></tr>
+                    </table>
+                    <p style="text-align: center; margin-top: 25px; font-size: 12px; color: #999;">沐曦 MuXi 寵物生活館 線上預約系統</p>
+                </div>
+            </div>
+            """
+            official_admin_email = os.getenv("MAIL_USERNAME", "muxipet.service@gmail.com")
+            send_smtp_email(official_admin_email, f"🐾【沐曦預約通知】來自 {owner_name} 的寵物預約 ({booking_id})", admin_booking_html)
         except Exception:
             pass
 
