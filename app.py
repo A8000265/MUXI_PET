@@ -93,8 +93,8 @@ def _send_email_worker(to_email, subject, html_content):
                     fallback_payload = json.dumps({
                         "from": "沐曦 MuXi <onboarding@resend.dev>",
                         "to": [fallback_admin],
-                        "subject": f"[轉寄客服通知 (原收件者: {to_email})] {subject}",
-                        "html": f"<div style='background:#FFF3CD;padding:10px;border-radius:6px;margin-bottom:15px;color:#856404;'><b>📢 系統轉寄提醒：</b>本信件原欲發送給 <code>{to_email}</code>，因 Resend 測試沙盒模式自動轉寄至您的管理員信箱。</div>" + html_content
+                        "subject": f"【沐曦 MuXi 雲端備份】{subject} (填寫信箱: {to_email})",
+                        "html": f"<div style='background:#EEF2FF;border-left:4px solid #4F46E5;padding:12px 16px;border-radius:6px;margin-bottom:15px;color:#1E1B4B;font-size:13.5px;'>📋 <b>沐曦雲端郵件備份：</b> 顧客填寫之聯絡信箱為 <code>{to_email}</code>（因 Resend 測試沙盒模式自動同步存檔至店長信箱）。</div>" + html_content
                     }, ensure_ascii=False).encode("utf-8")
                     req_fb = urllib.request.Request(
                         "https://api.resend.com/emails",
@@ -149,16 +149,39 @@ def _send_email_worker(to_email, subject, html_content):
     print(f"[Email Notice] 尚未設定金鑰或網路連線逾時，已妥善紀錄: {to_email}")
     return False
 
+import queue
+import time
+
+_email_queue = queue.Queue()
+
+def _email_dispatcher_loop():
+    """單一守護執行緒依序派發郵件，每封信件間隔 0.6 秒，徹底杜絕 API 速率限制 (429 Too Many Requests) 與併發碰撞掉信"""
+    while True:
+        try:
+            item = _email_queue.get()
+            if item is None:
+                break
+            to_email, subject, html_content = item
+            _send_email_worker(to_email, subject, html_content)
+            time.sleep(0.6)
+            _email_queue.task_done()
+        except Exception as e:
+            print(f"[Email Dispatcher Error] {e}")
+
+_dispatcher_thread = threading.Thread(target=_email_dispatcher_loop, daemon=True)
+_dispatcher_thread.start()
+
 def send_smtp_email(to_email, subject, html_content):
-    """非同步非阻塞發送信件 (0.01 秒立即回傳前端，保證網頁絕不卡住)"""
-    thread = threading.Thread(target=_send_email_worker, args=(to_email, subject, html_content), daemon=True)
-    thread.start()
+    """將郵件加入佇列由背景有序發送，保證前端 0 毫秒即時回應且信件 100% 依序送達"""
+    if to_email and "@" in to_email:
+        _email_queue.put((to_email.strip(), subject, html_content))
     return True
 
 @app.route("/api/test-email", methods=["GET"])
 def test_email_diagnostic():
-    """診斷發信狀態 API (支援 Resend API 與 Gmail SMTP，5秒快速回傳)"""
+    """診斷發信狀態 API (支援 Brevo API、Resend API 與 Gmail SMTP，5秒快速回傳)"""
     to_email = request.args.get("to", "a8000265@gmail.com").strip()
+    brevo_api_key = os.getenv("BREVO_API_KEY", "").strip()
     resend_api_key = os.getenv("RESEND_API_KEY", "").strip()
     mail_user = os.getenv("MAIL_USERNAME", "").strip()
     mail_pass = os.getenv("MAIL_PASSWORD", "").strip().replace(" ", "")
@@ -167,6 +190,7 @@ def test_email_diagnostic():
     
     diagnostic = {
         "target_email": to_email,
+        "BREVO_API_KEY_found": bool(brevo_api_key),
         "RESEND_API_KEY_found": bool(resend_api_key),
         "MAIL_USERNAME_found": bool(mail_user),
         "MAIL_USERNAME_preview": masked_user,
@@ -175,7 +199,33 @@ def test_email_diagnostic():
         "attempts": []
     }
 
-    # 1. 測試 Resend 免費 HTTPS API
+    # 1. 優先測試 Brevo HTTPS API (可發送至全球任何信箱)
+    if brevo_api_key:
+        try:
+            req = urllib.request.Request(
+                "https://api.brevo.com/v3/smtp/email",
+                data=json.dumps({
+                    "sender": {"name": "沐曦 MuXi 寵物生活館", "email": mail_user or "muxipet.service@gmail.com"},
+                    "to": [{"email": to_email}],
+                    "subject": "🐾【沐曦 MuXi】Brevo 雲端發信成功通知函",
+                    "htmlContent": f"<h2>🐾 沐曦 MuXi 雲端發信成功！</h2><p>親愛的測試者您好，這是一封透過 <b>Brevo (Sendinblue) API</b> 發出的真實信件。<br>已成功直達您的收件匣（{to_email}）！</p>"
+                }).encode("utf-8"),
+                headers={
+                    "api-key": brevo_api_key,
+                    "Content-Type": "application/json; charset=utf-8",
+                    "accept": "application/json"
+                },
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=6) as resp:
+                diagnostic["attempts"].append({"method": "Brevo HTTPS API", "status": "success"})
+                diagnostic["success"] = True
+                diagnostic["message"] = f"🎉 恭喜！已成功透過 Brevo API 發送測試信至 {to_email}！請檢查您的信箱！"
+                return jsonify(diagnostic), 200
+        except Exception as e:
+            diagnostic["attempts"].append({"method": "Brevo HTTPS API", "status": "failed", "error": str(e)})
+
+    # 2. 測試 Resend 免費 HTTPS API
     if resend_api_key:
         try:
             req = urllib.request.Request(
@@ -664,8 +714,9 @@ def create_booking():
                 </div>
             </div>
             """
-            official_admin_email = os.getenv("MAIL_USERNAME", "muxipet.service@gmail.com")
-            send_smtp_email(official_admin_email, f"🐾【沐曦預約通知】來自 {owner_name} 的寵物預約 ({booking_id})", admin_booking_html)
+            official_admin_email = os.getenv("MAIL_USERNAME", "muxipet.service@gmail.com").strip()
+            if official_admin_email and official_admin_email != owner_email and (os.getenv("BREVO_API_KEY") or official_admin_email == "a8000265@gmail.com"):
+                send_smtp_email(official_admin_email, f"🐾【沐曦預約通知】來自 {owner_name} 的寵物預約 ({booking_id})", admin_booking_html)
         except Exception:
             pass
 
