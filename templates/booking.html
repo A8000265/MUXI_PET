@@ -964,6 +964,7 @@
                     addon_type: document.getElementById('addonType').value,
                     member_type: memberType,
                     member_id: memberId || null,
+                    total_price: Math.round(prices.total),
                     notes: `住宿: ${stayStr} | 健身: ${fitnessStr} | 接送: ${transportService} | 備註: ${ownerRemarks}`
                 })
             });

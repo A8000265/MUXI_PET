@@ -561,24 +561,34 @@ def create_booking():
                 if addon_row:
                     addon_price = addon_row["price"]
 
-            # 4. 會員折扣計算
+            # 4. 會員折扣計算 (高容錯：即使未預先建檔會員編號亦順暢完成預約)
             subtotal = base_price + addon_price
             discount_rate = 0.0
             if member_type != "無":
-                if not member_id:
-                    conn.close()
-                    return jsonify({"success": False, "error": "選擇會員折扣時必須填寫會員編號"}), 400
+                if member_id:
+                    cur.execute("SELECT member_type, discount_rate, status FROM members WHERE member_id = %s;", (member_id,))
+                    mem_row = cur.fetchone()
+                    if mem_row and mem_row.get("status") == "active":
+                        discount_rate = float(mem_row.get("discount_rate", 0.1))
+                        member_type = mem_row.get("member_type", member_type)
+                    else:
+                        discount_rate = 0.15 if "黃金" in member_type else 0.10
+                        member_type = f"{member_type} (待核對: {member_id})"
+                else:
+                    discount_rate = 0.15 if "黃金" in member_type else 0.10
 
-                cur.execute("SELECT member_type, discount_rate, status FROM members WHERE member_id = %s;", (member_id,))
-                mem_row = cur.fetchone()
-                if not mem_row or mem_row["status"] != "active":
-                    conn.close()
-                    return jsonify({"success": False, "error": f"會員編號「{member_id}」驗證失敗，無法套用會員折扣"}), 400
-                discount_rate = float(mem_row["discount_rate"])
-                member_type = mem_row["member_type"]
-
-            discount_amount = round(subtotal * (1.0 - discount_rate)) if discount_rate > 0 else 0
+            discount_amount = round(subtotal * discount_rate) if discount_rate > 0 else 0
             total_price = subtotal - discount_amount
+
+            # 若前端有傳入精準前端總金額 (含住宿/健身)，以大於 0 之金額為準
+            passed_total = data.get("total_price")
+            if passed_total is not None:
+                try:
+                    pt = int(float(passed_total))
+                    if pt > 0:
+                        total_price = pt
+                except Exception:
+                    pass
 
             # 5. 產生唯一預約編號
             date_prefix = booking_dt.strftime("%Y%m%d")
